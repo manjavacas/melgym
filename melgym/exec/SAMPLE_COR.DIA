@@ -1,0 +1,17 @@
+  
+ MELCOR diagnostic output   4WCODOAYU  3/31/23  14:39:52 
+ SAMPLE                                                                
+
+ *** MESSAGE FROM SUBROUTINE XFLUSH: ***
+ BUFFER FLUSHING FOR MELCOR OUTPUT FILES
+ HAS BEEN DISABLED BY INPUT RECORD 'NOFLUSH'
+ Subroutine XFLUSH is currently used for PLOT and RESTART files:
+  Uses FLUSH intrinsic
+ To change this treatment, modify INCLUDE blocks XFLUSH1,
+ XFLUSH2, and XFLUSH3 used by subroutine XFLUSH
+
+
+ Calculation terminated by : USER INPUT TEND (END OF PROBLEM)
+
+ JOB TERMINATION PROCEDURE STARTED
+
