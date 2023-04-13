@@ -1,6 +1,9 @@
 sample: clean
 	./melgen-fusion-186_bdba ../data/sample.inp
 	./melcor-fusion-186_bdba ../data/sample.inp
+sgs: clean
+	./melgen-fusion-186_bdba ../data/sgs2.inp
+	./melcor-fusion-186_bdba ../data/sgs2.inp
 clean:
 	rm -f *.DIA
 	rm -f *.MES
