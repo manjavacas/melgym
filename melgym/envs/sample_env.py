@@ -29,6 +29,7 @@ MELCOR_PATH = os.path.join(EXEC_DIR, 'melcor-fusion-186_bdba')
 EDF_PATH = os.path.join(EXEC_DIR, 'VARIABLES.DAT')
 
 AUX_CVS = ['CV001']
+SUPPLY_IDS = ['OVERPRESSURE', 'UNDERPRESSURE']
 
 ACTIONS = {
     0: (0, 0),
@@ -74,31 +75,34 @@ class SampleEnv(gym.Env):
         '''
 
         # Get HVAC-served CVs
-        hvac_served_cvs = []
-        for cv in self.toolkit.get_cv_list():
-            if cv.get_id() not in AUX_CVS:
-                hvac_served_cvs.append(cv)
+        hvac_served_cvs = [cv for cv in self.toolkit.get_cv_list() if cv.get_id() not in AUX_CVS]
+
+        # Get supply CFs
+        supply_cfs = [cf for cf in self.toolkit.get_cf_list() if cf.get_field('CFNAME') in SUPPLY_IDS]
 
         # Update supply CFs
-        for i, cv in enumerate(hvac_served_cvs):
-            action = ACTIONS[actions[i]]
-            fls_connected = self.toolkit.get_fl_connections(cv.get_id())
-            supply_fls = filter(lambda fl: fl.get_field(
-                'FLNAME').startswith('SUPPLY'), fls_connected)
-            for fl in supply_fls:
-                cfs_connected = self.toolkit.get_connected_cfs(fl.get_id())
-                overpressure_cfs = [cf for cf in cfs_connected if cf.get_field(
-                    'CFNAME') == 'OVERPRESSURE']
-                underpressure_cfs = [cf for cf in cfs_connected if cf.get_field(
-                    'CFNAME') == 'UNDERPRESSURE']
-                overpressure_cfs[0].update_field('CFSCAL', float(
-                    overpressure_cfs[0].get_field('CFSCAL')) + action[0])
-                underpressure_cfs[0].update_field('CFSCAL', float(
-                    underpressure_cfs[0].get_field('CFSCAL')) + action[1])
+        
+        ## TO-FIX
+
+        # for i, cv in enumerate(hvac_served_cvs):
+        #     action = ACTIONS[actions[i]]
+        #     fls_connected = self.toolkit.get_fl_connections(cv.get_id())
+        #     supply_fls = filter(lambda fl: fl.get_field(
+        #         'FLNAME').startswith('SUPPLY'), fls_connected)
+        #     for fl in supply_fls:
+        #         cfs_connected = self.toolkit.get_connected_cfs(fl.get_id())
+        #         overpressure_cfs = [cf for cf in cfs_connected if cf.get_field(
+        #             'CFNAME') == 'OVERPRESSURE']
+        #         underpressure_cfs = [cf for cf in cfs_connected if cf.get_field(
+        #             'CFNAME') == 'UNDERPRESSURE']
+        #         overpressure_cfs[0].update_field('CFSCAL', float(
+        #             overpressure_cfs[0].get_field('CFSCAL')) + action[0])
+        #         underpressure_cfs[0].update_field('CFSCAL', float(
+        #             underpressure_cfs[0].get_field('CFSCAL')) + action[1])
                 
-                # [!] TO-FIX
-                # self.toolkit.update_object(underpressure_cfs[0])
-                # self.toolkit.update_object(overpressure_cfs[0])
+        #         # [!] TO-FIX
+        #         # self.toolkit.update_object(underpressure_cfs[0])
+        #         # self.toolkit.update_object(overpressure_cfs[0])
 
         # Rerun MELCOR
         subprocess.run(['make', CLEAN_ALL_COMMAND], cwd=EXEC_DIR)

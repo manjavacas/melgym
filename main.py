@@ -1,29 +1,45 @@
 #!/usr/bin/python3
 import gymnasium as gym
+import numpy as np
+
 import melgym
 
-from stable_baselines3.dqn import DQN
+from stable_baselines3.dqn import PPO
 
-INPUT_FILE = './sample.inp'
+INPUT_FILE = './sgs2.inp'
 EDF_FILE = './VARIABLES.DAT'
 
-N_EPISODES = 1
+N_EPISODES = 10
 
-N_CVS = 1
-N_ACTIONS = 7
+N_OBS = 4
+N_ACTIONS = 1
+
 
 def run():
 
-    env = gym.make('sample-v0', obs_size=N_CVS, n_actions=N_ACTIONS)
+    env = gym.make('sgs-v0', obs_size=N_OBS, n_actions=N_ACTIONS)
 
-    # agent = DQN('MlpPolicy', env)
+    # TRAINING
+    # agent = PPO('MlpPolicy', env, verbose=1)
+    # agent.learn(total_timesteps=25000)
+    # agent.save('ppo_sgs')
 
-    for _ in range(N_EPISODES):
-        obs, _ = env.reset()
-        # (en main) [P1, P2, P3... Pk] -> NN -> [action1, action2, action3... actionN]
-        # actions = agent.predict(obs)
-        next_obs, reward, done, _, _ = env.step([4])
+    # EVALUATION
+    obs, _ = env.reset()
+    for e in range(N_EPISODES):
+        done = False
+        ep_mean_reward = 0.
+        n = 0
+        while not done:
+            action = agent.predict(obs)
+            obs, reward, done, _, _ = env.step(action)
+            
+            print(f'\tTimestep {n}. Reward = {reward}')
+
+            ep_mean_reward = (ep_mean_reward + reward) / n
+            n += 1
         
-
+        print(f'Episode {e}. Mean reward = {ep_mean_reward}')
+            
 if __name__ == '__main__':
     run()
