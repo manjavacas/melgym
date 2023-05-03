@@ -1,6 +1,4 @@
-import gymnasium as gym
-
-from gymnasium import spaces
+from gymnasium import Env, spaces
 
 from melkit.toolkit import Toolkit
 
@@ -9,35 +7,21 @@ import subprocess
 import numpy as np
 
 from ..utils import edf, rewards
+from ..utils.constants import DATA_DIR, EXEC_DIR, CLEAN_COMMAND, CLEAN_ALL_COMMAND
 
-
-MAX_AR_GRWTS = 44.4
-MAX_AIR_PERCENT = 10.
-
-####################### EXEC CONSTANTS #######################
+MAX_AR_GRWTS = 22.2
+# MAX_AIR_PERCENT = 10.
 
 RUN_COMMAND = 'sgs'
-CLEAN_COMMAND = 'clean'
-CLEAN_ALL_COMMAND = 'cleanall'
-
-INPUT_FILENAME = 'sgs2.inp'
-
-ROOT_DIR = os.getcwd()
-
-DATA_DIR = os.path.join(ROOT_DIR, 'melgym', 'data')
-EXEC_DIR = os.path.join(ROOT_DIR, 'melgym', 'exec')
-
+INPUT_FILENAME = 'sgs.inp'
 INPUT_PATH = os.path.join(DATA_DIR, INPUT_FILENAME)
-
-MELGEN_PATH = os.path.join(EXEC_DIR, 'melgen-fusion-186_bdba')
-MELCOR_PATH = os.path.join(EXEC_DIR, 'melcor-fusion-186_bdba')
-
 EDF_PATH = os.path.join(EXEC_DIR, 'VARIABLES.DAT')
+OUTPUT_FILE = 'melcor_exec.out'
 
-###############################################################
+EPISODE_STEPS = 100
 
 
-class SGSEnv(gym.Env):
+class SGSEnv(Env):
     '''
     SGS environment class
     '''
@@ -51,24 +35,29 @@ class SGSEnv(gym.Env):
 
         # So many observed variables as SGS rooms
         self.observation_space = spaces.Box(
-            low=low_obs, high=high_obs, shape=(4,), dtype=np.float32)
+            low=low_obs, high=high_obs, shape=(obs_size,), dtype=np.float32)
 
         # An action is a continuous number between 0 and MAX_AR_GRWTS
         self.action_space = spaces.Box(
-            low=0, high=MAX_AR_GRWTS, shape=(1,), dtype=np.float32)
+            low=0, high=MAX_AR_GRWTS, shape=(n_actions,), dtype=np.float32)
 
         self.toolkit = Toolkit(INPUT_PATH)
+
+        self.n = 0
 
     def reset(self, seed=None, options=None):
         '''
         Clears output files and returns an initial observation.
         '''
 
-        subprocess.run(['make', CLEAN_ALL_COMMAND], cwd=EXEC_DIR)
-        subprocess.run(['make', RUN_COMMAND], cwd=EXEC_DIR)
+        with open(OUTPUT_FILE, 'a') as output_file:
+            subprocess.run(['make', CLEAN_ALL_COMMAND],
+                           cwd=EXEC_DIR, stdout=output_file)
+            subprocess.run(['make', RUN_COMMAND],
+                           cwd=EXEC_DIR, stdout=output_file)
 
         obs = edf.make_sgs_observation(
-            input_file=INPUT_PATH, edf_file=EDF_PATH)
+            input_file=INPUT_PATH, edf_file=EDF_PATH, verbose=1)
 
         return np.array(obs, dtype=np.float32), {}
 
@@ -83,15 +72,23 @@ class SGSEnv(gym.Env):
         cf.update_field('ARADCN_0', action[0])
         self.toolkit.update_object(cf, overwrite=True)
 
-        subprocess.run(['make', CLEAN_ALL_COMMAND], cwd=EXEC_DIR)
-        subprocess.run(['make', RUN_COMMAND], cwd=EXEC_DIR)
+        self.toolkit.remove_comments(overwrite=True)
+
+        with open(OUTPUT_FILE, 'a') as output_file:
+            subprocess.run(['make', CLEAN_ALL_COMMAND],
+                           cwd=EXEC_DIR, stdout=output_file)
+            subprocess.run(['make', RUN_COMMAND],
+                           cwd=EXEC_DIR, stdout=output_file)
 
         new_obs = edf.make_sgs_observation(
-            input_file=INPUT_PATH, edf_file=EDF_PATH)
+            input_file=INPUT_PATH, edf_file=EDF_PATH, verbose=1)
 
-        reward = rewards.get_sgs_reward(new_obs, MAX_AIR_PERCENT)
+        reward = rewards.get_sgs_reward_3(new_obs)
 
-        done = all(value < 10. for value in new_obs)
+        done = False
+
+        print(
+            f'Action = {action}\nReward = {reward}\nNew observation = {new_obs}\nDone = {done}\n')
 
         return new_obs, reward, done, False, {}
 
@@ -99,4 +96,6 @@ class SGSEnv(gym.Env):
         return NotImplementedError
 
     def close(self):
-        subprocess.run(['make', CLEAN_COMMAND], cwd=EXEC_DIR)
+        with open(OUTPUT_FILE, 'a') as output_file:
+            subprocess.run(['make', CLEAN_COMMAND],
+                           cwd=EXEC_DIR, stdout=output_file)

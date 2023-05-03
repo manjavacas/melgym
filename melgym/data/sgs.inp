@@ -1,0 +1,419 @@
+*EOR* MELGEN
+title     sgs2
+jobid     sgs2
+restartf  sgs2.rst
+outputf   sgs2_gen.out
+diagf     sgs2_gen.dia
+stopf     sgs2.stp
+crtout 
+tstart    00.0
+DTTIME    0.1      
+NCG001    N2    4                             
+NCG002    O2    5                             
+NCG333    H2    6                             
+NCG444    HE    7                             
+NCG555    AR    8                             
+CV40000   ENV-IN  2  2  5          		                                           
+CV40001   0   -1                                    
+CV400A0   3                                                                                         
+CV400A1   PVOL    101325.0                          
+CV400A3   TATM    293.15  RHUM  0.6    	                                                 
+CV400A4   MLFR.4  0.78                              
+CV400A6   MLFR.5  0.21                              
+CV400A8   MLFR.8  0.01                              
+CV400B1   0.0        0.0                                                          
+CV400B2  50.0   1000000.0              	            
+CV40200   G-RWTS  2  2  5          		                                   
+CV40201   0   0		                                  				            
+CV402A0   3                                                                                         
+CV402A1   PVOL    101325.0                           
+CV402A3   TATM    293.15  RHUM  0.6    	                                                  
+CV402A4   MLFR.4  0.78                               
+CV402A6   MLFR.5  0.21                               
+CV402A8   MLFR.8  0.01                               
+CV402B1   0.0        0.0                                                          
+CV402B2   50.0       1000000.0              	     
+CV01600   R016  2  0  1                                                            
+CV01601   0   0		                              
+CV016A0   3                                                                                         
+CV016A1   PVOL  101065.0                            
+CV016A2   TATM  290.95  RHUM  0.0                   
+CV016A3   MLFR.8  0.9999                            
+CV016A4   MLFR.5  0.000021                          
+CV016A5   MLFR.4  0.000079                          
+CV016B1   0.0      0.0                                                            
+CV016B2   7.2      2495.0                           
+CV00800   R009-1  2  0  1                                                         
+CV00801   0   0		                               
+CV008A0   3                                                                                         
+CV008A1   PVOL  101065.0                            
+CV008A2   TATM  293.15  RHUM  0.6                  
+CV008A3   MLFR.8  0.9999                            
+CV008A4   MLFR.5  0.000021                          
+CV008A5   MLFR.4  0.000079                          
+CV008B1   0.0      0.0                                                            
+CV008B2   8.0      557.0                            
+CV00900   R009-2  2  0  1                                                            
+CV00901   0   0		                               
+CV009A0   3                                                                                         
+CV009A1   PVOL  101065.0                            
+CV009A2   TATM  293.15  RHUM  0.6                  
+CV009A3   MLFR.8  0.9999                            
+CV009A4   MLFR.5  0.000021                          
+CV009A5   MLFR.4  0.000079                          
+CV009B1   0.0      0.0                                                            
+CV009B2   8.5      585.0                            
+CV12900   R129  2  2  2                                                          
+CV12901   0   0		                           
+CV129A0   3                                                                                         
+CV129A1   PVOL    101065.0                          
+CV129A3   TATM    298.15    RHUM  0.0                                                     
+CV129A5   MLFR.8  0.9999                            
+CV129A6   MLFR.5  0.000021                          
+CV129A8   MLFR.4  0.000079                          
+CV129B1   9.0      0.0                                                         
+CV129B2   14.5     529.0                            
+CV90200   SGS-AUX-1  2  0  1                                                   
+CV90201   0   0		                              
+CV902A0   3                                                                                         
+CV902A1   PVOL  101000.0                            
+CV902A2   TATM  290.95  RHUM  0.0                   
+CV902A3   MLFR.8  0.9999                            
+CV902A4   MLFR.5  0.000021                          
+CV902A5   MLFR.4  0.000079                          
+CV902B1   6.2      0.0                                                            
+CV902B2   7.2      1.0                              
+CV90300   SGS-AUX-2  2  0  1                                                   
+CV90301   0   0		                           
+CV903A0   3                                                                                         
+CV903A1   PVOL  102000.0                            
+CV903A2   TATM  290.95  RHUM  0.0                   
+CV903A3   MLFR.8  0.9999                            
+CV903A4   MLFR.5  0.000021                          
+CV903A5   MLFR.4  0.000079                          
+CV903B1   5.2      0.0                                                            
+CV903B2   7.2      2.0                              
+CV90400   SGS-AUX-3  2  0  1                                                   
+CV90401   0   0		                                
+CV904A0   3                                                                                         
+CV904A1   PVOL  101700.0                            
+CV904A2   TATM  290.95  RHUM  0.0                   
+CV904A3   MLFR.8  0.9999                            
+CV904A4   MLFR.5  0.000021                          
+CV904A5   MLFR.4  0.000079                          
+CV904B1   5.2      0.0                                                            
+CV904B2   7.2      2.0                              
+CF90100 'AUX-3-Energy-src' EQUALS 1 1.0             
+CF90110  1.0  0.0  CVH-TVAP.904                     
+CV904C1  MASS.5 902 3                       
+CV904C2  TE 901 9                           
+CF90200 'AUX-3-O2-sink' DIVIDE 2  -1.0               
+CF90210  1.0  0.0  CFVALU.500
+CF90215  1.0  0.0  CFVALU.501                                       
+CF50000  DENOM-CF902  ADD  2  3600.0
+CF50010  1.0  0.0  CFVALU.102
+CF50015  -1.0  0.0  CFVALU.101
+CF50100  NUM-CF902  MULTIPLY  2  0.8793
+CF50110  1.0  0.0  CFVALU.100
+CF50115  1.0  0.0  CVH-MASS.5.904
+CV904C3  MASS.4 903 3                       
+CV904C4  TE 901 9                           
+CF90300 'AUX-3-N2-sink' DIVIDE 2  -1.0               
+CF90310  1.0  0.0  CFVALU.500
+CF90315  1.0  0.0  CFVALU.503                                       
+CF50300  NUM-CF903  MULTIPLY  2  0.8
+CF50310  1.0  0.0  CFVALU.100
+CF50315  1.0  0.0  CVH-MASS.4.904
+CV904C5  MASS.3 904 3                       
+CV904C6  TE 901 9                           
+CF90400 'AUX-3-H20-sink' DIVIDE 2  -1.0               
+CF90410  1.0  0.0  CFVALU.500
+CF90415  1.0  0.0  CFVALU.504                                       
+CF50400  NUM-CF903  MULTIPLY  2  0.99
+CF50410  1.0  0.0  CFVALU.100
+CF50415  1.0  0.0  CVH-MASS.3.904
+CV904C7  MASS.8 910 3                       
+CV904C8  TE 901 9   
+CF90500  'AUX-3-Ar-source'  DIVIDE  2  1.784           
+CF90510  0.0  3600.0  TIME
+CF90515  0.0  0.75  TIME
+CF91000  'AR-INLET'  L-A-IFTE  3  1.0
+CF91005  NORMAL
+CF91010  1.0  0.0  CFVALU.506
+CF91015  1.0  0.0  CFVALU.905
+CF91020  0.0  0.0  TIME
+CV90500   SGS-AUX-4  2  0  1                                                   
+CV90501   0   0		                              
+CV905A0   3                                                                                         
+CV905A1   PVOL  101400.0                            
+CV905A2   TATM  290.95  RHUM  0.0                   
+CV905A3   MLFR.8  0.9999                            
+CV905A4   MLFR.5  0.000021                          
+CV905A5   MLFR.4  0.000079                          
+CV905B1   6.2      0.0                                                            
+CV905B2   7.2      1.0                              
+CV90700   SGS-AUX-6  2  0  1                                                   
+CV90701   0   0		                               
+CV907A0   3                                                                                         
+CV907A1   PVOL  101400.0                            
+CV907A2   TATM  290.95  RHUM  0.0                   
+CV907A3   MLFR.8  0.9999                            
+CV907A4   MLFR.5  0.000021                          
+CV907A5   MLFR.4  0.000079                          
+CV907B1   5.0      0.0                                                            
+CV907B2   6.0      1.0                              
+CF90000 'AUX-6-Energy-src' EQUALS 1 1.0             
+CF90010  1.0  0.0  CVH-TVAP.904                     
+CV907C1  MASS.5 908 3                       
+CV907C2  TE 900 9                           
+CF90800 'AUX-6-O2-src' EQUALS 1 1.0          
+CF90810  -1.0  0.0  CFVALU.902                                   
+CV907C3  MASS.4 906 3                       
+CV907C4  TE 900 9                           
+CF90600 'AUX-6-N2-src' EQUALS 1 1.0           
+CF90610  -1.0  0.0  CFVALU.903  
+CV907C5  MASS.3 907 3                       
+CV907C6  TE 900 9                           
+CF90700 'AUX-6-H2O-src' EQUALS 1 1.0
+CF90710  -1.0  0.0  CFVALU.904 
+CF10000   QP  EQUALS  1  2.0                         
+CF10010   0.0  57.8  TIME
+CF10200   QT  EQUALS  1  0.0  26869.0               
+CF10210   1.0  0.0  TIME
+CF10300   Cmax  EQUALS  1  0.0  10.0               
+CF10310   1.0  0.0  TIME
+FL20100   SGS-FL201   903   904   6.2  6.2
+FL20101   0.43709  10.0   1.0             
+FL20102	  3                                                         
+FL201S0   0.43709  10.0   0.746 
+FL20200   SGS-FL202   904   905   6.7    6.7
+FL20201   0.43709  5.0   1.0              
+FL20202	  3                                                                  
+FL202S0   0.43709  5.0   0.746                                           
+FL20300   SGS-FL203   905   016   6.7  6.7
+FL20301   0.19322  4.0   1.0                
+FL20302	  3                                       
+FL203S0   0.19322  4.0   0.496
+FL20400   SGS-FL204   016   902  6.7  6.7  
+FL20401   0.19322  4.0   1.0               
+FL20402	  3                                      
+FL204S0   0.19322  4.0   0.496                                                                               
+FL20500   SGS-FL205   902   903   6.7  6.7
+FL20501   0.43709  36.0   1.0              
+FL20502	  3                                                         
+FL205S0   0.43709  36.0   0.746                                          
+FL205T0   2   205                                               
+CF20500   VEL-FL205  DIVIDE  2  1.0
+CF20510   0.0  1573.524  TIME                                   
+CF20515   1.0  0.0  CFVALU.102
+FL20800   SGS-FL208   903   907   5.5  5.5
+FL20801   0.001341  7.5   1.0               
+FL20802   3                                                           
+FL208S0   0.001341  7.5   0.038 
+FL208T0   2  208
+CF20800   VEL-FL208  DIVIDE  2  1.0                             
+CF20810   0.0  4.8276  TIME                                     
+CF20815   1.0  0.0  CFVALU.909                                        
+CF90900  'FL208-VENT'  L-A-IFTE  3  1.0
+CF90905  NORMAL
+CF90910  1.0  0.0  CFVALU.506
+CF90915  0.0  0.0  TIME
+CF90920  1.0  0.0  CFVALU.101
+CF50600  AUX-P016  L-GE  2  1.0  0.0
+CF50605  NORMAL
+CF50610  0.0  101065.0  TIME
+CF50615  1.0  0.0  CVH-P.16   
+FL21000   SGS-FL210   907   402   5.5  5.5
+FL21001   0.001341  7.5   1.0              
+FL21002   3                                                        
+FL210S0   0.001341  7.5   0.038  
+FL21100   SGS-FL211   905   129   6.7   12.0
+FL21101   0.437087  18.0   1.0                                                      
+FL211S0   0.437087  18.0   0.746     
+FL21200   SGS-FL212   905   009   6.7  6.7
+FL21201   0.218956  18.0   1.0              
+FL21202   3                                                          
+FL212S0   0.218956  18.0   0.528  
+FL21300   SGS-FL213   905   008   6.7  6.7
+FL21301   0.218956  18.0   1.0              
+FL21302   3                                                            
+FL213S0   0.218956  18.0   0.528                                             
+FL21400   SGS-FL214   009   902   6.7  6.7
+FL21401   0.218956  18.0   1.0             
+FL21402   3                                                           
+FL214S0   0.218956  18.0   0.528                                         
+FL21500   SGS-FL215   008   902   6.7  6.7
+FL21501   0.218956  18.0   1.0              
+FL21502   3                                                            
+FL215S0   0.218956  18.0   0.528                                         
+FL21600   SGS-FL216   129   902   12.0   6.7
+FL21601   0.437087  18.0   1.0                                                           
+FL216S0   0.437087  18.0   0.746                                         
+FL01600  R016-LEAK   400   016  3.6   3.6
+FL01601  0.5  0.5  1.0
+FL01602  3
+FL016S0  0.5  0.5  0.5
+FL016T0  2  016
+CF01600  R016-LEAK-VEL  DIVIDE  2  1.0
+CF01610  0.0  1800.0   TIME                           
+CF01615  0.0  0.2495   TIME                           
+FL00900  R009-2-LEAK   400   009  4.25   4.25
+FL00901  0.5  0.5  1.0
+FL00902  3
+FL009S0  0.5  0.5  0.5
+FL009T0  2  009
+CF00900  R009-2-LEAK-VEL  DIVIDE  2  1.0
+CF00910  0.0  1800.0   TIME                           
+CF00915  0.0  0.0585   TIME                           
+FL00800  R009-1-LEAK   400   008  4.0   4.0
+FL00801  0.5  0.5  1.0
+FL00802  3
+FL008S0  0.5  0.5  0.5
+FL008T0  2  008
+CF00800  R009-1-LEAK-VEL  DIVIDE  2  1.0
+CF00810  0.0  1800.0   TIME                           
+CF00815  0.0  0.0557   TIME                           
+FL12900  R129-LEAK   400   129  11.75   11.75
+FL12901  0.5  0.5  1.0
+FL12902  3
+FL129S0  0.5  0.5  0.5
+FL129T0  2  129
+CF12900  R129-LEAK-VEL  DIVIDE  2  1.0
+CF12910  0.0  1800.0   TIME                           
+CF12915  0.0  0.0529   TIME                           
+CF15000   N2-dens-LLC DIVIDE 2 1.0                                      
+CF15010   101325.0  0.0  CVH-TVAP.016
+CF15015   347.34475  0.0  CVH-P.016                                 
+CF15100   O2-dens-LLC DIVIDE 2 1.0                                      
+CF15110   101325.0  0.0  CVH-TVAP.016
+CF15115   396.83765  0.0  CVH-P.016                                 
+CF15200   H2O-dens-LLC DIVIDE 2 1.0                                      
+CF15210   101325.0  0.0  CVH-TVAP.016
+CF15215   297.2704575  0.0  CVH-P.016                               
+CF18400   N2-dens-AUX2 DIVIDE 2 1.0                                      
+CF18410   101325.0  0.0  CVH-TVAP.903
+CF18415   347.34475  0.0  CVH-P.903                                 
+CF18500   O2-dens-AUX2 DIVIDE 2 1.0                                      
+CF18510   101325.0  0.0  CVH-TVAP.903
+CF18515   396.83765  0.0  CVH-P.903                                 
+CF18600   H2O-dens-AUX2 DIVIDE 2 1.0                                      
+CF18610   101325.0  0.0  CVH-TVAP.903
+CF18615   297.2704575  0.0  CVH-P.903                               
+CF18700   Ar-dens-AUX2 DIVIDE 2 1.0                                      
+CF18710   101325.0  0.0  CVH-TVAP.903
+CF18715   531.8996  0.0  CVH-P.903                                  
+CF15300   N2-dens-AUX3 DIVIDE 2 1.0                                      
+CF15310   101325.0  0.0  CVH-TVAP.904
+CF15315   347.34475  0.0  CVH-P.904                                 
+CF15400   O2-dens-AUX3 DIVIDE 2 1.0                                      
+CF15410   101325.0  0.0  CVH-TVAP.904
+CF15415   396.83765  0.0  CVH-P.904                                 
+CF15500   H2O-dens-AUX3 DIVIDE 2 1.0                                      
+CF15510   101325.0  0.0  CVH-TVAP.904
+CF15515   297.2704575  0.0  CVH-P.904                               
+CF18300   Ar-dens-AUX3 DIVIDE 2 1.0                                      
+CF18310   101325.0  0.0  CVH-TVAP.904
+CF18315   531.8996  0.0  CVH-P.904                                  
+CF15600   N2-dens-TIR DIVIDE 2 1.0                                      
+CF15610   101325.0  0.0  CVH-TVAP.129
+CF15615   347.34475  0.0  CVH-P.129                                 
+CF15700   O2-dens-TIR DIVIDE 2 1.0                                      
+CF15710   101325.0  0.0  CVH-TVAP.129
+CF15715   396.83765  0.0  CVH-P.129                                 
+CF15800   H2O-dens-TIR DIVIDE 2 1.0                                      
+CF15810   101325.0  0.0  CVH-TVAP.129
+CF15815   297.2704575  0.0  CVH-P.129                               
+CF15900   N2-dens-HTC DIVIDE 2 1.0                                      
+CF15910   101325.0  0.0  CVH-TVAP.009
+CF15915   347.34475  0.0  CVH-P.009                                 
+CF16900   O2-dens-HTC DIVIDE 2 1.0                                      
+CF16910   101325.0  0.0  CVH-TVAP.009
+CF16915   396.83765  0.0  CVH-P.009                                 
+CF17000   H2O-dens-HTC DIVIDE 2 1.0                                      
+CF17010   101325.0  0.0  CVH-TVAP.009
+CF17015   297.2704575  0.0  CVH-P.009                               
+CF17100   N2-dens-CTC DIVIDE 2 1.0                                      
+CF17110   101325.0  0.0  CVH-TVAP.008
+CF17115   347.34475  0.0  CVH-P.008                                 
+CF17200   O2-dens-CTC DIVIDE 2 1.0                                      
+CF17210   101325.0  0.0  CVH-TVAP.008
+CF17215   396.83765  0.0  CVH-P.008                                 
+CF17300   H2O-dens-CTC DIVIDE 2 1.0                                      
+CF17310   101325.0  0.0  CVH-TVAP.008
+CF17315   297.2704575  0.0  CVH-P.008                               
+CF16000   LLC-N2-ppm DIVIDE 2 1.0E6
+CF16010   2495.0  0.0  CFVALU.150            
+CF16015   1.0  0.0  CVH-MASS.4.016
+CF16100   LLC-O2-ppm DIVIDE 2 1.0E6
+CF16110   2495.0  0.0  CFVALU.151            
+CF16115   1.0  0.0  CVH-MASS.5.016
+CF16200   LLC-H2O-ppm DIVIDE 2 1.0E6
+CF16210   2495.0  0.0  CFVALU.152            
+CF16215   1.0  0.0  CVH-MASS.3.016
+CF17400   TIR-N2-ppm DIVIDE 2 1.0E6
+CF17410   529.0  0.0  CFVALU.156            
+CF17415   1.0  0.0  CVH-MASS.4.129
+CF17500   TIR-O2-ppm DIVIDE 2 1.0E6
+CF17510   529.0  0.0  CFVALU.157            
+CF17515   1.0  0.0  CVH-MASS.5.129
+CF17600   TIR-H2O-ppm DIVIDE 2 1.0E6
+CF17610   529.0  0.0  CFVALU.158            
+CF17615   1.0  0.0  CVH-MASS.3.129
+CF17700   HTC-N2-ppm DIVIDE 2 1.0E6
+CF17710   585.0  0.0  CFVALU.159            
+CF17715   1.0  0.0  CVH-MASS.4.009
+CF17800   HTC-O2-ppm DIVIDE 2 1.0E6
+CF17810   585.0  0.0  CFVALU.169            
+CF17815   1.0  0.0  CVH-MASS.5.009
+CF17900   HTC-H2O-ppm DIVIDE 2 1.0E6
+CF17910   585.0  0.0  CFVALU.170            
+CF17915   1.0  0.0  CVH-MASS.3.009
+CF18000   CTC-N2-ppm DIVIDE 2 1.0E6
+CF18010   557.0  0.0  CFVALU.171            
+CF18015   1.0  0.0  CVH-MASS.4.008
+CF18100   CTC-O2-ppm DIVIDE 2 1.0E6
+CF18110   557.0  0.0  CFVALU.172            
+CF18115   1.0  0.0  CVH-MASS.5.008
+CF18200   CTC-H2O-ppm DIVIDE 2 1.0E6
+CF18210   557.0  0.0  CFVALU.173            
+CF18215   1.0  0.0  CVH-MASS.3.008
+CF25000   LLC-AIR%  ADD  2  100.0
+CF25010   0.0  1.0  TIME
+CF25015   -1.0  0.0  CFVALU.260
+CF21000   DEN-CF260  ADD  4  1.0
+CF21010   1.0  0.0  CVH-MASS.3.016
+CF21015   1.0  0.0  CVH-MASS.4.016
+CF21020   1.0  0.0  CVH-MASS.5.016
+CF21025   1.0  0.0  CVH-MASS.8.016
+CF26000   ELEM-CF250  DIVIDE  2  1.0
+CF26010   1.0  0.0  CFVALU.210
+CF26015   1.0  0.0  CVH-MASS.8.016
+CF27000   STOP-LLC  L-GE  2  1.0
+CF27001   .FALSE.
+CF27010   1.0  0.0  CFVALU.250
+CF27015   1.0  0.0  CFVALU.103
+EDF11100 VARIAB 1 WRITE
+EDF11101 variables.dat
+EDF11102 8E12.4
+EDF11110 0.      1.
+EDF111AA CFVALU.250         
+CF10100	RJ	EQUALS	1	2.0	0.0	
+CF10110	0.0	18.49701754962448	TIME	
+. 
+*EOR* melcor
+noflush
+TITLE     sgs2
+RESTARTFILE  sgs2.rst
+OUTPUTFILE   sgs2.out
+PLOTFILE     sgs2.ptf
+DIAGFILE     sgs2_cor.dia
+MESSAGEFILE  sgs2_cor.mes
+STOPCF    270
+CPULEFT          200.
+CPULIM           86400.                             
+CYMESF           10000    10000                     
+RESTART          -1              
+TEND             1.0e4         
+SOFTDTMIN  .1  1000
+TIME1         0.0      100.0    10.0     86400.0    86400.0    86400.0          
+.
