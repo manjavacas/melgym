@@ -1,9 +1,10 @@
-sample: clean
-	./melgen-fusion-186_bdba ../data/sample.inp
-	./melcor-fusion-186_bdba ../data/sample.inp
+hvac: clean
+	./melgen-fusion-186_bdba ../data/hvac.inp
+	./melcor-fusion-186_bdba ../data/hvac.inp
 sgs: clean
-	./melgen-fusion-186_bdba ../data/sgs2.inp
-	./melcor-fusion-186_bdba ../data/sgs2.inp
+	rm -f ../../melcor_exec.out
+	./melgen-fusion-186_bdba ../data/sgs.inp
+	./melcor-fusion-186_bdba ../data/sgs.inp
 clean:
 	rm -f *.DIA
 	rm -f *.MES

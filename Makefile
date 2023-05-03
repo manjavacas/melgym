@@ -1,3 +1,6 @@
+run: clean
+	./main.py
+
 clean:
 	rm -f *.DIA
 	rm -f *.MES

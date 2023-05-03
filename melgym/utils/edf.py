@@ -2,7 +2,7 @@ import numpy as np
 from melkit.toolkit import Toolkit
 
 
-def make_sgs_observation(input_file, edf_file):
+def make_sgs_observation(input_file, edf_file, verbose=0):
     '''
     Returns an observation from MELCOR EDF output.
     Each observation is a vector [x_1, x_2, ... x_N] with x_i being the 
@@ -10,12 +10,17 @@ def make_sgs_observation(input_file, edf_file):
     '''
     toolkit = Toolkit(input_file)
 
+    if verbose:
+        print(30 * '=')
+        print(toolkit.as_dataframe(edf_file))
+        print(30 * '=' + '\n')
+
     edf_data = toolkit.as_dataframe(edf_file).iloc[-1, 1:]
 
     return np.array(edf_data, dtype=np.float32)
 
 
-def make_observation(input_file, edf_file):
+def make_hvac_observation(input_file, edf_file):
     '''
     Returns an observation from MELCOR EDF output.
     Each observation is a vector [x_1, x_2..., x_N] with x_i being the mean deviation

@@ -1,35 +1,21 @@
-import gymnasium as gym
-import numpy as np
-
-import os
-import subprocess
+from gymnasium import Env, spaces
 
 from melkit.toolkit import Toolkit
 
-from gymnasium import spaces
+import os
+import subprocess
+import numpy as np
+
 from ..utils import edf, rewards
-
-
-RUN_COMMAND = 'sample'
-CLEAN_COMMAND = 'clean'
-CLEAN_ALL_COMMAND = 'cleanall'
-
-INPUT_FILENAME = 'sample.inp'
-
-ROOT_DIR = os.getcwd()
-
-DATA_DIR = os.path.join(ROOT_DIR, 'melgym', 'data')
-EXEC_DIR = os.path.join(ROOT_DIR, 'melgym', 'exec')
-
-INPUT_PATH = os.path.join(DATA_DIR, INPUT_FILENAME)
-
-MELGEN_PATH = os.path.join(EXEC_DIR, 'melgen-fusion-186_bdba')
-MELCOR_PATH = os.path.join(EXEC_DIR, 'melcor-fusion-186_bdba')
-
-EDF_PATH = os.path.join(EXEC_DIR, 'VARIABLES.DAT')
+from ..utils.constants import DATA_DIR, EXEC_DIR, CLEAN_COMMAND, CLEAN_ALL_COMMAND
 
 AUX_CVS = ['CV001']
 SUPPLY_IDS = ['OVERPRESSURE', 'UNDERPRESSURE']
+
+RUN_COMMAND = 'hvac'
+INPUT_FILENAME = 'hvac.inp'
+INPUT_PATH = os.path.join(DATA_DIR, INPUT_FILENAME)
+EDF_PATH = os.path.join(EXEC_DIR, 'VARIABLES.DAT')
 
 ACTIONS = {
     0: (0, 0),
@@ -42,7 +28,7 @@ ACTIONS = {
 }
 
 
-class SampleEnv(gym.Env):
+class HVACEnv(Env):
     '''
     A sample MELCOR environment class.
     '''
@@ -75,14 +61,16 @@ class SampleEnv(gym.Env):
         '''
 
         # Get HVAC-served CVs
-        hvac_served_cvs = [cv for cv in self.toolkit.get_cv_list() if cv.get_id() not in AUX_CVS]
+        hvac_served_cvs = [
+            cv for cv in self.toolkit.get_cv_list() if cv.get_id() not in AUX_CVS]
 
         # Get supply CFs
-        supply_cfs = [cf for cf in self.toolkit.get_cf_list() if cf.get_field('CFNAME') in SUPPLY_IDS]
+        supply_cfs = [cf for cf in self.toolkit.get_cf_list(
+        ) if cf.get_field('CFNAME') in SUPPLY_IDS]
 
         # Update supply CFs
-        
-        ## TO-FIX
+
+        # TO-FIX
 
         # for i, cv in enumerate(hvac_served_cvs):
         #     action = ACTIONS[actions[i]]
@@ -99,7 +87,7 @@ class SampleEnv(gym.Env):
         #             overpressure_cfs[0].get_field('CFSCAL')) + action[0])
         #         underpressure_cfs[0].update_field('CFSCAL', float(
         #             underpressure_cfs[0].get_field('CFSCAL')) + action[1])
-                
+
         #         # [!] TO-FIX
         #         # self.toolkit.update_object(underpressure_cfs[0])
         #         # self.toolkit.update_object(overpressure_cfs[0])
@@ -109,11 +97,11 @@ class SampleEnv(gym.Env):
         subprocess.run(['make', RUN_COMMAND], cwd=EXEC_DIR)
 
         # Get new observation
-        new_obs = edf.make_observation(
+        new_obs = edf.make_hvac_observation(
             input_file=INPUT_PATH, edf_file=EDF_PATH)
 
         # Get reward (pressure compliance accomplished)
-        reward = rewards.get_pressure_compliance(new_obs)
+        reward = rewards.get_hvac_reward(new_obs)
 
         # Check episode termination
         done = (reward == self.n_cvs)
@@ -128,7 +116,8 @@ class SampleEnv(gym.Env):
         subprocess.run(['make', CLEAN_ALL_COMMAND], cwd=EXEC_DIR)
         subprocess.run(['make', RUN_COMMAND], cwd=EXEC_DIR)
 
-        obs = edf.make_observation(input_file=INPUT_PATH, edf_file=EDF_PATH)
+        obs = edf.make_hvac_observation(
+            input_file=INPUT_PATH, edf_file=EDF_PATH)
 
         return np.array(obs, dtype=np.float32), {}
 
