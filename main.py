@@ -1,19 +1,22 @@
 #!/usr/bin/python3
 
-import gymnasium as gym
 import melgym
 
-from melgym.utils.constants import N_HVAC_SERVED_ROOMS, N_HVAC_BRANCHES
+import gymnasium as gym
+import numpy as np
+
+N_BRANCHES = 1
+N_ROOMS = 2
 
 
 def run():
-    env = gym.make('hvac-v0', n_obs=N_HVAC_SERVED_ROOMS,
-                   n_actions=N_HVAC_BRANCHES, control_horizon=100)
-    obs, info = env.reset()
-    print('observacion = ', obs)
-    print('tiempo = ', info)
+    env = gym.make('hvac-v0', n_obs=N_ROOMS, n_actions=N_BRANCHES)
+    obs, _ = env.reset()
 
-    env.close()
+    while True:
+        print(env.step(np.random.uniform(0, 10, 1)))
+
+    # env.close()
 
 
 if __name__ == '__main__':
