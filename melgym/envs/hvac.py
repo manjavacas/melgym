@@ -41,7 +41,7 @@ class EnvHVAC(Env):
         # Files
         self.input_path = os.path.join(DATA_DIR, input_file)
         self.melin_path = os.path.join(OUTPUT_DIR, 'MELIN')
-        self.melcor_log_path = os.path.join(OUTPUT_DIR, 'MELOG')
+        self.melog_path = os.path.join(OUTPUT_DIR, 'MELOG')
 
         # Auxiliar variables
         self.control_horizon = control_horizon
@@ -82,7 +82,7 @@ class EnvHVAC(Env):
         self.__update_tend()
 
         # First simulation
-        with open(self.melcor_log_path, 'a') as log:
+        with open(self.melog_path, 'a') as log:
             subprocess.call([MELGEN_PATH, self.melin_path],
                             cwd=OUTPUT_DIR, stdout=log, stderr=subprocess.STDOUT)
             subprocess.call([MELCOR_PATH, self.melin_path],
@@ -98,7 +98,7 @@ class EnvHVAC(Env):
         else:
             raise Exception(''.join(['EDF not found in ', OUTPUT_DIR]))
 
-        # Add CFs redefinitions to MELCOR input
+        # Add CFs redefinition to MELCOR input
         self.__add_cfs_redefinitions()
 
         return obs, {'cycle': cycle}
@@ -129,7 +129,7 @@ class EnvHVAC(Env):
         self.__update_cfs(action)
 
         # MELCOR simulation
-        with open(self.melcor_log_path, 'a') as log:
+        with open(self.melog_path, 'a') as log:
             subprocess.call([MELCOR_PATH, 'ow=o', 'i=' + self.melin_path],
                             cwd=OUTPUT_DIR, stdout=log, stderr=subprocess.STDOUT)
 
@@ -254,12 +254,12 @@ class EnvHVAC(Env):
             lines = f.readlines()
             i = len(action) - 1
 
-            # Read loop, from end to start
+            # Read file, from end to start
             for j in range(len(lines)-1, -1, -1):
                 line = lines[j].strip()
                 if line.startswith('CF'):
                     fields = line.split()
-                    # Overwrite scale factor
+                    # Overwrite CF scale factor
                     fields[4] = str(action[i])
                     lines[j] = ' '.join(fields) + '\n'
                     i -= 1
