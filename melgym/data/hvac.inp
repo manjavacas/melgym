@@ -56,14 +56,14 @@ FL001T0   2  001
 
 * Controlled FL
 
-CF00100   VEL  EQUALS  1   10.0
+CF00100   VEL  EQUALS  1   1.0
 CF00110   1.0  0.0  CFVALU.2
 
 **********************************************************
 *                 Simulation time control                *
 **********************************************************
 
-CF00200   CONTROLLER  MULTIPLY  2 1.0
+CF00200   CONTROLLER  MULTIPLY  2 1.0 0.0
 CF00210   1.0 0.0 CFVALU.3
 CF00215   1.0 0.0 CFVALU.4
 
@@ -98,6 +98,6 @@ RESTART     -1
 TEND 100
 
 *           TIME        DTMAX     DTMIN    DTEDT     DTPLT     DTRST
-TIME1       0.0         1.0       1.0      20.0      20.0      20.0
+TIME1       0.0         1.0       1.0      100.0      100.0      100.0
 
 . * END MELCOR
