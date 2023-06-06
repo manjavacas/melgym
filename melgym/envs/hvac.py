@@ -61,7 +61,7 @@ class EnvHVAC(Env):
             5. Executes MELCOR, creating the EDF file.
             6. Reads the first observation from the last EDF record.
 
-        After that, CFs redefinitions are added to the MELCOR input for future control steps.
+        After that, CFs redefinition are added to the MELCOR input for future control steps.
 
         Args:
             seed (int, optional): random seed. Defaults to None.
@@ -99,7 +99,7 @@ class EnvHVAC(Env):
             raise Exception(''.join(['EDF not found in ', OUTPUT_DIR]))
 
         # Add CFs redefinition to MELCOR input
-        self.__add_cfs_redefinitions()
+        self.__add_cfs_redefinition()
 
         return obs, {'cycle': cycle}
 
@@ -210,7 +210,7 @@ class EnvHVAC(Env):
             last_values = np.array(last_record[1:], dtype=np.float64)
         return last_values, float(last_record[0])
 
-    def __add_cfs_redefinitions(self, cf_keyword='CONTROLLER'):
+    def __add_cfs_redefinition(self, cf_keyword='CONTROLLER'):
         """
         Includes in the MELCOR input the definitions of the CFs to be overwritten.
 
