@@ -98,9 +98,9 @@ CYMESF      10 10
 
 RESTART     -1
 
-TEND 100
+TEND 10
 
 *           TIME        DTMAX     DTMIN    DTEDT     DTPLT     DTRST
-TIME1       0.0         1.0       1.0      100.0      100.0      100.0
+TIME1       0.0         1.0       1.0      10.0     10000.0    10.0
 
 . * END MELCOR
