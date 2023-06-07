@@ -17,7 +17,7 @@ class EnvHVAC(Env):
     """
     HVAC control environment. Inlet air velocities are adjusted according to HVAC served room states.
     """
-    metadata = {'render_modes': ['plot']}
+    metadata = {'render_modes': ['human']}
 
     def __init__(self, n_obs, n_actions, input_file, control_horizon=100, max_deviation=20, max_vel=10, render_mode=None):
         """
@@ -53,7 +53,6 @@ class EnvHVAC(Env):
         # Auxiliar variables
         self.control_horizon = control_horizon
         self.max_deviation = max_deviation
-        self.edf_path = None
         self.steps_counter = 0
 
         # Tookit
@@ -75,8 +74,7 @@ class EnvHVAC(Env):
             2. Generates a copy from original input file.
             3. Updates simulation times according to the specified control horizon.
             4. Executes MELGEN, generating an initial restart file.
-            5. Executes MELCOR, creating the EDF file.
-            6. Reads the first observation from the last EDF record.
+            5. Gets the initial pressures for each CV.
 
         After that, CFs redefinitions are added to the MELCOR input for future control steps.
 
@@ -84,12 +82,9 @@ class EnvHVAC(Env):
             seed (int, optional): random seed. Defaults to None.
             options (dict, optional): reset options. Defaults to None.
 
-        Raises:
-            Exception: if an EDF file is not found in the output directory.
-
         Returns:
-            np.array: pressures after first simulation.
-            dict: last time and pressures record.
+            np.array: initial pressures.
+            dict: initial time step and pressures.
         """
 
         # Env setup
@@ -102,19 +97,12 @@ class EnvHVAC(Env):
         with open(self.melog_path, 'a') as log:
             subprocess.call([MELGEN_PATH, self.melin_path],
                             cwd=OUTPUT_DIR, stdout=log, stderr=subprocess.STDOUT)
-            subprocess.call([MELCOR_PATH, self.melin_path],
-                            cwd=OUTPUT_DIR, stdout=log, stderr=subprocess.STDOUT)
 
-        # Get initial results from EDF
-        edf_files = [os.path.join(OUTPUT_DIR, file) for file in os.listdir(
-            OUTPUT_DIR) if file.endswith('.DAT')]
-        self.edf_path = edf_files[0] if edf_files else None
-
-        if self.edf_path:
-            info = {**{'time':0.0}, **self.__get_last_record()}
-            obs = [value for key, value in info.items() if key.startswith('CV')]
-        else:
-            raise Exception(''.join(['EDF not found in ', OUTPUT_DIR]))
+        # Get initial pressures
+        info = {'time': 0.0}
+        for cv_id in self.__get_edf_cvs():
+            info[cv_id] = self.__get_initial_pressure(cv_id)
+        obs = [value for key, value in info.items() if key.startswith('CV')]
 
         # Add CFs redefinition to MELCOR input
         self.__add_cfs_redefinition()
@@ -124,7 +112,7 @@ class EnvHVAC(Env):
     def step(self, action):
         """
         Performs a control action by adjusting inlet air velocities.
-            1. Modifies those input CFs related to inlet FL velocities.
+            1. Modifies input CFs related to inlet FL velocities.
             2. Updates TEND.
             3. Executes a MELCOR simulation during the number of cycles specified in the control horizon.
             4. Gets the last values recorded in the EDF.
@@ -139,7 +127,7 @@ class EnvHVAC(Env):
             float: reward value. Computed as the sum of the distances of every room pressure to its initial value.
             bool: termination flag. It will be True when pressures converge.
             bool: truncated. Not used.
-            dict: additional step information (current cycle and pressures).
+            dict: additional step information (last recorded time and pressures).
         """
 
         # Input edition
@@ -166,26 +154,27 @@ class EnvHVAC(Env):
 
         Args:
             time_bt_frames (int, optional): time to wait after plotting. Defaults to 0.1.
-
-        Raises:
-            Exception: if no step has been performed before render.
         """
 
-        info = self.__get_last_record()
+        if self.steps_counter > 2:
+            info = self.__get_last_record()
 
-        df = pd.read_csv(self.edf_path, delim_whitespace=True, header=None)
-        df = df.set_index(0)
-        column_names = [key for key in info.keys()
-                        if key.startswith('CV')]
-        df.columns = column_names
+            df = pd.read_csv(self.__get_edf_path(),
+                            delim_whitespace=True, header=None)
+            df = df.set_index(0)
+            column_names = [key for key in info.keys()
+                            if key.startswith('CV')]
+            df.columns = column_names
 
-        df = df.apply(pd.to_numeric, errors='coerce')
+            df = df.apply(pd.to_numeric, errors='coerce')
 
-        df.plot()
+            df.plot()
 
-        plt.draw()
-        plt.pause(time_bt_frames)
-        plt.close('all')
+            plt.draw()
+            plt.pause(time_bt_frames)
+            plt.close('all')  
+        else:
+            pass
 
     def close(self):
         """
@@ -249,17 +238,11 @@ class EnvHVAC(Env):
 
         record = {}
 
-        pressure_vars = [
-            var for var in self.toolkit.get_edf_vars() if var.startswith('CVH-P.')]
-
-        with open(self.edf_path, 'r') as f:
+        with open(self.__get_edf_path(), 'r') as f:
             last_line = f.readlines()[-1].split()
 
             record['time'] = float(last_line[0])
-
-            for i, var in enumerate(pressure_vars):
-                cv_number = var[var.find('.') + 1:]
-                cv_id = ''.join(['CV', '0' * (3 - len(cv_number)), cv_number])
+            for i, cv_id in enumerate(self.__get_edf_cvs()):
                 record[cv_id] = np.float64(last_line[i+1])
 
         return record
@@ -359,6 +342,47 @@ class EnvHVAC(Env):
         cv = self.toolkit.get_cv(cv_id)
 
         return float(cv.get_field('PVOL'))
+
+    def __get_edf_cvs(self):
+        """
+        Retrieves those CVs whose pressure is monitored in the EDF.
+
+        Returns:
+            list: list of CV ids.
+        """
+
+        cv_ids = []
+
+        pressure_vars = [
+            var for var in self.toolkit.get_edf_vars() if var.startswith('CVH-P.')]
+
+        for var in pressure_vars:
+            cv_number = var[var.find('.') + 1:]
+            cv_ids.append(
+                ''.join(['CV', '0' * (3 - len(cv_number)), cv_number]))
+
+        return cv_ids
+
+    def __get_edf_path(self):
+        """
+        Returns the path to the EDF generated by MELCOR.
+        In case multiple EDFs exist in the same output directory, the first EDF found will be used.
+
+        Raises:
+            Exception: if the EDF is not found.
+
+        Returns:
+            str: path to the EDF.
+        """
+
+        edf_files = [os.path.join(OUTPUT_DIR, file) for file in os.listdir(
+            OUTPUT_DIR) if file.endswith('.DAT')]
+        self.edf_path = edf_files[0] if edf_files else None
+
+        if not self.edf_path:
+            raise Exception(''.join(['EDF not found in ', OUTPUT_DIR]))
+
+        return self.edf_path
 
     def __check_termination(self, distances, max_deviation=20):
         """
