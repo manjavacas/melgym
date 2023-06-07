@@ -1,7 +1,11 @@
 import os
 import shutil
 import subprocess
+import time
+
 import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
 from gymnasium import Env, spaces
 from melkit.toolkit import Toolkit
@@ -13,8 +17,9 @@ class EnvHVAC(Env):
     """
     HVAC control environment. Inlet air velocities are adjusted according to HVAC served room states.
     """
+    metadata = {'render_modes': ['plot']}
 
-    def __init__(self, n_obs, n_actions, input_file, control_horizon=100, max_vel=10):
+    def __init__(self, n_obs, n_actions, input_file, control_horizon=100, max_deviation=20, max_vel=10, render_mode=None):
         """
         Class constructor.
 
@@ -23,7 +28,9 @@ class EnvHVAC(Env):
             n_actions (int): number of inlet air velocities to be controlled.
             input_file (str): name of the file with the MELGEN/MELCOR input data.
             control_horizon (int, optional): number of simulation cycles. Defaults to 100.
+            max_deviation (float, optional): maximum distance allowed from original pressures.
             max_vel (float): maximum value for control actions. Defaults to 10 (m/s).
+            render_mode (str): render option.
         """
 
         # Observation space
@@ -45,11 +52,21 @@ class EnvHVAC(Env):
 
         # Auxiliar variables
         self.control_horizon = control_horizon
+        self.max_deviation = max_deviation
         self.edf_path = None
         self.steps_counter = 0
 
         # Tookit
         self.toolkit = Toolkit(self.input_path)
+
+        # Render
+        if render_mode is not None:
+            if render_mode in self.metadata['render_modes']:
+                self.render_mode = render_mode
+                plt.ion()
+            else:
+                raise Exception(
+                    'The specified render format is not available.')
 
     def reset(self, seed=None, options=None):
         """
@@ -61,7 +78,7 @@ class EnvHVAC(Env):
             5. Executes MELCOR, creating the EDF file.
             6. Reads the first observation from the last EDF record.
 
-        After that, CFs redefinition are added to the MELCOR input for future control steps.
+        After that, CFs redefinitions are added to the MELCOR input for future control steps.
 
         Args:
             seed (int, optional): random seed. Defaults to None.
@@ -71,15 +88,15 @@ class EnvHVAC(Env):
             Exception: if an EDF file is not found in the output directory.
 
         Returns:
-            np.array: first environment observation.
-            dict: auxiliar information (e.g. current cycle).
+            np.array: pressures after first simulation.
+            dict: last time and pressures record.
         """
 
         # Env setup
         self.__clean_out_files()
         shutil.copy(self.input_path, self.melin_path)
-        self.steps_counter += 1
-        self.__update_tend()
+        self.steps_counter = 1
+        self.__update_time()
 
         # First simulation
         with open(self.melog_path, 'a') as log:
@@ -94,14 +111,15 @@ class EnvHVAC(Env):
         self.edf_path = edf_files[0] if edf_files else None
 
         if self.edf_path:
-            obs, cycle = self.__get_edf_obs()
+            info = {**{'time':0.0}, **self.__get_last_record()}
+            obs = [value for key, value in info.items() if key.startswith('CV')]
         else:
             raise Exception(''.join(['EDF not found in ', OUTPUT_DIR]))
 
         # Add CFs redefinition to MELCOR input
         self.__add_cfs_redefinition()
 
-        return obs, {'cycle': cycle}
+        return np.array(obs, dtype=np.float64), info
 
     def step(self, action):
         """
@@ -117,15 +135,15 @@ class EnvHVAC(Env):
             action (np.array): new inlet air velocities.
 
         Returns:
-            np.array: environment observation after control action.
+            np.array: environment observation after control action (current pressures).
             float: reward value. Computed as the sum of the distances of every room pressure to its initial value.
-            bool: termination flag.
+            bool: termination flag. It will be True when pressures converge.
             bool: truncated. Not used.
-            dict: additional step information (e.g. current cycle and pressures).
+            dict: additional step information (current cycle and pressures).
         """
 
         # Input edition
-        self.__update_tend()
+        self.__update_time()
         self.__update_cfs(action)
 
         # MELCOR simulation
@@ -134,16 +152,40 @@ class EnvHVAC(Env):
                             cwd=OUTPUT_DIR, stdout=log, stderr=subprocess.STDOUT)
 
         # Get results
-        obs, cycle = self.__get_edf_obs()
-        reward, pressures_info = self.__compute_distances(obs)
-        terminated = self.__check_termination(obs)
+        info = self.__get_last_record()
+        obs = [value for key, value in info.items() if key.startswith('CV')]
+        reward, distances = self.__compute_distances(info)
+        terminated = self.__check_termination(distances, self.max_deviation)
+        truncated = self.__check_truncation()
 
-        info = {**{'cycle': cycle}, **pressures_info}
+        return np.array(obs, np.float64), -reward, truncated, terminated, info
 
-        return obs, reward, False, terminated, info
+    def render(self, time_bt_frames=0.1):
+        """
+        Plots the pressure values evolution recorded in the EDF.
 
-    def render(self):
-        raise NotImplementedError
+        Args:
+            time_bt_frames (int, optional): time to wait after plotting. Defaults to 0.1.
+
+        Raises:
+            Exception: if no step has been performed before render.
+        """
+
+        info = self.__get_last_record()
+
+        df = pd.read_csv(self.edf_path, delim_whitespace=True, header=None)
+        df = df.set_index(0)
+        column_names = [key for key in info.keys()
+                        if key.startswith('CV')]
+        df.columns = column_names
+
+        df = df.apply(pd.to_numeric, errors='coerce')
+
+        df.plot()
+
+        plt.draw()
+        plt.pause(time_bt_frames)
+        plt.close('all')
 
     def close(self):
         """
@@ -160,7 +202,7 @@ class EnvHVAC(Env):
         for file in os.listdir(OUTPUT_DIR):
             os.remove(os.path.join(OUTPUT_DIR, file))
 
-    def __update_tend(self):
+    def __update_time(self):
         """
         Edits the TEND register in the input file according to the specified control horizon.
 
@@ -197,18 +239,30 @@ class EnvHVAC(Env):
         else:
             raise Exception('No reset has been done before step')
 
-    def __get_edf_obs(self):
+    def __get_last_record(self):
         """
-        Get the last recorded values in the simulation EDF.
+        Reads the last recorded values in the EDF.
 
         Returns:
-            np.array: last registered values.
-            float: simulation cycle when the last EDF values were recorded.
+            dict: last registered values (i.e. time and pressures).
         """
+
+        record = {}
+
+        pressure_vars = [
+            var for var in self.toolkit.get_edf_vars() if var.startswith('CVH-P.')]
+
         with open(self.edf_path, 'r') as f:
-            last_record = f.readlines()[-1].split()
-            last_values = np.array(last_record[1:], dtype=np.float64)
-        return last_values, float(last_record[0])
+            last_line = f.readlines()[-1].split()
+
+            record['time'] = float(last_line[0])
+
+            for i, var in enumerate(pressure_vars):
+                cv_number = var[var.find('.') + 1:]
+                cv_id = ''.join(['CV', '0' * (3 - len(cv_number)), cv_number])
+                record[cv_id] = np.float64(last_line[i+1])
+
+        return record
 
     def __add_cfs_redefinition(self, cf_keyword='CONTROLLER'):
         """
@@ -269,35 +323,66 @@ class EnvHVAC(Env):
             f.writelines(lines)
             f.truncate()
 
-    def __compute_distances(self, obs):
+    def __compute_distances(self, last_record):
         """
-        Computes the sum of the distances of each CV pressure to their original/target values.
+        Computes the sum of the distances of each CV pressure to their initial (target) value.
 
         Args:
-            obs (np.array): current pressures, obtained from EDF latest record.
+            last_record (dict): last recorded data in the EDF.
 
         Returns:
-            float: sum of the distances between CV pressures and their original values.
-            dict: last individual pressures recorded in the EDF.
+            float: sum of all the distances between CV pressures to their initial values.
+            dict: individual pressure distances.
         """
 
-        distances = []
-        current_pressures = {}
+        distances = {}
 
-        pressure_vars = [
-            var for var in self.toolkit.get_edf_vars() if var.startswith('CVH-P.')]
+        ids = [id for id in last_record if id.startswith('CV')]
 
-        for i, var in enumerate(pressure_vars):
-            cv_number = var[var.find('.') + 1:]
-            cv_id = ''.join(['CV', '0' * (3 - len(cv_number)), cv_number])
-            cv = self.toolkit.get_cv(cv_id)
+        for cv_id in ids:
+            distances[cv_id] = abs(
+                self.__get_initial_pressure(cv_id) - last_record[cv_id])
 
-            target_pressure = float(cv.get_field('PVOL'))
+        return sum(distances.values()), distances
 
-            distances.append(abs(target_pressure - obs[i]))
-            current_pressures[cv_id] = obs[i]
+    def __get_initial_pressure(self, cv_id):
+        """
+        Returns the initial pressure of a CV.
 
-        return sum(distances), current_pressures
+        Args:
+            cv_id (str): CV identifier (CVnnn).
 
-    def __check_termination(self, obs):
-        return False
+        Returns:
+            float: initial pressure.
+        """
+
+        cv = self.toolkit.get_cv(cv_id)
+
+        return float(cv.get_field('PVOL'))
+
+    def __check_termination(self, distances, max_deviation=20):
+        """
+        Checks the completion of an episode. 
+        An episode ends when at least one pressure has moved epsilon Pa away from its original value.
+
+        Args:
+            distances (dict): computed distances from original to current pressures.
+            max_deviation (float, optional): maximum allowed deviation. Defaults to 20.
+
+        Returns:
+            bool: True if at least one pressure is out of its allowed limits.
+        """
+        return any(valor > max_deviation for valor in distances.values())
+
+    def __check_truncation(self, max_steps=100000):
+        """
+        Checks the truncation condition of an episode. 
+        An episode is truncated if the number of steps is greater than a value specified in max_steps.
+
+        Args:
+            max_steps (int, optional): maximum number of steps for an episode. Defaults to 100000.
+
+        Returns:
+            bool: True if the maximum number of steps have been raised.
+        """
+        return self.steps_counter > max_steps

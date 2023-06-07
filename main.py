@@ -11,11 +11,13 @@ N_ROOMS = 2
 
 def run():
     env = gym.make('hvac-v0', n_obs=N_ROOMS, n_actions=N_BRANCHES)
-    obs, _ = env.reset()
-
-    while True:
-        print(env.step(np.random.uniform(0, 10, 1)))
-
+    obs, info = env.reset()
+    terminated = False
+    truncated = False
+    while not terminated and not truncated:
+        env.render()
+        obs, reward, truncated, terminated, info = env.step(env.action_space.sample())
+        print(f'info={info}\nreward={reward}, obs={obs}, terminated={terminated}, truncated={truncated}\n==============\n')
     # env.close()
 
 

@@ -1,0 +1,1237 @@
+
+ MELGEN    BASE CODE VERSION
+ 1.8.6(A)   MAY-20-2009  
+
+ RELEASE VERSION
+ BASE CODE YU $Revision: 2911 $                              
+
+
+
+
+  PACKAGE VERSION SUMMARY
+
+  PROG  OS  <3/25/94>   
+  EXEC  YS  <12/03/07>  
+  BUR   YH  <1/30/06>   
+  CAV   YS  <01/25/08>  
+  CF    YS  <12/03/07>  
+  COR   YT  <02/26/08>  
+  CVH   YT  <02/26/08>  
+  DCH   YS  <12/03/07>  
+  EDF   YL  <08/08/06>  
+  EOS   YS  <12/03/07>  
+  ESF   YH  <1/30/06>   
+  FDI   YJ  <4/10/06>   
+  FL    YS  <12/03/07>  
+  HS    YS  <12/03/07>  
+  MP    YS  <12/03/07>  
+  RN1   YS  <12/03/07>  
+  RN2   YS  <12/03/07>  
+  SPR   YJ  <4/10/06>   
+  TF    RP  <6/17/05>   
+  TP    YJ  <4/10/06>   
+  UTIL  YL  <08/08/06>  
+  NaEOS YT  <2/26/08>   
+
+  LAST PACKAGE MODIFICATION <02/26/08>                            
+
+
+
+ PRECISION_64 is defined.
+ 
+
+ ******************************************************
+ BASE CODE MODIFIED BY B. J. MERRILL
+ BATTELLE ENERGY ALLIANCE, LLC (BEA)
+ BEA IS A CONTRACTOR TO THE US GOVERNMENT
+ NOTE ITEM ONE - NRC NDA FOR USE WARRANTY AND LIABILITY
+ MULTIPLE FLUIDS VERSION
+ ******************************************************
+
+ INL Modifications for BDBA Version                          
+ COMPILED Thu May 25 13:38:48 MDT 2017                       
+
+
+
+ Opening file ./melgym/data/hvac.inp for user input
+
+
+ Computer environment = INT                                                                             
+
+1
+                 EDIT OF USER INPUT RECORD IMAGES
+
+ Identifier fields between  4 and 12 characters long are allowed.
+ The first 120 columns of each input record are processed.
+ The maximum number of data records that may be processed is  2500000.
+
+ DATA RECORD        RECORD IMAGE
+    NUMBER
+
+          
+         * CV001 ---> CV002
+          
+         **********************************************************************************************
+         *                                        MELGEN INPUT                                        *
+         **********************************************************************************************
+          
+         *EOR* MELGEN
+          
+      1  TITLE     HVAC
+          
+         **********************************************************
+         *                       NGC INPUT                        *
+         **********************************************************
+          
+      2  NCG001    N2    4
+      3  NCG002    O2    5
+          
+         **********************************************************
+         *                        CV INPUT                        *
+         **********************************************************
+          
+      4  CV00100   VOL-1  2  0  1
+      5  CV00101   0      0
+      6  CV001A0   3
+      7  CV001A1   PVOL      101235.0
+      8  CV001A2   TATM      293.0
+      9  CV001A3   RHUM      0.6
+     10  CV001A4   MLFR.4    0.78
+     11  CV001A5   MLFR.5    0.22
+     12  CV001B1   0.0    0.0
+     13  CV001B2   50.0   100000.0
+          
+         ******
+          
+     14  CV00200   VOL-2  2  0  1
+     15  CV00201   0      0
+     16  CV002A0   3
+     17  CV002A1   PVOL      101235.0
+     18  CV002A2   TATM      293.0
+     19  CV002A3   RHUM      0.6
+     20  CV002A4   MLFR.4    0.78
+     21  CV002A5   MLFR.5    0.22
+     22  CV002B1   0.0   0.0
+     23  CV002B2   50.0  100000.0
+          
+         **********************************************************
+         *                        FL INPUT                        *
+         **********************************************************
+          
+     24  FL00100   INLET  001   002   25.  25.
+     25  FL00101   1.0   1.0   1.0
+     26  FL00102	  3
+     27  FL001S0   1.0   1.0   1.0
+     28  FL001T0   2  001
+          
+         * Controlled FL
+          
+     29  CF00100   VEL  EQUALS  1   1.0
+     30  CF00110   1.0  0.0  CFVALU.2
+          
+         **********************************************************
+         *                 Simulation time control                *
+         **********************************************************
+          
+     31  CF00200   CONTROLLER  MULTIPLY  2 1.0 0.0
+     32  CF00210   1.0 0.0 CFVALU.3
+     33  CF00215   1.0 0.0 CFVALU.4
+          
+     34  CF00300   FOO-CF-1  EQUALS  1   1.0
+     35  CF00310   0.0  1.0  TIME
+          
+     36  CF00400   FOO-CF-2  EQUALS  1   1.0
+     37  CF00410   0.0  1.0  TIME
+          
+     38  EDF00100  PRESSURES 2 WRITE
+     39  EDF00101  PRESSURES.DAT
+     40  EDF00102  8E20.12
+     41  EDF00110  10. 10.
+     42  EDF001A0  CVH-P.1
+     43  EDF001A1  CVH-P.2
+          
+         .
+         *** TERMINATOR RECORD - END OF USER INPUT ***
+
+
+     USER INPUT PROCESSING SUMMARY
+
+       NUMBER OF RECORDS READ                   =   83
+       NUMBER OF BLANK OR COMMENT RECORDS READ  =   39
+       NUMBER OF BAD RECORDS READ               =    0
+       NUMBER OF DEFINE INPUT FORMAT RECORDS    =    0
+       NUMBER OF REDEFINE INPUT FILE RECORDS    =    0
+       NUMBER OF TERMINATOR RECORDS             =    1
+       NUMBER OF RECORDS PROCESSED              =   43
+       NUMBER OF PROCESSED RECORDS DUPLICATED   =    0
+       NUMBER OF PROCESSED RECORDS DELETED      =    0
+       NUMBER OF REDUNDANT RECORD DELETIONS     =    0
+       NUMBER OF PROCESSED RECORDS SORTED       =   43
+       INPUT ERROR FLAG                         = .FALSE.
+1
+       USER INPUT PROCESSING
+
+
+ RUN TITLE : HVAC
+
+ RUN ID    : GWFOBJZYU   6/07/23  14:15:35 
+
+   TABULAR FUNCITON PACKAGE IS NOT ACTIVE            
+
+
+
+      ***** CONTROL FUNCTION SETUP EDIT *****
+
+
+  TOTAL NUMBER OF CONTROL FUNCTIONS                   =     4
+  TOTAL NUMBER OF REAL VALUED CONTROL FUNCTIONS       =     4
+  TOTAL NUMBER OF LOGICAL VALUED CONTROL FUNCTIONS    =     0
+  TOTAL NUMBER OF MISCELLANEOUS DATA                  =     0
+  TOTAL NUMBER OF ARGUMENTS                           =     5
+  MAXIMUM NUMBER OF ARGUMENTS FOR A CONTROL FUNCTION  =     2
+
+
+   --- MEMORY REQUIREMENTS FOR CONTROL FUNCTION PACKAGE ---
+  NUMBER OF REALS          =    36
+  NUMBER OF INTEGERS       =    65
+  NUMBER OF CHARACTER (*8) =    23
+  NUMBER OF LOGICALS       =     2
+
+
+
+
+
+   CONTROL FUNCTION PACKAGE IS ACTIVE                
+
+
+   NON-CONDENSIBLE GAS EOS PACKAGE IS ACTIVE         
+
+
+   DECAY HEAT PACKAGE IS NOT ACTIVE                  
+
+1      ***** MATERIAL PROPERTIES SETUP EDIT *****
+
+
+  TOTAL NUMBER OF PROPERTIES  =     7
+  TOTAL NUMBER OF MATERIALS =    40
+  TOTAL NUMBER OF PROPERTIES FOR ALL MATERIALS =   280
+
+
+ --- DATA BASE MEMORY REQUIREMENTS FOR MATERIAL PROPERTIES PACKAGE ---
+  NUMBER OF REALS          =   200
+  NUMBER OF INTEGERS       =   280
+  NUMBER OF LOGICALS       =     0
+  NUMBER OF CHARACTER (*8) =   120
+
+
+ --- SCRATCH MEMORY REQUIREMENTS FOR MATERIAL PROPERTIES PACKAGE ---
+  NUMBER OF REALS          =     0
+  NUMBER OF INTEGERS       =     0
+  NUMBER OF LOGICALS       =     0
+  NUMBER OF CHARACTER (*8) =     0
+
+
+ --- EDIT MEMORY REQUIREMENTS FOR MATERIAL PROPERTIES PACKAGE ---
+  NUMBER OF REALS          =     0
+  NUMBER OF INTEGERS       =     0
+  NUMBER OF LOGICALS       =     0
+  NUMBER OF CHARACTER (*8) =     0
+
+
+
+
+
+
+   EDIT OF MPPNT POINTERS
+      MMATNM =    1      MTBPRM =    1
+
+   MATERIAL PROPERTIES PACKAGE IS ACTIVE             
+
+1      ***** CONTROL VOLUME SETUP EDIT *****
+
+
+  TOTAL NUMBER OF CONTROL VOLUMES                     =     2
+
+  --- MEMORY REQUIREMENTS FOR CONTROL VOLUME PACKAGE ---
+
+  DATA BASE:          
+   NUMBER OF REALS          =   852
+   NUMBER OF INTEGERS       =    18
+   NUMBER OF CHARACTER (*8) =     4
+
+  CALCULATION SCRATCH:
+   NUMBER OF REALS          =   392
+   NUMBER OF INTEGERS       =    36
+   NUMBER OF CHARACTER (*8) =     0
+
+  EDIT SCRATCH:       
+   NUMBER OF REALS          =    16
+   NUMBER OF INTEGERS       =     8
+   NUMBER OF CHARACTER (*8) =     0
+
+
+
+   CONTROL VOLUME PACKAGE IS ACTIVE                  
+
+1      ***** FLOW PATH SETUP EDIT *****
+
+
+  TOTAL NUMBER OF FLOW PATHS                     =     1
+
+  --- MEMORY REQUIREMENTS FOR FLOW PATH PACKAGE ---
+
+  DATA BASE:          
+   NUMBER OF REALS          =   109
+   NUMBER OF INTEGERS       =    33
+   NUMBER OF CHARACTER (*8) =     2
+
+  CALCULATION SCRATCH:
+   NUMBER OF REALS          =   530
+   NUMBER OF INTEGERS       =    40
+   NUMBER OF CHARACTER (*8) =     0
+
+  EDIT SCRATCH:       
+   NUMBER OF REALS          =    11
+   NUMBER OF INTEGERS       =     7
+   NUMBER OF CHARACTER (*8) =     0
+
+
+0      ***** SPARSE MATRIX SOLUTION *****
+
+
+  MAXIMUM NUMBER OF MATRIX ENTRIES               =     4
+  CORRESPONDING FRACTION OF FULL MATRIX           = 1.000
+
+  --- INCREASED SCRATCH MEMORY REQUIREMENTS ARE ---
+
+  CALCULATION SCRATCH:
+   NUMBER OF REALS          =   550
+   NUMBER OF INTEGERS       =    48
+
+
+
+   FLOW PATH PACKAGE IS ACTIVE                       
+
+ <Diagnostic Message>  Time= 0.0000E+00 Dt= 1.0000E+00 Cycle= 0 (COR)
+  MESSAGE - DEFAULT VALUES      
+  DEFAULT RECORD NOT PRESENT - USE 1.86 DEFAULT VALUES                            
+
+   CORE IS NOT ACTIVE                                
+
+1       ***** EXTERNAL DATA FILE SETUP EDIT *****
+
+0 ----------------------------------
+  PROCESSING INPUT FOR DATA FILE 001
+  ----------------------------------
+
+
+   NO ERRORS WERE DETECTED DURING PROCESSING OF EXTERNAL DATA FILE INPUT DATA
+
+  --- MEMORY REQUIREMENTS FOR EXTERNAL DATA FILE PACKAGE ---
+
+  DATA BASE:          
+   NUMBER OF REALS          =    28
+   NUMBER OF INTEGERS       =    16
+   NUMBER OF LOGICAL        =     0
+   NUMBER OF CHARACTER (*8) =    21
+
+  CALCULATION SCRATCH:
+   NUMBER OF REALS          =     2
+   NUMBER OF INTEGERS       =     0
+   NUMBER OF LOGICAL        =     0
+   NUMBER OF CHARACTER (*8) =     0
+
+  EDIT SCRATCH:       
+   NUMBER OF REALS          =     0
+   NUMBER OF INTEGERS       =     2
+   NUMBER OF LOGICAL        =     0
+   NUMBER OF CHARACTER (*8) =     0
+
+
+
+   EXTERNAL DATA FILE PACKAGE IS ACTIVE              
+
+1      ***** CON SPRAY SETUP EDIT *****
+
+
+  TOTAL NUMBER OF CON SPRAY SOURCES   =     0
+  TOTAL NUMBER OF CON SPRAY VOLUMES   =     0
+  TOTAL NUMBER OF CON SPRAY JUNCTIONS =     0
+
+
+
+ --- DATA BASE MEMORY REQUIREMENTS FOR CON SPRAY PACKAGE ---
+  NUMBER OF REALS          =     0
+  NUMBER OF INTEGERS       =     0
+  NUMBER OF LOGICALS       =     0
+  NUMBER OF CHARACTER (*8) =     0
+
+
+ --- SCRATCH MEMORY REQUIREMENTS FOR CON SPRAY PACKAGE ---
+  NUMBER OF REALS          =    10
+  NUMBER OF INTEGERS       =     0
+  NUMBER OF LOGICALS       =     0
+  NUMBER OF CHARACTER (*8) =     0
+
+
+ --- EDIT MEMORY REQUIREMENTS FOR CON SPRAY PACKAGE ---
+  NUMBER OF REALS          =     0
+  NUMBER OF INTEGERS       =     0
+  NUMBER OF LOGICALS       =     0
+  NUMBER OF CHARACTER (*8) =     0
+
+
+
+
+
+   CONTAINMENT SPRAY PACKAGE IS NOT ACTIVE           
+
+
+
+   --- MEMORY REQUIREMENTS FOR HS PACKAGE --- 
+
+    NUMBER OF REALS IN DATABASE               =      1
+    NUMBER OF INTEGERS IN DATABASE            =      1
+    NUMBER OF LOGICALS IN DATABASE            =      1
+    NUMBER OF CHARACTERS (*8) IN DATABASE     =      1
+
+
+
+   --- MEMORY REQUIREMENTS FOR HS PACKAGE --- 
+
+    NUMBER OF SCRATCH CALC REALS              =      1
+    NUMBER OF SCRATCH CALC INTEGERS           =      1
+    NUMBER OF SCRATCH CALC LOGICALS           =      1
+    NUMBER OF SCRATCH CALC CHARACTERS (*8)    =      1
+
+
+
+   --- MEMORY REQUIREMENTS FOR HS PACKAGE --- 
+
+    NUMBER OF SCRATCH EDIT REALS              =      1
+    NUMBER OF SCRATCH EDIT INTEGERS           =      1
+    NUMBER OF SCRATCH EDIT LOGICALS           =      1
+    NUMBER OF SCRATCH EDIT CHARACTERS (*8)    =      1
+
+
+
+1************************** HEAT STRUCTURE SETUP EDIT ***************************
+
+
+ PASS-ONE PROCESSING OF HEAT STRUCTURE INPUT
+
+
+ TOTAL NUMBER OF HEAT STRUCTURES       = 00000
+ TOTAL NUMBER OF GAS SOURCES           = 00000
+
+ HEAT STRUCTURE PACKAGE REQUIRED 1.4300E-04 SECONDS FOR PASS-ONE INPUT PROCESSING
+
+
+
+   HEAT SLABS PACKAGE IS NOT ACTIVE                  
+
+
+   BURN PACKAGE IS NOT ACTIVE                        
+
+1       ***** CAVITY MODEL SETUP EDIT *****
+
+
+   NO ERRORS WERE DETECTED DURING PROCESSING OF CAVITY INPUT DATA
+
+   CAVITY PACKAGE IS NOT ACTIVE                      
+
+1       ***** FDI MODEL SETUP EDIT *****
+
+
+   NO ERRORS WERE DETECTED DURING PROCESSING OF FDI INPUT DATA
+
+   FUEL DISPERSAL INTERACTIONS PACKAGE IS NOT ACTIVE 
+
+
+   RADIONUCLIDE 1 PACKAGE IS NOT ACTIVE              
+
+
+   RADIONUCLIDE 2 PACKAGE IS NOT ACTIVE              
+
+
+   TRANSFER PROCESS PACKAGE IS NOT ACTIVE            
+
+1      ***** FAN COOLER SETUP EDIT *****
+
+
+  TOTAL NUMBER OF FAN COOLERS =     0
+
+
+
+ --- DATA BASE MEMORY REQUIREMENTS FOR FAN COOLER PACKAGE ---
+  NUMBER OF REALS          =     0
+  NUMBER OF INTEGERS       =     0
+  NUMBER OF LOGICALS       =     0
+  NUMBER OF CHARACTER (*8) =     0
+
+
+ --- SCRATCH MEMORY REQUIREMENTS FOR FAN COOLER PACKAGE ---
+  NUMBER OF REALS          =     0
+  NUMBER OF INTEGERS       =     0
+  NUMBER OF LOGICALS       =     0
+  NUMBER OF CHARACTER (*8) =     0
+
+
+ --- EDIT MEMORY REQUIREMENTS FOR FAN COOLER PACKAGE ---
+  NUMBER OF REALS          =     0
+  NUMBER OF INTEGERS       =     0
+  NUMBER OF LOGICALS       =     0
+  NUMBER OF CHARACTER (*8) =     0
+
+
+
+
+1      ***** PCCS/ICS CONDENSER SETUP EDIT *****
+
+ --- DATA BASE MEMORY REQUIREMENTS FOR condenser PACKAGE ---
+  NUMBER OF REALS          =     0
+  NUMBER OF INTEGERS       =     0
+  NUMBER OF LOGICALS       =     0
+  NUMBER OF CHARACTER (*8) =     0
+
+
+ --- SCRATCH MEMORY REQUIREMENTS FOR condenser PACKAGE ---
+  NUMBER OF REALS          =     0
+  NUMBER OF INTEGERS       =     0
+  NUMBER OF LOGICALS       =     0
+  NUMBER OF CHARACTER (*8) =     0
+
+
+ --- EDIT MEMORY REQUIREMENTS FOR condenser PACKAGE ---
+  NUMBER OF REALS          =     0
+  NUMBER OF INTEGERS       =     0
+  NUMBER OF LOGICALS       =     0
+  NUMBER OF CHARACTER (*8) =     0
+
+
+
+
+1      ***** PAR UNIT SETUP EDIT *****
+
+
+  TOTAL NUMBER OF PAR TYPES =     0
+
+
+
+ --- DATA BASE MEMORY REQUIREMENTS FOR PAR PACKAGE ---
+  NUMBER OF REALS          =     0
+  NUMBER OF INTEGERS       =     0
+  NUMBER OF LOGICALS       =     0
+  NUMBER OF CHARACTER (*8) =     0
+
+
+ --- SCRATCH MEMORY REQUIREMENTS FOR PAR PACKAGE ---
+  NUMBER OF REALS          =     0
+  NUMBER OF INTEGERS       =     0
+  NUMBER OF LOGICALS       =     0
+  NUMBER OF CHARACTER (*8) =     0
+
+
+ --- EDIT MEMORY REQUIREMENTS FOR PAR PACKAGE ---
+  NUMBER OF REALS          =     0
+  NUMBER OF INTEGERS       =     0
+  NUMBER OF LOGICALS       =     0
+  NUMBER OF CHARACTER (*8) =     0
+
+
+
+
+
+   ENGINEERED SAFETY FEATURES PACKAGE IS NOT ACTIVE  
+
+
+
+          ****  EDIT OF REAL DATABASE POINTERS  ****
+
+ NUMBER OF REALS AVAILABLE = *******
+ NUMBER OF REALS USED FOR PHYSICS DATABASE AND SCRATCH STORAGE =    3046
+ POINTER TO BEGINNING OF PHYSICS SCRATCH STORAGE =    2497
+ POINTER TO BEGINNING OF EDIT SCRATCH STORAGE =    2547
+
+
+          ****  EDIT OF INTEGER DATABASE POINTERS  ****
+
+ NUMBER OF INTEGERS AVAILABLE = *******
+ NUMBER OF INTEGERS USED FOR PHYSICS DATABASE AND SCRATCH STORAGE =     613
+ POINTER TO BEGINNING OF PHYSICS SCRATCH STORAGE =     566
+ POINTER TO BEGINNING OF EDIT SCRATCH STORAGE =     574
+
+
+          ****  EDIT OF LOGICAL DATABASE POINTERS  ****
+
+ NUMBER OF LOGICALS AVAILABLE =   50000
+ NUMBER OF LOGICALS USED FOR PHYSICS DATABASE AND SCRATCH STORAGE =       4
+ POINTER TO BEGINNING OF PHYSICS SCRATCH STORAGE =       4
+ POINTER TO BEGINNING OF EDIT SCRATCH STORAGE =       5
+
+
+          ****  EDIT OF CHARACTER DATABASE POINTERS  ****
+
+ NUMBER OF CHARACTERS AVAILABLE = *******
+ NUMBER OF CHARACTERS USED FOR PHYSICS DATABASE AND SCRATCH STORAGE =     322
+ POINTER TO BEGINNING OF PHYSICS SCRATCH STORAGE =     322
+ POINTER TO BEGINNING OF EDIT SCRATCH STORAGE =     323
+
+
+1* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * 
+
+ MELGEN    BASE CODE VERSION
+ 1.8.6(A)   MAY-20-2009  
+
+ RELEASE VERSION
+ BASE CODE YU $Revision: 2911 $                              
+
+ PRECISION_64 is defined.
+ 
+
+ ******************************************************
+ BASE CODE MODIFIED BY B. J. MERRILL
+ BATTELLE ENERGY ALLIANCE, LLC (BEA)
+ BEA IS A CONTRACTOR TO THE US GOVERNMENT
+ NOTE ITEM ONE - NRC NDA FOR USE WARRANTY AND LIABILITY
+ MULTIPLE FLUIDS VERSION
+ ******************************************************
+
+ INL Modifications for BDBA Version                          
+ COMPILED Thu May 25 13:38:48 MDT 2017                       
+
+
+ GWFOBJZYU   6/07/23  14:15:35 
+
+ HVAC                                                                         
+ TIME=  0.000E+00 s =  0.000E+00 min =  0.000E+00 hrs =  0.000E+00 days
+ DT=  1.00000E+00 s          CYCLE=     0          CPU TIME=  0.000E+00
+
+
+               *** GLOBAL ENERGY BALANCE EDIT ***
+
+     GLOBAL ENERGY ERROR                     =     0.00000E+00
+     GLOBAL ENERGY ERROR / ENERGY IN PROBLEM =     0.00000E+00
+
+
+  ENERGY EDIT FOR PACKAGE CVH
+  ENERGY NOW         =     1.03321E+12     ORIGINAL ENERGY  =     1.03321E+12
+  ENERGY TRANSMITTED =     0.00000E+00     ENERGY CREATED   =     0.00000E+00
+  ENERGY ERROR       =     0.00000E+00     REL ENERGY ERROR =     0.00000E+00
+
+  ENERGY EDIT FOR PACKAGE FL 
+  ENERGY NOW         =     0.00000E+00     ORIGINAL ENERGY  =     0.00000E+00
+  ENERGY TRANSMITTED =     0.00000E+00     ENERGY CREATED   =     0.00000E+00
+  ENERGY ERROR       =     0.00000E+00     REL ENERGY ERROR =     0.00000E+00
+
+
+ END OF EDIT FOR MEX PACKAGE
+
+
+     NON-CONDENSIBLE GAS TIME INDEPENDENT DATA EDIT
+
+         5 MATERIALS ARE DEFINED FOR THIS CALCULATION
+
+ MATERIAL  MATERIAL   MOLECULAR    INTERNAL  
+  NUMBER     NAME       WEIGHT    ENERGY ZERO
+                       (KG/MOL)     (J/KG)   
+
+     1     POOL        1.8016E-02  0.0000E+00-ELV
+     2     FOG         1.8016E-02  0.0000E+00-ELV
+     3     H2O-VAP     1.8016E-02  0.0000E+00
+     4     N2          2.8010E-02  1.4882E+06
+     5     O2          3.2000E-02  1.7404E+07
+
+
+     MATERIAL CONSTANTS FOR CV(T)
+
+ NUMB    CV0         CV1         CV2         CV3      CVSQRT
+       J/KG-K     J/KG-K**2   J/KG-K**3   J/KG-K**4  J/KG-K**(3/2)
+         CVM1        CVM2        TLOW         TUP
+         J/KG       J-K/KG         K           K
+
+    3   1.507E+03   0.000E+00   0.000E+00   0.000E+00   0.000E+00
+        0.000E+00   0.000E+00   1.000E+00   1.000E+04
+    4   1.118E+03   0.000E+00   0.000E+00   0.000E+00   0.000E+00
+       -2.880E+05   5.348E+07   3.000E+02   5.000E+03
+    5   1.246E+03   0.000E+00   0.000E+00   0.000E+00  -1.676E+04
+        1.111E+05   0.000E+00   3.000E+02   2.778E+03
+
+ END OF EDIT FOR NCG PACKAGE
+
+
+          ***************************************
+          *                                     *
+          *  CONTROL VOLUME HYDRODYNAMICS EDIT  *
+          *                                     *
+          ***************************************
+
+
+
+ VOLUME   PRESSURE      TLIQ        TVAP      MASS        ENERGY     DENSITY     ENTHALPY    QUALITY       VOID           NAME
+  NUMB       PA           K           K        KG          J/KG      KG/M**3       J/KG                  FRACTION
+     1  1.0123E+05    293.0000    293.0000  1.1943E+05  4.3257E+06  1.1943E+00  4.4104E+06  1.0000E+00  1.0000E+00 VOL-1           
+     2  1.0123E+05    293.0000    293.0000  1.1943E+05  4.3257E+06  1.1943E+00  4.4104E+06  1.0000E+00  1.0000E+00 VOL-2           
+
+
+ VOLUME   VOLLIQ     VOLFOG     VOLVAP    VIRVOLLIQ  VIRVOLVAP  ENERGY
+  NUMB     M**3       M**3       M**3       M**3       M**3        J
+     1  0.000E+00  0.000E+00  1.000E+05  0.000E+00  0.000E+00  5.166E+11
+     2  0.000E+00  0.000E+00  1.000E+05  0.000E+00  0.000E+00  5.166E+11
+
+
+   VOLUME   S-Z-POOL    C-Z-POOL    ENERGY       AREA        NAME
+    NUMB       M           M           J          M**2
+       1   0.0000E+00  0.0000E+00  5.1660E+11  2.0000E+03   VOL-1           
+       2   0.0000E+00  0.0000E+00  5.1660E+11  2.0000E+03   VOL-2           
+
+
+ VOLUME      T(P)
+  NUMB         K
+     1    3.7315E+02
+     2    3.7315E+02
+
+
+ VOL   MATERIAL         MASS      DENSITY        E         PPART        ECV
+      NUM  NAME          KG       KG/M**3       J/KG         PA          J
+   1    3  H2O-VAP   1.0267E+03  1.0267E-02  2.4029E+06  1.3874E+03  2.4671E+09
+        4  N2        8.9546E+04  8.9546E-01 -2.4806E+03  7.7881E+04 -2.2213E+08
+        5  O2        2.8854E+04  2.8854E-01  1.7826E+07  2.1966E+04  5.1436E+11
+   2    3  H2O-VAP   1.0267E+03  1.0267E-02  2.4029E+06  1.3874E+03  2.4671E+09
+        4  N2        8.9546E+04  8.9546E-01 -2.4806E+03  7.7881E+04 -2.2213E+08
+        5  O2        2.8854E+04  2.8854E-01  1.7826E+07  2.1966E+04  5.1436E+11
+
+
+  MATERIAL           TOTAL       ORIGINAL        MASS        MASS
+ NUM  NAME           MASS          MASS         SOURCE        ERROR
+                     (KG)          (KG)          (KG)          (KG)
+ 1-3  WATER       2.05339E+03   2.05339E+03   0.00000E+00   0.00000E+00
+   4  N2          1.79092E+05   1.79092E+05   0.00000E+00   0.00000E+00
+   5  O2          5.77087E+04   5.77087E+04   0.00000E+00   0.00000E+00
+
+
+     TOTAL      ORIGINAL   POOL ENERGY  ATMOS ENERGY       POOL     ENERGY
+     ENERGY      ENERGY       SOURCE       SOURCE        SURFACE    ERROR
+       (J)         (J)          (J)          (J)           (J)       (J)
+   1.0332E+12   1.0332E+12   0.0000E+00   0.0000E+00   0.0000E+00   0.0000E+00
+
+
+     MASS SOURCE EDIT
+
+  MASS SOURCE OF CONTROL VOLUME   1
+   DELM( 1: 5)=  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+  MASS SOURCE OF CONTROL VOLUME   2
+   DELM( 1: 5)=  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00  0.0000E+00
+
+
+     ENERGY SOURCE EDIT
+
+  NVOL  POOL ENERGY   ATMOS ENERGY   POOL S ENERGY
+            (J)           (J)           (J)
+     1    0.0000E+00    0.0000E+00    0.0000E+00
+     2    0.0000E+00    0.0000E+00    0.0000E+00
+
+     VOLUME - ALTITUDE TABLE FOR CONTROL VOLUME NUMBER     1
+
+             ALTITUDE        VOLUME       MATL VOLUME    VIRT VOLUME
+               (M)           (M**3)         (M**3)         (M**3)
+      2     5.00000E+01    1.00000E+05    1.00000E+05    0.00000E+00
+      1     0.00000E+00    0.00000E+00    0.00000E+00    0.00000E+00
+
+     VOLUME - ALTITUDE TABLE FOR CONTROL VOLUME NUMBER     2
+
+             ALTITUDE        VOLUME       MATL VOLUME    VIRT VOLUME
+               (M)           (M**3)         (M**3)         (M**3)
+      2     5.00000E+01    1.00000E+05    1.00000E+05    0.00000E+00
+      1     0.00000E+00    0.00000E+00    0.00000E+00    0.00000E+00
+
+
+   *** VELOCITY CALCULATION STATISTICS EDIT ***
+       NUMBER OF MATRIX INVERSIONS             =       0
+       NUMBER OF FLOW REVERSALS                =       0
+       NUMBER OF EXPLICIT INTEGRATIONS         =       0
+       NUMBER OF SIGNIFICANT DIGITS INVERSIONS =       0
+       NUMBER OF WATER PACKINGS IDENTIFIED     =       0
+       NUMBER OF CHOKED FLOWS IDENTIFIED       =       0
+
+
+   TOTAL CPU TIME FOR CVH AND FL PACKAGES    =    0.00000E+00
+   CPU TIME FOR CVH AND FL PKGS CALCULATIONS =    0.00000E+00
+   CPU TIME FOR CVH AND FL PKGS EDITS        =    0.00000E+00
+   CPU TIME FOR CVH AND FL PACKAGES RESTARTS =    0.00000E+00
+
+
+   *** SUBCYCLE STATISTICS EDIT ***
+       NUMBER OF SUBCYCLES                    =       0
+       NUMBER OF REPEATED SUBCYCLES           =       0
+       NUMBER OF MOMENTUM BALANCE CALLS       =       0
+       PRESENT SUBCYCLE TIMESTEP              =    0.00000E+00
+
+ END OF EDIT FOR CVH PACKAGE
+
+
+          ******************************
+          *                            *
+          *   FLOW PATH PACKAGE EDIT   *
+          *                            *
+          ******************************
+
+
+
+
+   FLOW  FROM   TO     VELLIQ      VELVAP      MFLOW        AREA       TYP ACT
+   PATH  VOL.  VOL.     M/S         M/S         KG/S        M**2
+      1     1     2  1.2121E-01  1.2121E-01  0.0000E+00  1.0000E+00     3   0
+
+
+ FLOW  FROM   TO     MATERIAL         MFLOW      INT-MFLOW
+ PATH  VOL.  VOL.   NUM  NAME          KG/S         KG
+    1     1     2     1  POOL      0.00000E+00  0.00000E+00   INLET           
+
+
+ FLOW     P HEAD       FRACTION     OPEN AREA       ALPHA
+ PATH      (PA)          OPEN         (M**2)
+   1    0.0000E+00    1.0000E+00    1.0000E+00    1.0000E+00
+
+
+          ******************************************
+          *                                        *
+          *  FLOW PATH TIME INDEPENDENT DATA EDIT  *
+          *                                        *
+          ******************************************
+
+
+ FLOW  VOLUME    ORIENTATION  FLOW TYPE    OTHER     SPARC     FLASH
+ PATH  FM  TO                              MODEL     FM  TO    FM  TO
+    1    1   2   HORIZONTAL   NORMAL       V(T)      N   N     N   N    INLET           
+
+
+ FLOW  VOLUME    JUNCTION ELEVATION        LENGTH       AREA         FRACT OPEN
+ PATH  FM  TO     FM (M)      TO (M)        (M)          (M**2)       (-)
+    1    1   2   2.5000E+01   2.5000E+01   1.0000E+00   1.0000E+00   1.0000E+00
+
+
+ FLOW  VOLUME    'FM' JUNCTION OPENING     'TO' JUNCTION OPENING     MOM.EXCH.L
+ PATH  FM  TO     BOTTOM (M)   TOP (M)      BOTTOM (M)   TOP (M)      (M)
+    1    1   2   2.4436E+01   2.5564E+01   2.4436E+01   2.5564E+01   1.0000E+00
+
+
+ FLOW  VOLUME    LOSS COEFFICIENT          DISCHARGE COEFFICIENT
+ PATH  FM  TO     FWD (-)      REV (-)      FWD (-)      REV (-)      MHD
+    1    1   2  1.0000E+00   1.0000E+00    1.0000E+00   1.0000E+00
+  0.0000E+00
+
+
+ FLOW  VOLUME    SEG AREA     SEG LEN      HYD DIA      ROUGHNESS    F.LAMINAR
+ PATH  FM  TO     (M**2)       (M)          (M)          (M)          (-)
+    1    1   2   1.0000E+00   1.0000E+00   1.0000E+00   5.0000E-05   1.6000E+01
+
+
+                    *** CONTROL VOLUME CONNECTIVITY DATA ***
+ VOLUME                   CONNECTING FLOW PATH           VOLUME
+    1  VOL-1                1   INLET               TO      2  VOL-2           
+    2  VOL-2                1   INLET              FROM     1  VOL-1           
+
+ END OF EDIT FOR FL  PACKAGE
+
+
+
+     ***** CONTROL VOLUME THERMODYNAMICS STATISTICS EDIT *****
+                     VALUES SINCE LAST EDIT
+
+
+    CALLS TO MAIN PROGRAM (CVTHRM)                    =       1
+      NUMBER OF CONTROL VOLUMES PROCESSED             =       2
+    CALLS TO WATER EQUILIBRIUM PACKAGE (CVTWE)        =       0
+    CALLS TO GAS EQUILIBRIUM PACKAGE (CVTGE)          =       0
+    CALLS TO WATER + GAS EQUILIBRIUM PACKAGE (CVTWGE) =       2
+      STATISTICS ON WATER + GAS EQUILIBRIUM PACKAGE
+      NUMBER OF TEMPERATURE ITERATIONS =      0
+      AVERAGE TEMPERATURE ITERATIONS PER CALL = 0.00000E+00
+      NUMBER OF DENSITY ITERATIONS =      0
+      AVERAGE DENSITY ITERATIONS PER CALL = 0.00000E+00
+      AVERAGE DENSITY ITERATIONS PER TEMPERATURE ITERATION =  0.00000E+00
+    CALLS TO WATER + GAS NON-EQUILIBRIUM PACKAGE (CVTNEQ) =      2
+      STATISTICS ON WATER + GAS NON-EQUILIBRIUM PACKAGE
+      NUMBER OF ITERATIONS =      0
+      AVERAGE ITERATIONS PER CALL = 0.00000E+00
+
+
+
+ END OF EDIT FOR CVT PACKAGE
+
+ END OF EDIT FOR INP PACKAGE
+
+ END OF EDIT FOR CRA PACKAGE
+
+
+     ************************************
+     *       CONTROL FUNCTION EDIT      *
+     ************************************
+
+
+     NUMBER OF CONTROL FUNCTIONS                =     4
+     NUMBER OF REAL VALUED CONTROL FUNCTIONS    =     4
+     NUMBER OF LOGICAL VALUED CONTROL FUNCTIONS =     0
+     NUMBER OF ARGUMENTS                        =     5
+
+
+
+  CONTROL FUNCTION NUMBER        1 IS REAL TYPE EQUALS  
+  ITS NAME IS VEL             
+    VALUE =  1.2121E-01
+    SCALE FACTOR =  1.0000E+00  ADDITIVE CONSTANT =  0.0000E+00
+    UPPER BOUND =     1.7977+308  LOWER BOUND =    -1.7977+308
+    NUMBER OF ARGUMENTS =    1
+    ARGUMENT NUMBER =    1 HAS CHARACTER IDENTIFIER =CFVALU.2                
+      IS REAL VALUED AND IS IN MAIN DATABASE ARRAY
+      MULTIPLICATIVE CONSTANT =   1.0000E+00  ADDITIVE CONSTANT =   0.0000E+00
+
+  CONTROL FUNCTION NUMBER        2 IS REAL TYPE MULTIPLY
+  ITS NAME IS CONTROLLER      
+    VALUE =  1.4692E-02
+    SCALE FACTOR =  1.0000E+00  ADDITIVE CONSTANT =  0.0000E+00
+    UPPER BOUND =     1.7977+308  LOWER BOUND =    -1.7977+308
+    NUMBER OF ARGUMENTS =    2
+    ARGUMENT NUMBER =    1 HAS CHARACTER IDENTIFIER =CFVALU.3                
+      IS REAL VALUED AND IS IN MAIN DATABASE ARRAY
+      MULTIPLICATIVE CONSTANT =   1.0000E+00  ADDITIVE CONSTANT =   0.0000E+00
+    ARGUMENT NUMBER =    2 HAS CHARACTER IDENTIFIER =CFVALU.4                
+      IS REAL VALUED AND IS IN MAIN DATABASE ARRAY
+      MULTIPLICATIVE CONSTANT =   1.0000E+00  ADDITIVE CONSTANT =   0.0000E+00
+
+  CONTROL FUNCTION NUMBER        3 IS REAL TYPE EQUALS  
+  ITS NAME IS FOO-CF-1        
+    VALUE =  1.0000E+00
+    SCALE FACTOR =  1.0000E+00  ADDITIVE CONSTANT =  0.0000E+00
+    UPPER BOUND =     1.7977+308  LOWER BOUND =    -1.7977+308
+    NUMBER OF ARGUMENTS =    1
+    ARGUMENT NUMBER =    1 HAS CHARACTER IDENTIFIER =TIME                    
+      IS REAL VALUED AND IS IN PACKAGE MEX DATABASE ARRAY
+      MULTIPLICATIVE CONSTANT =   0.0000E+00  ADDITIVE CONSTANT =   1.0000E+00
+
+  CONTROL FUNCTION NUMBER        4 IS REAL TYPE EQUALS  
+  ITS NAME IS FOO-CF-2        
+    VALUE =  1.0000E+00
+    SCALE FACTOR =  1.0000E+00  ADDITIVE CONSTANT =  0.0000E+00
+    UPPER BOUND =     1.7977+308  LOWER BOUND =    -1.7977+308
+    NUMBER OF ARGUMENTS =    1
+    ARGUMENT NUMBER =    1 HAS CHARACTER IDENTIFIER =TIME                    
+      IS REAL VALUED AND IS IN PACKAGE MEX DATABASE ARRAY
+      MULTIPLICATIVE CONSTANT =   0.0000E+00  ADDITIVE CONSTANT =   1.0000E+00
+
+ END OF EDIT FOR CF  PACKAGE
+
+ END OF EDIT FOR MES PACKAGE
+
+
+ H2O PACKAGE CALL STATISTICS
+
+ CALLS TO  H2OEST    H2O1PH    H2O2PH    H2OSAT    H2OSAU    H2O2PD    H2O2PL
+ EDIT    6.600E+01 6.200E+01 1.500E+01 5.000E+00 1.100E+01 0.000E+00 0.000E+00
+ RUN     6.600E+01 6.200E+01 1.500E+01 5.000E+00 1.100E+01 0.000E+00 0.000E+00
+
+
+ END OF EDIT FOR H2O PACKAGE
+
+
+          ***********************************
+          *   MATERIAL PROPERTIES PACKAGE   *
+          ***********************************
+
+
+ TOTAL NUMBER OF PROPERTIES  =     7
+ TOTAL NUMBER OF MATERIALS   =    40
+ TOTAL NUMBER OF PROPERTIES FOR ALL MATERIALS =   280
+
+
+     USING             FOR
+ DEFAULT TABLE    29 WATER thermal conductivity vs temperature
+ DEFAULT TABLE    32 WATER viscosity vs temperature
+ DEFAULT TABLE    30 STEAM thermal conductivity vs temperature
+ DEFAULT TABLE    33 STEAM viscosity vs temperature
+ DEFAULT TABLE    31 AIR thermal conductivity vs temperature
+ DEFAULT TABLE    34 AIR viscosity vs temperature
+ CHAPMAN-ENSKOG 2000 HYDROGEN thermal conductivity vs temperature
+ DEFAULT TABLE    42 HYDROGEN viscosity vs temperature
+ CHAPMAN-ENSKOG 2000 HELIUM thermal conductivity vs temperature
+ CHAPMAN-ENSKOG 2000 HELIUM viscosity vs temperature
+ CHAPMAN-ENSKOG 2000 ARGON thermal conductivity vs temperature
+ CHAPMAN-ENSKOG 2000 ARGON viscosity vs temperature
+ CHAPMAN-ENSKOG 2000 DEUTERIUM thermal conductivity vs temperature
+ DEFAULT TABLE    83 DEUTERIUM viscosity vs temperature
+ DEFAULT TABLE     1 ZIRCALOY enthalpy vs temperature
+ DEFAULT TABLE     8 ZIRCALOY temperature vs enthalpy
+ DEFAULT TABLE    15 ZIRCALOY specific heat vs temperature
+ DEFAULT TABLE    22 ZIRCALOY thermal conductivity vs temperature
+ DEFAULT TABLE    35 ZIRCALOY density vs temperature
+ DEFAULT TABLE     2 ZIRCONIUM-OXIDE enthalpy vs temperature
+ DEFAULT TABLE     9 ZIRCONIUM-OXIDE temperature vs enthalpy
+ DEFAULT TABLE    16 ZIRCONIUM-OXIDE specific heat vs temperature
+ DEFAULT TABLE    23 ZIRCONIUM-OXIDE thermal conductivity vs temperature
+ DEFAULT TABLE    36 ZIRCONIUM-OXIDE density vs temperature
+ DEFAULT TABLE     3 URANIUM-DIOXIDE enthalpy vs temperature
+ DEFAULT TABLE    10 URANIUM-DIOXIDE temperature vs enthalpy
+ DEFAULT TABLE    17 URANIUM-DIOXIDE specific heat vs temperature
+ DEFAULT TABLE    24 URANIUM-DIOXIDE thermal conductivity vs temperature
+ DEFAULT TABLE    37 URANIUM-DIOXIDE density vs temperature
+ DEFAULT TABLE     4 STAINLESS-STEEL enthalpy vs temperature
+ DEFAULT TABLE    11 STAINLESS-STEEL temperature vs enthalpy
+ DEFAULT TABLE    18 STAINLESS-STEEL specific heat vs temperature
+ DEFAULT TABLE    25 STAINLESS-STEEL thermal conductivity vs temperature
+ DEFAULT TABLE    38 STAINLESS-STEEL density vs temperature
+ DEFAULT TABLE     5 STAINLESS-STEEL-OXIDE enthalpy vs temperature
+ DEFAULT TABLE    12 STAINLESS-STEEL-OXIDE temperature vs enthalpy
+ DEFAULT TABLE    19 STAINLESS-STEEL-OXIDE specific heat vs temperature
+ DEFAULT TABLE    26 STAINLESS-STEEL-OXIDE thermal conductivity vs temperature
+ DEFAULT TABLE    39 STAINLESS-STEEL-OXIDE density vs temperature
+ DEFAULT TABLE     6 BORON-CARBIDE enthalpy vs temperature
+ DEFAULT TABLE    13 BORON-CARBIDE temperature vs enthalpy
+ DEFAULT TABLE    20 BORON-CARBIDE specific heat vs temperature
+ DEFAULT TABLE    27 BORON-CARBIDE thermal conductivity vs temperature
+ DEFAULT TABLE    40 BORON-CARBIDE density vs temperature
+ DEFAULT TABLE     7 SILVER-INDIUM-CADMIUM enthalpy vs temperature
+ DEFAULT TABLE    14 SILVER-INDIUM-CADMIUM temperature vs enthalpy
+ DEFAULT TABLE    21 SILVER-INDIUM-CADMIUM specific heat vs temperature
+ DEFAULT TABLE    28 SILVER-INDIUM-CADMIUM thermal conductivity vs temperature
+ DEFAULT TABLE    41 SILVER-INDIUM-CADMIUM density vs temperature
+ DEFAULT TABLE    44 EUTECTIC thermal conductivity vs temperature
+ DEFAULT TABLE    43 EUTECTIC density vs temperature
+ DEFAULT TABLE    51 URANIUM-METAL enthalpy vs temperature
+ DEFAULT TABLE    52 URANIUM-METAL temperature vs enthalpy
+ DEFAULT TABLE    50 URANIUM-METAL specific heat vs temperature
+ DEFAULT TABLE    49 URANIUM-METAL thermal conductivity vs temperature
+ DEFAULT TABLE    48 URANIUM-METAL density vs temperature
+ DEFAULT TABLE    56 GRAPHITE enthalpy vs temperature
+ DEFAULT TABLE    57 GRAPHITE temperature vs enthalpy
+ DEFAULT TABLE    55 GRAPHITE specific heat vs temperature
+ DEFAULT TABLE    54 GRAPHITE thermal conductivity vs temperature
+ DEFAULT TABLE    53 GRAPHITE density vs temperature
+ DEFAULT TABLE    45 CONCRETE specific heat vs temperature
+ DEFAULT TABLE    46 CONCRETE thermal conductivity vs temperature
+ DEFAULT TABLE    47 CONCRETE density vs temperature
+ CHAPMAN-ENSKOG 2000 OXYGEN thermal conductivity vs temperature
+ CHAPMAN-ENSKOG 2000 OXYGEN viscosity vs temperature
+ CHAPMAN-ENSKOG 2000 CARBON-DIOXIDE thermal conductivity vs temperature
+ CHAPMAN-ENSKOG 2000 CARBON-DIOXIDE viscosity vs temperature
+ CHAPMAN-ENSKOG 2000 CARBON-MONOXIDE thermal conductivity vs temperature
+ CHAPMAN-ENSKOG 2000 CARBON-MONOXIDE viscosity vs temperature
+ CHAPMAN-ENSKOG 2000 NITROGEN thermal conductivity vs temperature
+ CHAPMAN-ENSKOG 2000 NITROGEN viscosity vs temperature
+ CHAPMAN-ENSKOG 2000 NITRIC-OXIDE thermal conductivity vs temperature
+ CHAPMAN-ENSKOG 2000 NITRIC-OXIDE viscosity vs temperature
+ CHAPMAN-ENSKOG 2000 NITROUS-OXIDE thermal conductivity vs temperature
+ CHAPMAN-ENSKOG 2000 NITROUS-OXIDE viscosity vs temperature
+ CHAPMAN-ENSKOG 2000 AMMONIA thermal conductivity vs temperature
+ CHAPMAN-ENSKOG 2000 AMMONIA viscosity vs temperature
+ CHAPMAN-ENSKOG 2000 ACETYLENE thermal conductivity vs temperature
+ CHAPMAN-ENSKOG 2000 ACETYLENE viscosity vs temperature
+ CHAPMAN-ENSKOG 2000 METHANE thermal conductivity vs temperature
+ CHAPMAN-ENSKOG 2000 METHANE viscosity vs temperature
+ CHAPMAN-ENSKOG 2000 ETHYLENE thermal conductivity vs temperature
+ CHAPMAN-ENSKOG 2000 ETHYLENE viscosity vs temperature
+ CHAPMAN-ENSKOG 2000 URANIUM-HEXAFLUORIDE viscosity vs temperature
+ DEFAULT TABLE    58 ALUMINUM enthalpy vs temperature
+ DEFAULT TABLE    59 ALUMINUM temperature vs enthalpy
+ DEFAULT TABLE    60 ALUMINUM specific heat vs temperature
+ DEFAULT TABLE    61 ALUMINUM thermal conductivity vs temperature
+ DEFAULT TABLE    62 ALUMINUM density vs temperature
+ DEFAULT TABLE    84 ALUMINUM-OXIDE enthalpy vs temperature
+ DEFAULT TABLE    85 ALUMINUM-OXIDE temperature vs enthalpy
+ DEFAULT TABLE    86 ALUMINUM-OXIDE specific heat vs temperature
+ DEFAULT TABLE    87 ALUMINUM-OXIDE thermal conductivity vs temperature
+ DEFAULT TABLE    88 ALUMINUM-OXIDE density vs temperature
+ DEFAULT TABLE    63 CADMIUM enthalpy vs temperature
+ DEFAULT TABLE    64 CADMIUM temperature vs enthalpy
+ DEFAULT TABLE    65 CADMIUM specific heat vs temperature
+ DEFAULT TABLE    66 CADMIUM thermal conductivity vs temperature
+ DEFAULT TABLE    67 CADMIUM density vs temperature
+ DEFAULT TABLE    68 STAINLESS-STEEL-304 enthalpy vs temperature
+ DEFAULT TABLE    69 STAINLESS-STEEL-304 temperature vs enthalpy
+ DEFAULT TABLE    70 STAINLESS-STEEL-304 specific heat vs temperature
+ DEFAULT TABLE    71 STAINLESS-STEEL-304 thermal conductivity vs temperature
+ DEFAULT TABLE    72 STAINLESS-STEEL-304 density vs temperature
+ DEFAULT TABLE    73 LITHIUM-ALUMINUM enthalpy vs temperature
+ DEFAULT TABLE    74 LITHIUM-ALUMINUM temperature vs enthalpy
+ DEFAULT TABLE    75 LITHIUM-ALUMINUM specific heat vs temperature
+ DEFAULT TABLE    76 LITHIUM-ALUMINUM thermal conductivity vs temperature
+ DEFAULT TABLE    77 LITHIUM-ALUMINUM density vs temperature
+ DEFAULT TABLE    78 URANIUM-ALUMINUM enthalpy vs temperature
+ DEFAULT TABLE    79 URANIUM-ALUMINUM temperature vs enthalpy
+ DEFAULT TABLE    80 URANIUM-ALUMINUM specific heat vs temperature
+ DEFAULT TABLE    81 URANIUM-ALUMINUM thermal conductivity vs temperature
+ DEFAULT TABLE    82 URANIUM-ALUMINUM density vs temperature
+ DEFAULT TABLE    89 CARBON-STEEL enthalpy vs temperature
+ DEFAULT TABLE    90 CARBON-STEEL temperature vs enthalpy
+ DEFAULT TABLE    91 CARBON-STEEL specific heat vs temperature
+ DEFAULT TABLE    92 CARBON-STEEL thermal conductivity vs temperature
+ DEFAULT TABLE    93 CARBON-STEEL density vs temperature
+ DEFAULT TABLE    94 B4C-INT enthalpy vs temperature
+ DEFAULT TABLE    95 B4C-INT temperature vs enthalpy
+ DEFAULT TABLE    20 B4C-INT specific heat vs temperature
+ DEFAULT TABLE    27 B4C-INT thermal conductivity vs temperature
+ DEFAULT TABLE    40 B4C-INT density vs temperature
+ DEFAULT TABLE    96 ZRO2-INT enthalpy vs temperature
+ DEFAULT TABLE    97 ZRO2-INT temperature vs enthalpy
+ DEFAULT TABLE    16 ZRO2-INT specific heat vs temperature
+ DEFAULT TABLE    23 ZRO2-INT thermal conductivity vs temperature
+ DEFAULT TABLE    36 ZRO2-INT density vs temperature
+ DEFAULT TABLE    98 UO2-INT enthalpy vs temperature
+ DEFAULT TABLE    99 UO2-INT temperature vs enthalpy
+ DEFAULT TABLE    17 UO2-INT specific heat vs temperature
+ DEFAULT TABLE    24 UO2-INT thermal conductivity vs temperature
+ DEFAULT TABLE    37 UO2-INT density vs temperature
+
+
+ The following constant properties table is available.
+ If negative, then that property for that material is undefined.
+
+    DENSITY   MELT TEMP.  LAT.HT.FUS.  LJ-SIGMA   LJ-EPSILON
+    KG/M**3       K          J/KG         ANG         K      MATERIAL
+
+ -1.0000E+03 -1.0000E+03 -1.0000E+03 -1.0000E+03 -1.0000E+03 WATER
+ -1.0000E+03 -1.0000E+03 -1.0000E+03  2.6410E+00  8.0910E+02 STEAM
+ -1.0000E+03 -1.0000E+03 -1.0000E+03  3.7110E+00  7.8600E+01 AIR
+ -1.0000E+03 -1.0000E+03 -1.0000E+03  2.8270E+00  5.9700E+01 HYDROGEN
+ -1.0000E+03 -1.0000E+03 -1.0000E+03  2.5510E+00  1.0220E+01 HELIUM
+ -1.0000E+03 -1.0000E+03 -1.0000E+03  3.5420E+00  9.3300E+01 ARGON
+ -1.0000E+03 -1.0000E+03 -1.0000E+03  2.9480E+00  3.9300E+01 DEUTERIUM
+  6.5000E+03  2.0980E+03  2.2500E+05 -1.0000E+03 -1.0000E+03 ZIRCALOY
+  5.6000E+03  2.9900E+03  7.0700E+05 -1.0000E+03 -1.0000E+03 ZIRCONIUM-OXIDE
+  1.0960E+04  3.1130E+03  2.7400E+05 -1.0000E+03 -1.0000E+03 URANIUM-DIOXIDE
+  7.9300E+03  1.7000E+03  2.6800E+05 -1.0000E+03 -1.0000E+03 STAINLESS-STEEL
+  5.1800E+03  1.8700E+03  5.9800E+05 -1.0000E+03 -1.0000E+03 STAINLESS-STEEL-OXIDE
+  2.5200E+03  2.6200E+03  5.0000E+05 -1.0000E+03 -1.0000E+03 BORON-CARBIDE
+  9.6894E+03  1.0750E+03  9.8000E+04 -1.0000E+03 -1.0000E+03 SILVER-INDIUM-CADMIUM
+  8.7300E+03  2.6060E+03  2.5000E+05 -1.0000E+03 -1.0000E+03 EUTECTIC
+  1.8210E+04  1.4060E+03  5.0250E+04 -1.0000E+03 -1.0000E+03 URANIUM-METAL
+  1.7300E+03  3.8660E+03 -1.0000E+03 -1.0000E+03 -1.0000E+03 GRAPHITE
+ -1.0000E+03 -1.0000E+03 -1.0000E+03 -1.0000E+03 -1.0000E+03 CONCRETE
+ -1.0000E+03 -1.0000E+03 -1.0000E+03  3.4670E+00  1.0670E+02 OXYGEN
+ -1.0000E+03 -1.0000E+03 -1.0000E+03  3.9410E+00  1.9520E+02 CARBON-DIOXIDE
+ -1.0000E+03 -1.0000E+03 -1.0000E+03  3.6900E+00  9.1700E+01 CARBON-MONOXIDE
+ -1.0000E+03 -1.0000E+03 -1.0000E+03  3.7980E+00  7.1400E+01 NITROGEN
+ -1.0000E+03 -1.0000E+03 -1.0000E+03  3.4920E+00  1.1670E+02 NITRIC-OXIDE
+ -1.0000E+03 -1.0000E+03 -1.0000E+03  3.8280E+00  2.3240E+02 NITROUS-OXIDE
+ -1.0000E+03 -1.0000E+03 -1.0000E+03  2.9000E+00  5.5830E+02 AMMONIA
+ -1.0000E+03 -1.0000E+03 -1.0000E+03  4.0330E+00  2.3180E+02 ACETYLENE
+ -1.0000E+03 -1.0000E+03 -1.0000E+03  3.7580E+00  1.4860E+02 METHANE
+ -1.0000E+03 -1.0000E+03 -1.0000E+03  4.1630E+00  2.2470E+02 ETHYLENE
+ -1.0000E+03 -1.0000E+03 -1.0000E+03  5.9670E+00  2.3680E+02 URANIUM-HEXAFLUORIDE
+  2.3650E+03  9.3300E+02  3.9780E+05 -1.0000E+03 -1.0000E+03 ALUMINUM
+  4.0000E+03  2.3270E+03  1.0700E+06 -1.0000E+03 -1.0000E+03 ALUMINUM-OXIDE
+  7.5900E+03  5.9400E+02  5.5000E+04 -1.0000E+03 -1.0000E+03 CADMIUM
+  7.7006E+03  1.7000E+03  2.6920E+05 -1.0000E+03 -1.0000E+03 STAINLESS-STEEL-304
+  2.3280E+03  9.1700E+02  3.9845E+05 -1.0000E+03 -1.0000E+03 LITHIUM-ALUMINUM
+  3.1819E+03  1.1285E+03  2.9000E+05 -1.0000E+03 -1.0000E+03 URANIUM-ALUMINUM
+  7.7529E+03  1.8109E+03  2.7196E+05 -1.0000E+03 -1.0000E+03 CARBON-STEEL
+  2.5200E+03  1.7000E+03  5.0000E+05 -1.0000E+03 -1.0000E+03 B4C-INT
+  5.6000E+03  2.8000E+03  7.0700E+05 -1.0000E+03 -1.0000E+03 ZRO2-INT
+  1.0960E+04  2.8000E+03  2.7400E+05 -1.0000E+03 -1.0000E+03 UO2-INT
+ -1.0000E+03 -1.0000E+03 -1.0000E+03 -1.0000E+03 -1.0000E+03 DUM
+
+
+ Additional properties of molten pools are defined as follows
+
+     VIS-OXY-COR-CH based on CORCON model
+     VIS-MET-COR-CH based on CORCON model
+     VIS-OXY-COR-BY based on CORCON model
+     VIS-MET-COR-BY based on CORCON model
+     VIS-OXY-LH-CH  based on CORCON model
+     VIS-MET-LH-CH  based on CORCON model
+     VIS-OXY-LH-BY  based on CORCON model
+     VIS-MET-LH-BY  based on CORCON model
+     BET-OXY-COR-CH based on CORCON model
+     BET-MET-COR-CH based on CORCON model
+     BET-OXY-COR-BY based on CORCON model
+     BET-MET-COR-BY based on CORCON model
+     BET-OXY-LH-CH  based on CORCON model
+     BET-MET-LH-CH  based on CORCON model
+     BET-OXY-LH-BY  based on CORCON model
+     BET-MET-LH-BY  based on CORCON model
+
+  Here 'VIS' and 'BET' are the viscosity and thermal expansion coefficient
+    'OXY' and 'MET' refer to the oxidic and metalic melts
+    'COR' and 'LH' refer to pools in the core and lower head
+    'CH' and 'BY' refer to pools in the channel and bypass
+
+
+ END OF EDIT FOR MP  PACKAGE
+
+
+          *************************************
+          *                                   *
+          *  EXTERNAL DATA FILE PACKAGE EDIT  *
+          *                                   *
+          *************************************
+
+
+
+ FILE   1, NAMED PRESSURES        IS A WRITE FILE
+
+   MOUNTED ON UNIT NUMBER  80.  SYSTEM NAME OF FILE IS
+     PRESSURES.DAT
+   FILE FORMAT IS (8E20.12)                FILE TIME OFFSET IS  0.00000E+00 (S)
+
+   RECORD FREQUENCY INFORMATION IN SEC:
+        TIME           DTREC
+      1.00000E+01    1.00000E+01
+0  NO RECORDS HAVE BEEN WRITTEN
+
+ CHANNEL     DATA        DATABASE
+ NUMBER      VALUE       ELEMENT
+
+    1     1.01235E+05    CVH-P.1                 
+    2     1.01235E+05    CVH-P.2                 
+
+ END OF EDIT FOR EDF PACKAGE
+
+
+ GRAPHICS FILE MASTER KEY CONTAINS
+     92 VARIABLE NAMES   441 KEY VARIABLES
+  THERE ARE    169 VARIABLES PER TIME RECORD
+
+
+
+ GRAPHICS KEY DIRECTORY
+
+ CFVALU                  CPU                     CVH-ATM-FR              CVH-CLIQLEV             CVH-CPUC                
+ CVH-CPUE                CVH-CPUR                CVH-CPUT                CVH-CVOLLIQ             CVH-E                   
+ CVH-E.1                 CVH-E.2                 CVH-E.3                 CVH-E.4                 CVH-E.5                 
+ CVH-ECV                 CVH-ECV.1               CVH-ECV.2               CVH-ECV.3               CVH-ECV.4               
+ CVH-ECV.5               CVH-H                   CVH-H.1                 CVH-H.2                 CVH-H.3                 
+ CVH-H.4                 CVH-H.5                 CVH-LIQLEV              CVH-MASS                CVH-MASS.1              
+ CVH-MASS.2              CVH-MASS.3              CVH-MASS.4              CVH-MASS.5              CVH-P                   
+ CVH-PPART.1             CVH-PPART.2             CVH-PPART.3             CVH-PPART.4             CVH-PPART.5             
+ CVH-PSAT(TLIQ)          CVH-PSAT(TVAP)          CVH-QUALITY             CVH-RHO                 CVH-RHO.1               
+ CVH-RHO.2               CVH-RHO.3               CVH-RHO.4               CVH-RHO.5               CVH-TLIQ                
+ CVH-TOT-E               CVH-TOT-M               CVH-TSAT(A)             CVH-TSAT(P)             CVH-TVAP                
+ CVH-VELLIQCV            CVH-VELVAPCV            CVH-VIRVOLIQ            CVH-VIRVOVAP            CVH-VOID-P              
+ CVH-VOID-T              CVH-VOLFOG              CVH-VOLLIQ              CVH-VOLVAP              CVH-X.3                 
+ CVH-X.4                 CVH-X.5                 CYCLE                   DT                      EDF.1                   
+ FL-EFLOW.A              FL-EFLOW.P              FL-I-EFLOW.A            FL-I-EFLOW.P            FL-I-H2O-MFLOW          
+ FL-I-MFLOW.1            FL-I-MFLOW.2            FL-I-MFLOW.3            FL-I-MFLOW.4            FL-I-MFLOW.5            
+ FL-MFLOW                FL-MFLOW.1              FL-MFLOW.2              FL-MFLOW.3              FL-MFLOW.4              
+ FL-MFLOW.5              FL-MFLOWC               FL-VELLIQ               FL-VELVAP               FL-VOID                 
+ LOCALWARP               MESSAGES                MESSAGES-Details        MESSAGES-Time           TIME                    
+ WARP                    
+
+
+
+
+
+ *** MESSAGE FROM SUBROUTINE XFLUSH: ***
+ BUFFER FLUSHING FOR MELCOR OUTPUT FILES
+ HAS BEEN DISABLED BY INPUT RECORD 'NOFLUSH'
+ Subroutine XFLUSH is currently used for PLOT and RESTART files:
+  Uses FLUSH intrinsic
+ To change this treatment, modify INCLUDE blocks XFLUSH1,
+ XFLUSH2, and XFLUSH3 used by subroutine XFLUSH
+
+ Restart written TIME= 0.00000E+00 CYCLE= 0        
+   TITLE=HVAC                                                                  
+         GWFOBJZYU   6/07/23  14:15:35 
+
+
+
+     ALL PROCESSED RECORD IMAGES HAVE BEEN READ

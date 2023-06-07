@@ -7,7 +7,7 @@
 
 *EOR* MELGEN
 
-TITLE     SAMPLE
+TITLE     HVAC
 
 **********************************************************
 *                       NGC INPUT                        *
@@ -88,13 +88,16 @@ EDF001A1  CVH-P.2       * Pressure CVH-2
 
 *EOR* MELCOR
 
-TITLE       SAMPLE
+WARNINGLEVEL 0
+
+TITLE       HVAC
 
 CPULEFT     100.
 CPULIM      100000.
-CYMESF      100 100
+CYMESF      10 10
 
 RESTART     -1
+
 TEND 100
 
 *           TIME        DTMAX     DTMIN    DTEDT     DTPLT     DTRST
