@@ -40,7 +40,9 @@ class EnvHVAC(Env):
             low=low_obs, high=high_obs, dtype=np.float64)
 
         # Action space
-        low_act = np.zeros(n_actions)
+        # low_act = np.zeros(n_actions)
+        low_act = max_vel * -np.ones(n_actions)
+
         high_act = max_vel * np.ones(n_actions)
         self.action_space = spaces.Box(
             low=low_act, high=high_act, dtype=np.float64)
@@ -143,10 +145,17 @@ class EnvHVAC(Env):
         info = self.__get_last_record()
         obs = [value for key, value in info.items() if key.startswith('CV')]
         reward, distances = self.__compute_distances(info)
+        
+        # Check ending conditions
         terminated = self.__check_termination(distances, self.max_deviation)
         truncated = self.__check_truncation()
 
-        return np.array(obs, np.float64), -reward, truncated, terminated, info
+        if terminated:
+            reward = -1
+        else:
+            reward = 0
+        
+        return np.array(obs, np.float64), reward, truncated, terminated, info
 
     def render(self, time_bt_frames=0.1):
         """
