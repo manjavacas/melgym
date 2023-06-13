@@ -1,7 +1,5 @@
 # MELCOR/MELGEN
-melgym/exec/MELGEN
-melgym/exec/MELCOR
-
+# melgym/exec/
 melgym/out/
 
 # Training
