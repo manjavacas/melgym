@@ -7,7 +7,7 @@
 
 *EOR* MELGEN
 
-TITLE     HVAC
+TITLE     SIMPLE
 
 **********************************************************
 *                       NGC INPUT                        *
@@ -90,7 +90,7 @@ EDF001A1  CVH-P.2       * Pressure CVH-2
 
 WARNINGLEVEL 0
 
-TITLE       HVAC
+TITLE       SIMPLE
 
 CPULEFT     100.
 CPULIM      100000.
