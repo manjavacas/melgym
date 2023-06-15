@@ -41,11 +41,13 @@ class EnvHVAC(Env):
 
         # Action space
         # low_act = np.zeros(n_actions)
-        low_act = max_vel * -np.ones(n_actions)
+        # low_act = max_vel * -np.ones(n_actions)
 
-        high_act = max_vel * np.ones(n_actions)
-        self.action_space = spaces.Box(
-            low=low_act, high=high_act, dtype=np.float64)
+        # high_act = max_vel * np.ones(n_actions)
+        # self.action_space = spaces.Box(
+        #     low=low_act, high=high_act, dtype=np.float64)
+        
+        self.action_space = spaces.Discrete(3)
 
         # Files
         self.input_path = os.path.join(DATA_DIR, input_file)
@@ -56,6 +58,7 @@ class EnvHVAC(Env):
         self.control_horizon = control_horizon
         self.max_deviation = max_deviation
         self.steps_counter = 0
+        self.current_tend = 0
 
         # Tookit
         self.toolkit = Toolkit(self.input_path)
@@ -95,7 +98,7 @@ class EnvHVAC(Env):
         self.steps_counter = 1
         self.__update_time()
 
-        # First simulation
+        # MELGEN execution
         with open(self.melog_path, 'a') as log:
             subprocess.call([MELGEN_PATH, self.melin_path],
                             cwd=OUTPUT_DIR, stdout=log, stderr=subprocess.STDOUT)
@@ -127,10 +130,17 @@ class EnvHVAC(Env):
         Returns:
             np.array: environment observation after control action (current pressures).
             float: reward value. Computed as the sum of the distances of every room pressure to its initial value.
-            bool: termination flag. It will be True when pressures converge.
-            bool: truncated. Not used.
+            bool: termination flag. It will be True if any pressure exceeds its imposed limits.
+            bool: truncated flag. It will be True if pressures keep stable until the imposed time step limit.
             dict: additional step information (last recorded time and pressures).
         """
+
+        # Convert discrete action to continuous value (-1, 0, 1)
+        if isinstance(action, (int, np.integer)):
+            if action == 2:
+                action = [-1.0]
+            else:
+                action = [float(action)]
 
         # Input edition
         self.__update_time()
@@ -147,15 +157,15 @@ class EnvHVAC(Env):
         reward, distances = self.__compute_distances(info)
         
         # Check ending conditions
-        terminated = self.__check_termination(distances, self.max_deviation)
+        terminated = self.__check_termination(distances)
         truncated = self.__check_truncation()
 
         if terminated:
-            reward = -1
+            reward = -reward
         else:
             reward = 0
         
-        return np.array(obs, np.float64), reward, truncated, terminated, info
+        return np.array(obs, np.float64), reward, terminated, truncated, info
 
     def render(self, time_bt_frames=0.1):
         """
@@ -218,12 +228,12 @@ class EnvHVAC(Env):
                 for i, line in enumerate(lines):
                     if 'TEND' in line:
                         edit_line = i
-                        current_tend = int(
+                        self.current_tend = int(
                             line.split()[1]) if self.steps_counter > 1 else 0
                         break
                 if edit_line != -1:
                     new_tend = str(
-                        current_tend + self.control_horizon * self.steps_counter)
+                        self.current_tend + self.control_horizon * self.steps_counter)
                     lines[edit_line] = ''.join(['TEND ', new_tend, '\n'])
 
                     # Update file with new TEND
@@ -393,29 +403,28 @@ class EnvHVAC(Env):
 
         return self.edf_path
 
-    def __check_termination(self, distances, max_deviation=20):
+    def __check_termination(self, distances):
         """
         Checks the completion of an episode. 
-        An episode ends when at least one pressure has moved epsilon Pa away from its original value.
+        An episode ends when at least one pressure has moved k Pa away from its original value, where k is the class variable max_deviation.
 
         Args:
             distances (dict): computed distances from original to current pressures.
-            max_deviation (float, optional): maximum allowed deviation. Defaults to 20.
 
         Returns:
             bool: True if at least one pressure is out of its allowed limits.
         """
-        return any(valor > max_deviation for valor in distances.values())
+        return any(valor > self.max_deviation for valor in distances.values())
 
-    def __check_truncation(self, max_steps=100000):
+    def __check_truncation(self, max_tend=15000):
         """
         Checks the truncation condition of an episode. 
-        An episode is truncated if the number of steps is greater than a value specified in max_steps.
+        An episode is truncated if the number of steps is greater than a value specified in max_tend.
 
         Args:
-            max_steps (int, optional): maximum number of steps for an episode. Defaults to 100000.
+            max_tend (int, optional): maximum TEND for an episode. Defaults to 15000.
 
         Returns:
             bool: True if the maximum number of steps have been raised.
         """
-        return self.steps_counter > max_steps
+        return self.current_tend > max_tend

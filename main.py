@@ -13,28 +13,32 @@ from datetime import datetime
 N_BRANCHES = 1
 N_ROOMS = 2
 
-RUN_ID = 'PPO-' + str(datetime.now())
+MAX_DEVIATION = 20
+MAX_VEL = 1
+CONTROL_HORIZON = 5
 
 
 def train(env):
 
     env_eval = gym.make('simple-v0', n_obs=N_ROOMS, n_actions=N_BRANCHES,
-                        control_horizon=10, max_deviation=20, max_vel=1)
+                        control_horizon=CONTROL_HORIZON, max_deviation=MAX_DEVIATION, max_vel=MAX_VEL)
+
+    # Callbacks
     eval_callback = EvalCallback(
-        env_eval, best_model_save_path='./best_models/' + RUN_ID, eval_freq=100, n_eval_episodes=1)
+        env_eval, best_model_save_path='./best_models', eval_freq=5000, n_eval_episodes=1)
 
     model = PPO('MlpPolicy', env, verbose=1,
-                tensorboard_log='./tensorboard/' + RUN_ID)
-    model.learn(total_timesteps=1000000,
-                progress_bar=True, callback=eval_callback)
+                tensorboard_log='./tensorboard')
+    model.learn(total_timesteps=100000,
+                progress_bar=True, callback=[eval_callback])
 
 
 def run(env):
-    model = PPO.load('./best_models/' + RUN_ID)
+    model = PPO.load('best_models/best_model')
     obs, _ = env.reset()
     done = False
     truncated = False
-    while True:
+    while not done and not truncated:
         action, _ = model.predict(obs)
         obs, reward, truncated, done, info = env.step(action)
         env.render()
@@ -43,7 +47,7 @@ def run(env):
 
 if __name__ == '__main__':
     env = gym.make('simple-v0', n_obs=N_ROOMS, n_actions=N_BRANCHES,
-                   control_horizon=10, max_deviation=20, max_vel=1)
+                   control_horizon=CONTROL_HORIZON, max_deviation=MAX_DEVIATION, max_vel=MAX_VEL)
     train(env)
     run(env)
     env.close()
