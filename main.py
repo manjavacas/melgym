@@ -34,7 +34,7 @@ def train(env):
 
 
 def run(env):
-    model = PPO.load('best_models/best_model')
+    model = PPO.load('best_models/PPO-discrete')
     obs, _ = env.reset()
     done = False
     truncated = False
@@ -48,6 +48,6 @@ def run(env):
 if __name__ == '__main__':
     env = gym.make('simple-v0', n_obs=N_ROOMS, n_actions=N_BRANCHES,
                    control_horizon=CONTROL_HORIZON, max_deviation=MAX_DEVIATION, max_vel=MAX_VEL)
-    train(env)
+    #train(env)
     run(env)
     env.close()
