@@ -141,6 +141,8 @@ class EnvHVAC(Env):
                 action = [-1.0]
             else:
                 action = [float(action)]
+        elif isinstance(action, np.ndarray) and action.size == 1:
+            action = [float(action)]
 
         # Input edition
         self.__update_time()
