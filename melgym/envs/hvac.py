@@ -41,13 +41,12 @@ class EnvHVAC(Env):
 
         # Action space
         # low_act = np.zeros(n_actions)
-        # low_act = max_vel * -np.ones(n_actions)
+        low_act = max_vel * -np.ones(n_actions)
+        high_act = max_vel * np.ones(n_actions)
+        self.action_space = spaces.Box(
+            low=low_act, high=high_act, dtype=np.float64)
 
-        # high_act = max_vel * np.ones(n_actions)
-        # self.action_space = spaces.Box(
-        #     low=low_act, high=high_act, dtype=np.float64)
-        
-        self.action_space = spaces.Discrete(3)
+        # self.action_space = spaces.Discrete(3)
 
         # Files
         self.input_path = os.path.join(DATA_DIR, input_file)
@@ -71,6 +70,12 @@ class EnvHVAC(Env):
             else:
                 raise Exception(
                     'The specified render format is not available.')
+
+        # Metrics
+        self.last_velocity = 0
+        self.last_pressures = {}
+        self.last_distances = {}
+        self.last_truncated = False
 
     def reset(self, seed=None, options=None):
         """
@@ -112,6 +117,10 @@ class EnvHVAC(Env):
         # Add CFs redefinition to MELCOR input
         self.__add_cfs_redefinition()
 
+        # Reset history of episodic metrics
+        self.last_velocity = 0
+        self.last_pressures = {}
+
         return np.array(obs, dtype=np.float64), info
 
     def step(self, action):
@@ -135,14 +144,14 @@ class EnvHVAC(Env):
             dict: additional step information (last recorded time and pressures).
         """
 
-        # Convert discrete action to continuous value (-1, 0, 1)
-        if isinstance(action, (int, np.integer)):
-            if action == 2:
-                action = [-1.0]
-            else:
-                action = [float(action)]
-        elif isinstance(action, np.ndarray) and action.size == 1:
-            action = [float(action)]
+        # # (Ad-hoc) Convert discrete action to continuous value (-1, 0, 1)
+        # if isinstance(action, (int, np.integer)):
+        #     if action == 2:
+        #         action = [-1.0]
+        #     else:
+        #         action = [float(action)]
+        # elif isinstance(action, np.ndarray) and action.size == 1:
+        #     action = [float(action)]
 
         # Input edition
         self.__update_time()
@@ -157,7 +166,7 @@ class EnvHVAC(Env):
         info = self.__get_last_record()
         obs = [value for key, value in info.items() if key.startswith('CV')]
         reward, distances = self.__compute_distances(info)
-        
+
         # Check ending conditions
         terminated = self.__check_termination(distances)
         truncated = self.__check_truncation()
@@ -166,7 +175,14 @@ class EnvHVAC(Env):
             reward = -reward
         else:
             reward = 0
-        
+
+        # Update history
+        self.last_velocity = action[0]
+        self.last_pressures = {key: value for key,
+                               value in info.items() if key.startswith('CV')}
+        self.last_distances = distances
+        self.last_truncated = truncated
+
         return np.array(obs, np.float64), reward, terminated, truncated, info
 
     def render(self, time_bt_frames=0.1):
@@ -181,7 +197,7 @@ class EnvHVAC(Env):
             info = self.__get_last_record()
 
             df = pd.read_csv(self.__get_edf_path(),
-                            delim_whitespace=True, header=None)
+                             delim_whitespace=True, header=None)
             df = df.set_index(0)
             column_names = [key for key in info.keys()
                             if key.startswith('CV')]
@@ -193,7 +209,7 @@ class EnvHVAC(Env):
 
             plt.draw()
             plt.pause(time_bt_frames)
-            plt.close('all')  
+            plt.close('all')
         else:
             pass
 
