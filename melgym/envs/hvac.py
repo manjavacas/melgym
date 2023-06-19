@@ -19,7 +19,7 @@ class EnvHVAC(Env):
     """
     metadata = {'render_modes': ['human']}
 
-    def __init__(self, n_obs, n_actions, input_file, control_horizon=100, max_deviation=20, max_vel=10, render_mode=None):
+    def __init__(self, n_obs, n_actions, input_file, control_horizon=10, max_deviation=20, max_vel=10, render_mode=None):
         """
         Class constructor.
 
@@ -27,7 +27,7 @@ class EnvHVAC(Env):
             n_obs (int): number of HVAC served rooms.
             n_actions (int): number of inlet air velocities to be controlled.
             input_file (str): name of the file with the MELGEN/MELCOR input data.
-            control_horizon (int, optional): number of simulation cycles. Defaults to 100.
+            control_horizon (int, optional): number of simulation cycles. Defaults to 10.
             max_deviation (float, optional): maximum distance allowed from original pressures.
             max_vel (float): maximum value for control actions. Defaults to 10 (m/s).
             render_mode (str): render option.
@@ -37,14 +37,14 @@ class EnvHVAC(Env):
         low_obs = np.zeros(n_obs)
         high_obs = np.inf * np.ones(n_obs)
         self.observation_space = spaces.Box(
-            low=low_obs, high=high_obs, dtype=np.float32)
+            low=low_obs, high=high_obs, dtype=np.float64)
 
         # Action space
         # low_act = np.zeros(n_actions)
         low_act = max_vel * -np.ones(n_actions)
         high_act = max_vel * np.ones(n_actions)
         self.action_space = spaces.Box(
-            low=low_act, high=high_act, dtype=np.float32)
+            low=low_act, high=high_act, dtype=np.float64)
 
         # self.action_space = spaces.Discrete(3)
 
@@ -73,9 +73,9 @@ class EnvHVAC(Env):
 
         # Metrics
         self.last_velocity = 0
-        self.last_pressures = {}
-        self.last_distances = {}
         self.last_truncated = False
+        # self.last_pressures = {}
+        # self.last_distances = {}
 
     def reset(self, seed=None, options=None):
         """
@@ -119,9 +119,8 @@ class EnvHVAC(Env):
 
         # Reset history of episodic metrics
         self.last_velocity = 0
-        self.last_pressures = {}
 
-        return np.array(obs, dtype=np.float32), info
+        return np.array(obs, dtype=np.float64), info
 
     def step(self, action):
         """
@@ -178,12 +177,12 @@ class EnvHVAC(Env):
 
         # Update history
         self.last_velocity = action[0]
-        self.last_pressures = {key: value for key,
-                               value in info.items() if key.startswith('CV')}
-        self.last_distances = distances
         self.last_truncated = truncated
+        # self.last_pressures = {key: value for key,
+        #                        value in info.items() if key.startswith('CV')}
+        # self.last_distances = distances
 
-        return np.array(obs, np.float32), reward, terminated, truncated, info
+        return np.array(obs, np.float64), reward, terminated, truncated, info
 
     def render(self, time_bt_frames=0.1):
         """
@@ -280,7 +279,7 @@ class EnvHVAC(Env):
 
             record['time'] = float(last_line[0])
             for i, cv_id in enumerate(self.__get_edf_cvs()):
-                record[cv_id] = np.float32(last_line[i+1])
+                record[cv_id] = np.float64(last_line[i+1])
 
         return record
 

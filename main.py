@@ -35,17 +35,15 @@ class MetricsCallback(BaseCallback):
             'sim_data/Velocity', self.training_env.get_attr('last_velocity')[0])
         self.logger.record(
             'sim_data/Truncated', self.training_env.get_attr('last_truncated')[0])
-        for cv, pressure in self.training_env.get_attr('last_pressures')[0].items():
-            self.logger.record('sim_data/Pressure-' + cv, pressure)
-        for cv, distance in self.training_env.get_attr('last_distances')[0].items():
-            self.logger.record('sim_data/Distance-' + cv, distance)
+        # for cv, pressure in self.training_env.get_attr('last_pressures')[0].items():
+        #     self.logger.record('sim_data/Pressure-' + cv, pressure)
+        # for cv, distance in self.training_env.get_attr('last_distances')[0].items():
+        #     self.logger.record('sim_data/Distance-' + cv, distance)
 
         return True
 
 
 def train(env):
-
-    model_id = 'model-' + str(TRAIN_TIMESTEPS) + '-' + str(datetime.now())
 
     # Evaluation environment
     env_eval = gym.make('simple-v0', n_obs=N_ROOMS, n_actions=N_BRANCHES,
@@ -55,16 +53,14 @@ def train(env):
     eval_callback = EvalCallback(
         env_eval, best_model_save_path='./best_models', eval_freq=EVAL_FREQ, n_eval_episodes=EVAL_EPISODES)
 
-    model = SAC('MlpPolicy', env, verbose=1,
+    model = PPO('MlpPolicy', env, verbose=1,
                 tensorboard_log='./tensorboard')
     model.learn(total_timesteps=TRAIN_TIMESTEPS,
                 progress_bar=True, callback=[eval_callback, MetricsCallback()])
 
-    return model_id
 
-
-def run(env, model_id):
-    model = SAC.load('best_models/' + model_id)
+def run(env, model_id='best_model'):
+    model = PPO.load('best_models/' + model_id)
     obs, _ = env.reset()
     done = False
     truncated = False
@@ -78,6 +74,6 @@ def run(env, model_id):
 if __name__ == '__main__':
     env = gym.make('simple-v0', n_obs=N_ROOMS, n_actions=N_BRANCHES,
                    control_horizon=CONTROL_HORIZON, max_deviation=MAX_DEVIATION, max_vel=MAX_VEL)
-    model_id = train(env)
-    run(env, model_id)
+    train(env)
+    run(env)
     env.close()
