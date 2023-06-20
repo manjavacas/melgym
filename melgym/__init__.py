@@ -1,9 +1,11 @@
 from gymnasium.envs.registration import register
 
 register(
-    id='simple-v0',
+    id='base-v0',
     entry_point='melgym.envs:EnvHVAC',
     kwargs={
-        'input_file' : 'simple.inp'
+        'input_file' : 'base.inp',
+        'n_actions' : 1,
+        'controlled_cvs' : ['CV003']
     }
 )

@@ -1,7 +1,6 @@
 import os
 import shutil
 import subprocess
-import time
 
 import numpy as np
 import pandas as pd
@@ -19,34 +18,35 @@ class EnvHVAC(Env):
     """
     metadata = {'render_modes': ['human']}
 
-    def __init__(self, n_obs, n_actions, input_file, control_horizon=10, max_deviation=20, max_vel=10, render_mode=None):
+    def __init__(self, input_file, n_actions, controlled_cvs, control_horizon=5, check_done_time=0, max_deviation=20, max_vel=10, render_mode=None):
         """
         Class constructor.
 
         Args:
-            n_obs (int): number of HVAC served rooms.
-            n_actions (int): number of inlet air velocities to be controlled.
             input_file (str): name of the file with the MELGEN/MELCOR input data.
-            control_horizon (int, optional): number of simulation cycles. Defaults to 10.
-            max_deviation (float, optional): maximum distance allowed from original pressures.
+            n_actions (int): number of inlet air velocities to be controlled.
+            controlled_cvs (list): list of controlled CVs IDs (e.g. CV001).
+            control_horizon (int, optional): number of simulation cycles between actions. Defaults to 5.
+            check_done_time (int, optional): simulation time allowed before evaluating the termination condition. Defaults to 0.
+            max_deviation (float, optional): maximum distance allowed from original pressures. Defaults to 20 (Pa).
             max_vel (float): maximum value for control actions. Defaults to 10 (m/s).
             render_mode (str): render option.
         """
 
         # Observation space
+        self.controlled_cvs = controlled_cvs
+        n_obs = len(self.controlled_cvs)
+
         low_obs = np.zeros(n_obs)
         high_obs = np.inf * np.ones(n_obs)
         self.observation_space = spaces.Box(
             low=low_obs, high=high_obs, dtype=np.float64)
 
         # Action space
-        # low_act = np.zeros(n_actions)
-        low_act = max_vel * -np.ones(n_actions)
+        low_act = np.zeros(n_actions)
         high_act = max_vel * np.ones(n_actions)
         self.action_space = spaces.Box(
             low=low_act, high=high_act, dtype=np.float64)
-
-        # self.action_space = spaces.Discrete(3)
 
         # Files
         self.input_path = os.path.join(DATA_DIR, input_file)
@@ -55,6 +55,7 @@ class EnvHVAC(Env):
 
         # Auxiliar variables
         self.control_horizon = control_horizon
+        self.check_done_time = check_done_time
         self.max_deviation = max_deviation
         self.steps_counter = 0
         self.current_tend = 0
@@ -74,8 +75,6 @@ class EnvHVAC(Env):
         # Metrics
         self.last_velocity = 0
         self.last_truncated = False
-        # self.last_pressures = {}
-        # self.last_distances = {}
 
     def reset(self, seed=None, options=None):
         """
@@ -112,13 +111,10 @@ class EnvHVAC(Env):
         info = {'time': 0.0}
         for cv_id in self.__get_edf_cvs():
             info[cv_id] = self.__get_initial_pressure(cv_id)
-        obs = [value for key, value in info.items() if key.startswith('CV')]
+        obs = [value for key, value in info.items() if key in self.controlled_cvs]
 
         # Add CFs redefinition to MELCOR input
         self.__add_cfs_redefinition()
-
-        # Reset history of episodic metrics
-        self.last_velocity = 0
 
         return np.array(obs, dtype=np.float64), info
 
@@ -130,27 +126,18 @@ class EnvHVAC(Env):
             3. Executes a MELCOR simulation during the number of cycles specified in the control horizon.
             4. Gets the last values recorded in the EDF.
             5. Computes the reward based on pressure requirements.
-            6. Evaluates the episode termination condition.
+            6. Evaluates the episode termination and truncation condition.
 
         Args:
             action (np.array): new inlet air velocities.
 
         Returns:
-            np.array: environment observation after control action (current pressures).
+            np.array: environment observation after control action (current controlled pressures).
             float: reward value. Computed as the sum of the distances of every room pressure to its initial value.
             bool: termination flag. It will be True if any pressure exceeds its imposed limits.
             bool: truncated flag. It will be True if pressures keep stable until the imposed time step limit.
             dict: additional step information (last recorded time and pressures).
         """
-
-        # # (Ad-hoc) Convert discrete action to continuous value (-1, 0, 1)
-        # if isinstance(action, (int, np.integer)):
-        #     if action == 2:
-        #         action = [-1.0]
-        #     else:
-        #         action = [float(action)]
-        # elif isinstance(action, np.ndarray) and action.size == 1:
-        #     action = [float(action)]
 
         # Input edition
         self.__update_time()
@@ -163,30 +150,22 @@ class EnvHVAC(Env):
 
         # Get results
         info = self.__get_last_record()
-        obs = [value for key, value in info.items() if key.startswith('CV')]
+        obs = [value for key, value in info.items() if key in self.controlled_cvs]
         reward, distances = self.__compute_distances(info)
 
         # Check ending conditions
         terminated = self.__check_termination(distances)
         truncated = self.__check_truncation()
 
-        if terminated:
-            reward = -reward
-        else:
-            reward = 0
-
         # Update history
         self.last_velocity = action[0]
         self.last_truncated = truncated
-        # self.last_pressures = {key: value for key,
-        #                        value in info.items() if key.startswith('CV')}
-        # self.last_distances = distances
 
-        return np.array(obs, np.float64), reward, terminated, truncated, info
+        return np.array(obs, np.float64), -reward, terminated, truncated, info
 
     def render(self, time_bt_frames=0.1):
         """
-        Plots the pressure values evolution recorded in the EDF.
+        Plots all pressures evolution during simulation time.
 
         Args:
             time_bt_frames (int, optional): time to wait after plotting. Defaults to 0.1.
@@ -344,7 +323,7 @@ class EnvHVAC(Env):
 
     def __compute_distances(self, last_record):
         """
-        Computes the sum of the distances of each CV pressure to their initial (target) value.
+        Computes the sum of the distances of each controlled CV pressure to their initial (target) value.
 
         Args:
             last_record (dict): last recorded data in the EDF.
@@ -356,7 +335,7 @@ class EnvHVAC(Env):
 
         distances = {}
 
-        ids = [id for id in last_record if id.startswith('CV')]
+        ids = [id for id in last_record if id in self.controlled_cvs]
 
         for cv_id in ids:
             distances[cv_id] = abs(
@@ -375,9 +354,7 @@ class EnvHVAC(Env):
             float: initial pressure.
         """
 
-        cv = self.toolkit.get_cv(cv_id)
-
-        return float(cv.get_field('PVOL'))
+        return float(self.toolkit.get_cv(cv_id).get_field('PVOL'))
 
     def __get_edf_cvs(self):
         """
@@ -424,24 +401,27 @@ class EnvHVAC(Env):
         """
         Checks the completion of an episode. 
         An episode ends when at least one pressure has moved k Pa away from its original value, where k is the class variable max_deviation.
+        The termination condition will be evaluated when current_tend >= check_done_time.
 
         Args:
             distances (dict): computed distances from original to current pressures.
 
         Returns:
-            bool: True if at least one pressure is out of its allowed limits.
+            bool: True if at least one pressure is out of its allowed limits. False if termination is not yet evaluable or if pressures are inside their limits.
         """
-        return any(valor > self.max_deviation for valor in distances.values())
 
-    def __check_truncation(self, max_tend=15000):
+        return any(valor > self.max_deviation for valor in distances.values()) and self.current_tend > self.check_done_time
+
+    def __check_truncation(self, max_tend=5_000_000):
         """
-        Checks the truncation condition of an episode. 
+        Checks the truncation condition of an episode. Waits until check_done_time is raised to be evaluated.
         An episode is truncated if the number of steps is greater than a value specified in max_tend.
 
         Args:
-            max_tend (int, optional): maximum TEND for an episode. Defaults to 15000.
+            max_tend (int, optional): maximum TEND for an episode. Defaults to 5e6.
 
         Returns:
-            bool: True if the maximum number of steps have been raised.
+            bool: True if the maximum number of steps have been raised. False if not, or if truncation is not yet evaluable.
         """
-        return self.current_tend > max_tend
+
+        return self.current_tend > max_tend and self.current_tend > self.check_done_time
