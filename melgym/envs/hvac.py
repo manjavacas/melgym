@@ -40,13 +40,13 @@ class EnvHVAC(Env):
         low_obs = np.zeros(n_obs)
         high_obs = np.inf * np.ones(n_obs)
         self.observation_space = spaces.Box(
-            low=low_obs, high=high_obs, dtype=np.float64)
+            low=low_obs, high=high_obs, dtype=np.float32)
 
         # Action space
         low_act = np.zeros(n_actions)
         high_act = max_vel * np.ones(n_actions)
         self.action_space = spaces.Box(
-            low=low_act, high=high_act, dtype=np.float64)
+            low=low_act, high=high_act, dtype=np.float32)
 
         # Files
         self.input_path = os.path.join(DATA_DIR, input_file)
@@ -116,7 +116,7 @@ class EnvHVAC(Env):
         # Add CFs redefinition to MELCOR input
         self.__add_cfs_redefinition()
 
-        return np.array(obs, dtype=np.float64), info
+        return np.array(obs, dtype=np.float32), info
 
     def step(self, action):
         """
@@ -161,7 +161,7 @@ class EnvHVAC(Env):
         self.last_velocity = action[0]
         self.last_truncated = truncated
 
-        return np.array(obs, np.float64), -reward, terminated, truncated, info
+        return np.array(obs, np.float32), -reward, terminated, truncated, info
 
     def render(self, time_bt_frames=0.1):
         """
@@ -258,7 +258,7 @@ class EnvHVAC(Env):
 
             record['time'] = float(last_line[0])
             for i, cv_id in enumerate(self.__get_edf_cvs()):
-                record[cv_id] = np.float64(last_line[i+1])
+                record[cv_id] = np.float32(last_line[i+1])
 
         return record
 

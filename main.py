@@ -45,14 +45,14 @@ def train(env):
     eval_callback = EvalCallback(
         env_eval, best_model_save_path='./best_models/', eval_freq=EVAL_FREQ, n_eval_episodes=EVAL_EPISODES)
 
-    model = PPO('MlpPolicy', env, verbose=1,
+    model = SAC('MlpPolicy', env, verbose=1,
                 tensorboard_log='./tensorboard/')
     model.learn(total_timesteps=TRAIN_TIMESTEPS,
                 progress_bar=True, callback=[eval_callback, MetricsCallback()])
 
 
 def run(env, model_id='best_model'):
-    model = PPO.load('./best_models/' + model_id)
+    model = SAC.load('./best_models/' + model_id)
     obs, _ = env.reset()
     done = False
     truncated = False
