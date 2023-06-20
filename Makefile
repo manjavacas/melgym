@@ -1,8 +1,8 @@
 run:
 	./main.py
 gen: clean
-	./melgym/exec/MELGEN ow=o i=./melgym/data/simple.inp
+	./melgym/exec/MELGEN ow=o i=./melgym/data/base.inp
 cor:
-	./melgym/exec/MELCOR ./melgym/data/simple.inp
+	./melgym/exec/MELCOR ./melgym/data/base.inp
 clean:
 	rm -rf ./melgym/out/*
