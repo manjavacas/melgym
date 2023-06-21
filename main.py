@@ -85,7 +85,7 @@ def run_rbc(env):
 if __name__ == '__main__':
     env = gym.make('base-v0', control_horizon=CONTROL_HORIZON, check_done_time=CHECK_DONE_TIME,
                    max_deviation=MAX_DEVIATION)
-    # train(env)
-    # run(env)
-    run_rbc(env)
+    train(env)
+    run(env)
+    # run_rbc(env)
     env.close()
