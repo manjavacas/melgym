@@ -11,11 +11,11 @@ from stable_baselines3 import PPO, SAC, DQN
 from stable_baselines3.common.callbacks import BaseCallback, EvalCallback
 
 
-MAX_DEVIATION = 1_200
+MAX_DEVIATION = 20_000
+CHECK_DONE_TIME = 1_000
 CONTROL_HORIZON = 5
-CHECK_DONE_TIME = 500
 
-TRAIN_TIMESTEPS = 500_000
+TRAIN_TIMESTEPS = 300_000
 EVAL_FREQ = 10_000
 EVAL_EPISODES = 1
 
@@ -45,42 +45,47 @@ def train(env):
     eval_callback = EvalCallback(
         env_eval, best_model_save_path='./best_models/', eval_freq=EVAL_FREQ, n_eval_episodes=EVAL_EPISODES)
 
-    model = SAC('MlpPolicy', env, verbose=1,
+    model = PPO('MlpPolicy', env, verbose=1,
                 tensorboard_log='./tensorboard/')
     model.learn(total_timesteps=TRAIN_TIMESTEPS,
                 progress_bar=True, callback=[eval_callback, MetricsCallback()])
 
 
 def run(env, model_id='best_model'):
-    model = SAC.load('./best_models/' + model_id)
+    model = PPO.load('./best_models/' + model_id)
     obs, _ = env.reset()
     done = False
     truncated = False
+    i = 1
     while not done and not truncated:
         action, _ = model.predict(obs)
         obs, reward, truncated, done, info = env.step(action)
         env.render()
-        print(''.join([40 * '=', '\n', str(info), '\n Reward = ',
-              str(reward), '\n', 40 * '=', 2 * '\n']))
+        print(''.join([80 * '-', '\nEpisode/ ', str(i), '\nReward/ ', str(reward),
+              '\nObservation/ ', str(obs), '\nInfo/ ', str(info), '\n', 80 * '-']))
+        i += 1
 
 
 def run_rbc(env):
-    env.reset()
+    obs, _ = env.reset()
     done = False
     truncated = False
+    i = 1
     while not done and not truncated:
         # RBC LOGIC...
-        action = [10.0]
-        _, reward, truncated, done, info = env.step(action)
+        action = env.action_space.sample()
+        print('Action = ', str(action))
+        obs, reward, truncated, done, info = env.step(action)
         env.render()
-        print(''.join([40 * '=', '\n', str(info), '\n Reward = ',
-              str(reward), '\n', 40 * '=', 2 * '\n']))
+        print(''.join([80 * '-', '\nEpisode/ ', str(i), '\nReward/ ', str(reward),
+              '\nObservation/ ', str(obs), '\nInfo/ ', str(info), '\n', 80 * '-']))
+        i += 1
 
 
 if __name__ == '__main__':
     env = gym.make('base-v0', control_horizon=CONTROL_HORIZON, check_done_time=CHECK_DONE_TIME,
                    max_deviation=MAX_DEVIATION)
-    train(env)
-    run(env)
-    # run_rbc(env)
+    # train(env)
+    # run(env)
+    run_rbc(env)
     env.close()

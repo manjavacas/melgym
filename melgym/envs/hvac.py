@@ -18,7 +18,7 @@ class EnvHVAC(Env):
     """
     metadata = {'render_modes': ['human']}
 
-    def __init__(self, input_file, n_actions, controlled_cvs, control_horizon=5, check_done_time=0, max_deviation=20, max_vel=10, render_mode=None):
+    def __init__(self, input_file, n_actions, controlled_cvs, control_horizon=5, check_done_time=0, max_deviation=20, max_vel=10, render_mode=None, time_bt_frames=0.1):
         """
         Class constructor.
 
@@ -64,6 +64,7 @@ class EnvHVAC(Env):
         self.toolkit = Toolkit(self.input_path)
 
         # Render
+        self.time_bt_frames = time_bt_frames
         if render_mode is not None:
             if render_mode in self.metadata['render_modes']:
                 self.render_mode = render_mode
@@ -163,7 +164,7 @@ class EnvHVAC(Env):
 
         return np.array(obs, np.float32), -reward, terminated, truncated, info
 
-    def render(self, time_bt_frames=0.1):
+    def render(self):
         """
         Plots all pressures evolution during simulation time.
 
@@ -186,7 +187,7 @@ class EnvHVAC(Env):
             df.plot()
 
             plt.draw()
-            plt.pause(time_bt_frames)
+            plt.pause(self.time_bt_frames)
             plt.close('all')
         else:
             pass
