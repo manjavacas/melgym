@@ -6,3 +6,4 @@ cor:
 	./melgym/exec/MELCOR ./melgym/data/base.inp
 clean:
 	rm -rf ./melgym/out/*
+	rm -rf ./metrics/

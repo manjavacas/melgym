@@ -53,12 +53,15 @@ class EnvHVAC(Env):
         self.melin_path = os.path.join(OUTPUT_DIR, 'MELIN')
         self.melog_path = os.path.join(OUTPUT_DIR, 'MELOG')
 
-        # Auxiliar variables
+        # Control variables
         self.control_horizon = control_horizon
         self.check_done_time = check_done_time
         self.max_deviation = max_deviation
-        self.steps_counter = 0
-        self.current_tend = 0
+
+        # Aux variables
+        self.n_steps = 0
+        self.n_episodes = 0
+        self._current_tend = 0
 
         # Tookit
         self.toolkit = Toolkit(self.input_path)
@@ -72,10 +75,6 @@ class EnvHVAC(Env):
             else:
                 raise Exception(
                     'The specified render format is not available.')
-
-        # Metrics
-        self.last_velocity = 0
-        self.last_truncated = False
 
     def reset(self, seed=None, options=None):
         """
@@ -100,7 +99,10 @@ class EnvHVAC(Env):
         # Env setup
         self.__clean_out_files()
         shutil.copy(self.input_path, self.melin_path)
-        self.steps_counter = 1
+
+        self.n_episodes += 1
+        self.n_steps = 1
+
         self.__update_time()
 
         # MELGEN execution
@@ -158,10 +160,6 @@ class EnvHVAC(Env):
         terminated = self.__check_termination(distances)
         truncated = self.__check_truncation()
 
-        # Update history
-        self.last_velocity = action[0]
-        self.last_truncated = truncated
-
         return np.array(obs, np.float32), -reward, terminated, truncated, info
 
     def render(self):
@@ -172,7 +170,7 @@ class EnvHVAC(Env):
             time_bt_frames (int, optional): time to wait after plotting. Defaults to 0.1.
         """
 
-        if self.steps_counter > 2:
+        if self.n_steps > 2:
             info = self.__get_last_record()
 
             df = pd.read_csv(self.__get_edf_path(),
@@ -218,19 +216,19 @@ class EnvHVAC(Env):
             Exception: if no TEND register is found in the input file.
             Exception: if a  step is performed without an initial call to reset.
         """
-        if self.steps_counter > 0:
+        if self.n_steps > 0:
             with open(self.melin_path, 'r+') as f:
                 lines = f.readlines()
                 edit_line = -1
                 for i, line in enumerate(lines):
                     if 'TEND' in line:
                         edit_line = i
-                        self.current_tend = int(
-                            line.split()[1]) if self.steps_counter > 1 else 0
+                        self._current_tend = int(
+                            line.split()[1]) if self.n_steps > 1 else 0
                         break
                 if edit_line != -1:
                     new_tend = str(
-                        self.current_tend + self.control_horizon * self.steps_counter)
+                        self._current_tend + self.control_horizon * self.n_steps)
                     lines[edit_line] = ''.join(['TEND ', new_tend, '\n'])
 
                     # Update file with new TEND
@@ -240,7 +238,7 @@ class EnvHVAC(Env):
                 else:
                     raise Exception(
                         ''.join(['TEND not especified in ', self.input_path]))
-            self.steps_counter += 1
+            self.n_steps += 1
         else:
             raise Exception('No reset has been done before step')
 
@@ -411,18 +409,18 @@ class EnvHVAC(Env):
             bool: True if at least one pressure is out of its allowed limits. False if termination is not yet evaluable or if pressures are inside their limits.
         """
 
-        return any(valor > self.max_deviation for valor in distances.values()) and self.current_tend > self.check_done_time
+        return any(valor > self.max_deviation for valor in distances.values()) and self._current_tend > self.check_done_time
 
-    def __check_truncation(self, max_tend=5_000_000):
+    def __check_truncation(self, max_tend=10_000):
         """
         Checks the truncation condition of an episode. Waits until check_done_time is raised to be evaluated.
         An episode is truncated if the number of steps is greater than a value specified in max_tend.
 
         Args:
-            max_tend (int, optional): maximum TEND for an episode. Defaults to 5e6.
+            max_tend (int, optional): maximum TEND for an episode. Defaults to 1e4.
 
         Returns:
             bool: True if the maximum number of steps have been raised. False if not, or if truncation is not yet evaluable.
         """
 
-        return self.current_tend > max_tend and self.current_tend > self.check_done_time
+        return self._current_tend > max_tend and self._current_tend > self.check_done_time
