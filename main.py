@@ -25,7 +25,7 @@ class MetricsCallback(BaseCallback):
     Custom callback for gathering additional simulation data.
     """
 
-    def __init__(self, verbose=0, metrics_folder='metrics', log_freq=100):
+    def __init__(self, verbose=0, metrics_folder='metrics', log_freq=1):
         super().__init__(verbose)
         # import os
         # self.metrics_folder = metrics_folder
@@ -72,30 +72,30 @@ def run(env, model_id='best_model'):
     while not done and not truncated:
         action, _ = model.predict(obs)
         obs, reward, truncated, done, info = env.step(action)
-        env.render()
         print(''.join([80 * '-', '\nEpisode/ ', str(i), '\nReward/ ', str(reward),
               '\nObservation/ ', str(obs), '\nInfo/ ', str(info), '\n', 80 * '-']))
+        env.render()
         i += 1
 
 
-# def run_rbc(env):
-#     obs, _ = env.reset()
-#     done = False
-#     truncated = False
-#     i = 1
-#     while not done and not truncated:
-#         # RBC LOGIC...
-#         action = env.action_space.sample()
-#         print('Action = ', str(action))
-#         obs, reward, truncated, done, info = env.step(action)
-#         env.render()
-#         print(''.join([80 * '-', '\nEpisode/ ', str(i), '\nReward/ ', str(reward),
-#               '\nObservation/ ', str(obs), '\nInfo/ ', str(info), '\n', 80 * '-']))
-#         i += 1
+def run_rbc(env):
+    obs, _ = env.reset()
+    done = False
+    truncated = False
+    i = 1
+    while not done and not truncated:
+        # RBC LOGIC...
+        action = env.action_space.sample()
+        print('Action = ', str(action))
+        obs, reward, truncated, done, info = env.step(action)
+        print(''.join([80 * '-', '\nEpisode/ ', str(i), '\nReward/ ', str(reward),
+              '\nObservation/ ', str(obs), '\nInfo/ ', str(info), '\n', 80 * '-']))
+        env.render()
+        i += 1
 
 
 if __name__ == '__main__':
-    env = gym.make('base-v0', control_horizon=CONTROL_HORIZON, check_done_time=CHECK_DONE_TIME,
+    env = gym.make('branch-nl-v0', control_horizon=CONTROL_HORIZON, check_done_time=CHECK_DONE_TIME,
                    max_deviation=MAX_DEVIATION)
     train(env)
     run(env)

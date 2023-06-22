@@ -244,7 +244,10 @@ class EnvHVAC(Env):
 
     def __get_last_record(self):
         """
-        Reads the last recorded values in the EDF.
+        Reads the last recorded values in an EDF.
+
+        Raises:
+            Exception: if the EDF is not propertly read.
 
         Returns:
             dict: last registered values (i.e. time and pressures).
@@ -253,7 +256,10 @@ class EnvHVAC(Env):
         record = {}
 
         with open(self.__get_edf_path(), 'r') as f:
-            last_line = f.readlines()[-1].split()
+            try:
+                last_line = f.readlines()[-1].split()
+            except:
+                raise Exception('Error reading empty EDF.')
 
             record['time'] = float(last_line[0])
             for i, cv_id in enumerate(self.__get_edf_cvs()):

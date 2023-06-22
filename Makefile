@@ -1,3 +1,4 @@
+all: clean run
 run:
 	./main.py
 gen: clean

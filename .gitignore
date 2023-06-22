@@ -1,7 +1,7 @@
 # MELCOR/MELGEN
-# melgym/exec/
+melgym/exec/*
 melgym/out/*
-metrics/
+metrics/*
 
 # Training
 best_models/
