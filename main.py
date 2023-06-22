@@ -27,11 +27,11 @@ class MetricsCallback(BaseCallback):
 
     def __init__(self, verbose=0, metrics_folder='metrics', log_freq=100):
         super().__init__(verbose)
-        import os
-        self.metrics_folder = metrics_folder
-        self.log_freq = log_freq
-        if not os.path.exists(self.metrics_folder):
-            os.makedirs(self.metrics_folder)
+        # import os
+        # self.metrics_folder = metrics_folder
+        # self.log_freq = log_freq
+        # if not os.path.exists(self.metrics_folder):
+        #     os.makedirs(self.metrics_folder)
 
     def _on_step(self) -> bool:
 
@@ -40,10 +40,10 @@ class MetricsCallback(BaseCallback):
         self.logger.record('sim_data/last_action', action)
 
         # .CSV
-        episode = self.training_env.get_attr('n_episodes')[-1]
-        if episode == 1 or episode % self.log_freq == 0:
-            with open(self.metrics_folder + '/episode_' + str(episode) + '.csv', 'a') as f:
-                f.write(str(action) + '\n')
+        # episode = self.training_env.get_attr('n_episodes')[-1]
+        # if episode == 1 or episode % self.log_freq == 0:
+        #     with open(self.metrics_folder + '/episode_' + str(episode) + '.csv', 'a') as f:
+        #         f.write(str(action) + '\n')
 
         return True
 
@@ -78,20 +78,20 @@ def run(env, model_id='best_model'):
         i += 1
 
 
-def run_rbc(env):
-    obs, _ = env.reset()
-    done = False
-    truncated = False
-    i = 1
-    while not done and not truncated:
-        # RBC LOGIC...
-        action = env.action_space.sample()
-        print('Action = ', str(action))
-        obs, reward, truncated, done, info = env.step(action)
-        env.render()
-        print(''.join([80 * '-', '\nEpisode/ ', str(i), '\nReward/ ', str(reward),
-              '\nObservation/ ', str(obs), '\nInfo/ ', str(info), '\n', 80 * '-']))
-        i += 1
+# def run_rbc(env):
+#     obs, _ = env.reset()
+#     done = False
+#     truncated = False
+#     i = 1
+#     while not done and not truncated:
+#         # RBC LOGIC...
+#         action = env.action_space.sample()
+#         print('Action = ', str(action))
+#         obs, reward, truncated, done, info = env.step(action)
+#         env.render()
+#         print(''.join([80 * '-', '\nEpisode/ ', str(i), '\nReward/ ', str(reward),
+#               '\nObservation/ ', str(obs), '\nInfo/ ', str(info), '\n', 80 * '-']))
+#         i += 1
 
 
 if __name__ == '__main__':
