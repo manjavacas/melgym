@@ -7,7 +7,7 @@ import numpy as np
 
 import copy
 
-from stable_baselines3 import TD3
+from stable_baselines3 import DDPG
 from stable_baselines3.common.callbacks import BaseCallback, EvalCallback
 
 
@@ -57,14 +57,14 @@ def train(env):
     eval_callback = EvalCallback(
         env_eval, best_model_save_path='./best_models/', eval_freq=EVAL_FREQ, n_eval_episodes=EVAL_EPISODES)
 
-    model = TD3('MlpPolicy', env, verbose=1,
+    model = DDPG('MlpPolicy', env, verbose=1,
                 tensorboard_log='./tensorboard/')
     model.learn(total_timesteps=TRAIN_TIMESTEPS,
                 progress_bar=True, callback=[eval_callback, MetricsCallback()])
 
 
 def run(env, model_id='best_model'):
-    model = TD3.load('./best_models/' + model_id)
+    model = DDPG.load('./best_models/' + model_id)
     obs, _ = env.reset()
     done = False
     truncated = False
