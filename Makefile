@@ -1,6 +1,6 @@
 all: clean run
 run:
-	./main.py
+	./run_experiment.py -conf cfg.json
 gen: clean
 	./melgym/exec/MELGEN ow=o i=./melgym/data/base.inp
 cor:

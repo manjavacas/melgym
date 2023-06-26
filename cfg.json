@@ -1,0 +1,23 @@
+{
+    "id": "sample",
+    "env": {
+        "name": "branch-nl-v0",
+        "params": {
+            "max_deviation": 20,
+            "check_done_time": 1000,
+            "control_horizon": 5
+        }
+    },
+    "algorithm": {
+        "name": "SAC",
+        "params": {
+            "learning_rate": 0.0001,
+            "buffer_size": 100000
+        },
+        "train_params": {
+            "total_timesteps": 300000,
+            "eval_freq": 10000,
+            "n_eval_episodes": 1
+        }
+    }
+}
