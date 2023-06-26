@@ -32,7 +32,7 @@ def train(env):
     eval_callback = EvalCallback(
         env_eval, best_model_save_path='./best_models/', eval_freq=EVAL_FREQ, n_eval_episodes=EVAL_EPISODES)
 
-    # Action denormalisation (only for PPO and SAC)
+    # Action denormalisation [-1, 1] -> [0, 10]
     env = DenormaliseActionsWrapper(env)
     env_eval = DenormaliseActionsWrapper(env_eval)
 
