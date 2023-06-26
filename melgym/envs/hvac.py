@@ -18,7 +18,7 @@ class EnvHVAC(Env):
     """
     metadata = {'render_modes': ['human']}
 
-    def __init__(self, input_file, n_actions, controlled_cvs, control_horizon=5, check_done_time=0, max_deviation=20, max_vel=10, render_mode=None, time_bt_frames=0.1):
+    def __init__(self, input_file, n_actions, controlled_cvs, control_horizon=5, check_done_time=1_000, max_deviation=20, max_vel=10, render_mode=None, time_bt_frames=0.1):
         """
         Class constructor.
 
@@ -27,7 +27,7 @@ class EnvHVAC(Env):
             n_actions (int): number of inlet air velocities to be controlled.
             controlled_cvs (list): list of controlled CVs IDs (e.g. CV001).
             control_horizon (int, optional): number of simulation cycles between actions. Defaults to 5.
-            check_done_time (int, optional): simulation time allowed before evaluating the termination condition. Defaults to 0.
+            check_done_time (int, optional): simulation time allowed before evaluating the termination condition. Defaults to 1000.
             max_deviation (float, optional): maximum distance allowed from original pressures. Defaults to 20 (Pa).
             max_vel (float): maximum value for control actions. Defaults to 10 (m/s).
             render_mode (str): render option.
@@ -37,16 +37,16 @@ class EnvHVAC(Env):
         self.controlled_cvs = controlled_cvs
         n_obs = len(self.controlled_cvs)
 
-        low_obs = np.zeros(n_obs)
-        high_obs = np.inf * np.ones(n_obs)
         self.observation_space = spaces.Box(
-            low=low_obs, high=high_obs, dtype=np.float32)
+            low=np.zeros(n_obs), high=np.inf * np.ones(n_obs), dtype=np.float32)
 
-        # Action space
-        low_act = np.zeros(n_actions)
-        high_act = max_vel * np.ones(n_actions)
+        # Real action space [0, max_vel]
+        self.real_action_space = spaces.Box(
+            low=np.zeros(n_actions), high=max_vel * np.ones(n_actions), dtype=np.float32)
+
+        # Normalized action space [-1, 1]
         self.action_space = spaces.Box(
-            low=low_act, high=high_act, dtype=np.float32)
+            low=-np.ones(n_actions), high=np.ones(n_actions), dtype=np.float32)
 
         # Files
         self.input_path = os.path.join(DATA_DIR, input_file)
