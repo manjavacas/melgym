@@ -1,16 +1,14 @@
 #!/usr/bin/python3
 
 import melgym
+import copy
 
 from melgym.utils.callbacks import MetricsCallback
 from melgym.utils.wrappers import DenormaliseActionsWrapper
 
 import gymnasium as gym
-import numpy as np
 
-import copy
-
-from stable_baselines3 import PPO
+from stable_baselines3 import PPO, DDPG, TD3, SAC
 from stable_baselines3.common.callbacks import EvalCallback
 
 
