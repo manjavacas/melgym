@@ -1,4 +1,6 @@
 all: clean run
+rand:
+	./rand_controller.py
 run:
 	./run_experiment.py -conf cfg.json
 gen: clean
