@@ -11,10 +11,10 @@ register(
 )
 
 register(
-    id='branch-nl-v0',
+    id='branch-v0',
     entry_point='melgym.envs:EnvHVAC',
     kwargs={
-        'input_file': 'branch-nl.inp',
+        'input_file': 'branch.inp',
         'n_actions': 1,
         'controlled_cvs': ['CV086', 'CV083', 'CV026', 'CV011', 'CV006', 'CV001']
     }
