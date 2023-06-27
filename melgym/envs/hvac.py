@@ -16,7 +16,7 @@ class EnvHVAC(Env):
     """
     HVAC control environment. Inlet air velocities are adjusted according to HVAC served room states.
     """
-    metadata = {'render_modes': ['human']}
+    metadata = {'render_modes': ['pressures', 'distances']}
 
     def __init__(self, input_file, n_actions, controlled_cvs, control_horizon=5, check_done_time=1_000, max_deviation=20, max_vel=10, render_mode=None, time_bt_frames=0.1):
         """
@@ -62,6 +62,7 @@ class EnvHVAC(Env):
         self.n_steps = 0
         self.n_episodes = 0
         self._current_tend = 0
+        self.info = {}
 
         # Tookit
         self.toolkit = Toolkit(self.input_path)
@@ -111,15 +112,16 @@ class EnvHVAC(Env):
                             cwd=OUTPUT_DIR, stdout=log, stderr=subprocess.STDOUT)
 
         # Get initial pressures
-        info = {'time': 0.0}
+        self.info = {'time': 0.0}
         for cv_id in self.__get_edf_cvs():
-            info[cv_id] = self.__get_initial_pressure(cv_id)
-        obs = [value for key, value in info.items() if key in self.controlled_cvs]
+            self.info[cv_id] = self.__get_initial_pressure(cv_id)
+        obs = [value for key, value in self.info.items()
+               if key in self.controlled_cvs]
 
         # Add CFs redefinition to MELCOR input
         self.__add_cfs_redefinition()
 
-        return np.array(obs, dtype=np.float32), info
+        return np.array(obs, dtype=np.float32), self.info
 
     def step(self, action):
         """
@@ -152,43 +154,51 @@ class EnvHVAC(Env):
                             cwd=OUTPUT_DIR, stdout=log, stderr=subprocess.STDOUT)
 
         # Get results
-        info = self.__get_last_record()
-        obs = [value for key, value in info.items() if key in self.controlled_cvs]
-        reward, distances = self.__compute_distances(info)
+        time, pressures = self.__get_last_record()
+        obs = [value for key, value in pressures.items()
+               if key in self.controlled_cvs]
+        reward, distances = self.__compute_distances(pressures)
+
+        self.info = {**time, 'pressures': pressures, 'distances': distances}
 
         # Check ending conditions
         terminated = self.__check_termination(distances)
         truncated = self.__check_truncation()
 
-        return np.array(obs, np.float32), -reward, terminated, truncated, info
+        return np.array(obs, np.float32), -reward, terminated, truncated, self.info
 
     def render(self):
         """
-        Plots all pressures evolution during simulation time.
+        Plots all pressures / distances evolution during simulation time.
 
         Args:
             time_bt_frames (int, optional): time to wait after plotting. Defaults to 0.1.
         """
 
         if self.n_steps > 2:
-            info = self.__get_last_record()
+            _, pressures = self.__get_last_record()
+            match self.render_mode:
+                case 'pressures':
+                    df = pd.read_csv(self.__get_edf_path(),
+                                     delim_whitespace=True, header=None)
+                    df = df.set_index(0)
+                    df.columns = list(pressures.keys())
+                    df = df.apply(pd.to_numeric, errors='coerce')
 
-            df = pd.read_csv(self.__get_edf_path(),
-                             delim_whitespace=True, header=None)
-            df = df.set_index(0)
-            column_names = [key for key in info.keys()
-                            if key.startswith('CV')]
-            df.columns = column_names
+                    df.plot()
+                    plt.draw()
+                    plt.pause(self.time_bt_frames)
+                    plt.close('all')
+                case 'distances':
+                    _, distances = self.__compute_distances(pressures)
 
-            df = df.apply(pd.to_numeric, errors='coerce')
-
-            df.plot()
-
-            plt.draw()
-            plt.pause(self.time_bt_frames)
-            plt.close('all')
-        else:
-            pass
+                    plt.bar(list(distances.keys()),
+                            list(distances.values()))
+                    plt.draw()
+                    plt.pause(self.time_bt_frames)
+                    plt.close('all')
+                case _:
+                    pass
 
     def close(self):
         """
@@ -250,9 +260,10 @@ class EnvHVAC(Env):
             Exception: if the EDF is not propertly read.
 
         Returns:
-            dict: last registered values (i.e. time and pressures).
+            (dict, dict): last registered time and values (i.e. pressures).
         """
 
+        time = {}
         record = {}
 
         with open(self.__get_edf_path(), 'r') as f:
@@ -261,11 +272,11 @@ class EnvHVAC(Env):
             except:
                 raise Exception('Error reading empty EDF.')
 
-            record['time'] = float(last_line[0])
+            time['time'] = float(last_line[0])
             for i, cv_id in enumerate(self.__get_edf_cvs()):
                 record[cv_id] = np.float32(last_line[i+1])
 
-        return record
+        return time, record
 
     def __add_cfs_redefinition(self, cf_keyword='CONTROLLER'):
         """
@@ -343,10 +354,10 @@ class EnvHVAC(Env):
         ids = [id for id in last_record if id in self.controlled_cvs]
 
         for cv_id in ids:
-            distances[cv_id] = abs(
-                self.__get_initial_pressure(cv_id) - last_record[cv_id])
+            distances[cv_id] = last_record[cv_id] - \
+                self.__get_initial_pressure(cv_id)
 
-        return sum(distances.values()), distances
+        return sum(abs(value) for value in distances.values()), distances
 
     def __get_initial_pressure(self, cv_id):
         """
@@ -415,7 +426,7 @@ class EnvHVAC(Env):
             bool: True if at least one pressure is out of its allowed limits. False if termination is not yet evaluable or if pressures are inside their limits.
         """
 
-        return any(valor > self.max_deviation for valor in distances.values()) and self._current_tend > self.check_done_time
+        return any(abs(value) > self.max_deviation for value in distances.values()) and self._current_tend > self.check_done_time
 
     def __check_truncation(self, max_tend=10_000):
         """
