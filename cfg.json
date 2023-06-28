@@ -3,7 +3,7 @@
     "env": {
         "name": "branch-v0",
         "params": {
-            "max_deviation": 20,
+            "max_deviation": 30,
             "check_done_time": 1000,
             "control_horizon": 5
         }

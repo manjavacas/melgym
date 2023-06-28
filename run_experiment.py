@@ -20,6 +20,14 @@ ALGORITHMS = {
 }
 
 
+def summary(episode, action, obs, reward, info):
+    print(''.join(['[ACTION] ', str(action), '\n', 80 * '-', '\n[EPISODE] ', str(episode),
+                   '\n[REWARD] ', str(reward), '\n[OBSERVATION] ', str(obs),
+                   '\n[TIME] ', str(info['time']), '\n[PRESSURES] ', str(
+                       info['pressures']),
+                   '\n[DISTANCES] ', str(info['distances']), '\n', 80 * '-']))
+
+
 def train(env, config):
     """
     Model training based on user configuration. Includes:
@@ -82,8 +90,7 @@ def test(env, config):
     while not done and not truncated:
         action, _ = model.predict(obs)
         obs, reward, truncated, done, info = env.step(action)
-        print(''.join([80 * '-', '\nEpisode/ ', str(i), '\nReward/ ', str(reward),
-              '\nObservation/ ', str(obs), '\nInfo/ ', str(info), '\n', 80 * '-']))
+        summary(i, action, obs, reward, info)
         env.render()
         i += 1
 
