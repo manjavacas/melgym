@@ -23,8 +23,7 @@ def rand_control(env):
     truncated = False
     n_episode = 1
     while not done and not truncated:
-        # action = env.action_space.sample()
-        action = [10.0]
+        action = env.action_space.sample()
         obs, reward, truncated, done, info = env.step(action)
         summary(n_episode, action, obs, reward, info)
         env.render()
