@@ -3,6 +3,7 @@
 import melgym
 import gymnasium as gym
 
+import random
 
 MAX_DEVIATION = 20
 CHECK_DONE_TIME = 1_000
@@ -23,7 +24,8 @@ def rand_control(env):
     truncated = False
     n_episode = 1
     while not done and not truncated:
-        action = env.action_space.sample()
+        # action = env.action_space.sample()
+        action = [random.choice([7., 9., 10.])]
         obs, reward, truncated, done, info = env.step(action)
         summary(n_episode, action, obs, reward, info)
         env.render()
@@ -31,7 +33,7 @@ def rand_control(env):
 
 
 if __name__ == '__main__':
-    env = gym.make('branch-v0', control_horizon=CONTROL_HORIZON, check_done_time=CHECK_DONE_TIME,
-                   max_deviation=MAX_DEVIATION, render_mode='distances')
+    env = gym.make('simple-v0', control_horizon=CONTROL_HORIZON, check_done_time=CHECK_DONE_TIME,
+                   max_deviation=MAX_DEVIATION, render_mode='pressures')
     rand_control(env)
     env.close()

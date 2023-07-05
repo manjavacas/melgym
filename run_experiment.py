@@ -21,6 +21,16 @@ ALGORITHMS = {
 
 
 def summary(episode, action, obs, reward, info):
+    """
+    Prints an episode summary.
+
+    Args:
+        episode (int): current episode number.
+        action (np.array): last performed action.
+        obs (np.array): last observation.
+        reward (float): last reward.
+        info (dict): additional information.
+    """
     print(''.join(['[ACTION] ', str(action), '\n', 80 * '-', '\n[EPISODE] ', str(episode),
                    '\n[REWARD] ', str(reward), '\n[OBSERVATION] ', str(obs),
                    '\n[TIME] ', str(info['time']), '\n[PRESSURES] ', str(
@@ -109,7 +119,8 @@ args = parser.parse_args()
 with open(args.configuration) as json_config:
     config = json.load(json_config)
 
-env = gym.make(config['env']['name'], **config['env']['params'])
+env = gym.make(config['env']['name'], **config['env']
+               ['params'], render_mode='distances')
 
 train(env, config)
 test(env, config)
