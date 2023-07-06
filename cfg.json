@@ -1,5 +1,6 @@
 {
     "id": "sac",
+    "task": ["train", "test"],
     "env": {
         "name": "simple-v0",
         "params": {
@@ -12,7 +13,7 @@
         "name": "SAC",
         "params": {},
         "train_params": {
-            "total_timesteps": 100000,
+            "total_timesteps": 50000,
             "eval_freq": 2000,
             "n_eval_episodes": 5
         }
