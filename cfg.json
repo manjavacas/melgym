@@ -10,9 +10,7 @@
     },
     "algorithm": {
         "name": "SAC",
-        "params": {
-
-        },
+        "params": {},
         "train_params": {
             "total_timesteps": 100000,
             "eval_freq": 2000,

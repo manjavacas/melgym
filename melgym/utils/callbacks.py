@@ -10,12 +10,12 @@ class MetricsCallback(BaseCallback):
 
     def __init__(self, verbose=0, csv_save=False, metrics_folder='metrics', log_freq=1):
         super().__init__(verbose)
-        self.csv_save = csv_save
-        if self.csv_save:
-            self.metrics_folder = metrics_folder
-            self.log_freq = log_freq
-            if not os.path.exists(self.metrics_folder):
-                os.makedirs(self.metrics_folder)
+        # self.csv_save = csv_save
+        # if self.csv_save:
+        #     self.metrics_folder = metrics_folder
+        #     self.log_freq = log_freq
+        #     if not os.path.exists(self.metrics_folder):
+        #         os.makedirs(self.metrics_folder)
 
     def _on_step(self) -> bool:
 
@@ -31,10 +31,10 @@ class MetricsCallback(BaseCallback):
 
         ############## .CSV episode data ##############
 
-        if self.csv_save:
-            episode = self.training_env.get_attr('n_episodes')[-1]
-            if episode == 1 or episode % self.log_freq == 0:
-                with open(self.metrics_folder + '/episode_' + str(episode) + '.csv', 'a') as f:
-                    f.write(str(norm_action) + '\t' + str(real_action) + '\n')
+        # if self.csv_save:
+        #     episode = self.training_env.get_attr('n_episodes')[-1]
+        #     if episode == 1 or episode % self.log_freq == 0:
+        #         with open(self.metrics_folder + '/episode_' + str(episode) + '.csv', 'a') as f:
+        #             f.write(str(norm_action) + '\t' + str(real_action) + '\n')
 
         return True

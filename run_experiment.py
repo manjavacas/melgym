@@ -111,10 +111,12 @@ def test(env, config):
 
 config = get_config()
 env = gym.make(config['env']['name'], **config['env']
-               ['params'], render_mode='pressures')
+               ['params'], render_mode='distances')
 
 # Normalization wrapper
 env = NormalizeObservation(env)
 
 train(env, config)
 test(env, config)
+
+env.close()

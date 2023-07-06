@@ -6,6 +6,8 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
+from datetime import datetime
+
 from gymnasium import Env, spaces
 from melkit.toolkit import Toolkit
 
@@ -45,10 +47,18 @@ class EnvHVAC(Env):
         self.action_space = spaces.Box(
             low=-np.ones(n_actions), high=np.ones(n_actions), dtype=np.float32)
 
-        # Files
+        # Environment ID and output directory
+        self.env_id = 'melgym_output-' + datetime.now().strftime('%Y%m%d%H%M%S')
+        self.output_dir = os.path.join(OUTPUT_DIR, self.env_id)
+
+        if not os.path.exists(self.output_dir):
+            os.makedirs(self.output_dir)
+
+        # Paths
         self.input_path = os.path.join(DATA_DIR, input_file)
-        self.melin_path = os.path.join(OUTPUT_DIR, 'MELIN')
-        self.melog_path = os.path.join(OUTPUT_DIR, 'MELOG')
+
+        self.melin_path = os.path.join(self.output_dir, 'MELIN')
+        self.melog_path = os.path.join(self.output_dir, 'MELOG')
 
         # Control variables
         self.control_horizon = control_horizon
@@ -108,7 +118,7 @@ class EnvHVAC(Env):
         # MELGEN execution
         with open(self.melog_path, 'a') as log:
             subprocess.call([MELGEN_PATH, self.melin_path],
-                            cwd=OUTPUT_DIR, stdout=log, stderr=subprocess.STDOUT)
+                            cwd=self.output_dir, stdout=log, stderr=subprocess.STDOUT)
 
         # Get initial pressures
         self.info = {'time': 0.0}
@@ -153,7 +163,7 @@ class EnvHVAC(Env):
         # MELCOR simulation
         with open(self.melog_path, 'a') as log:
             subprocess.call([MELCOR_PATH, 'ow=o', 'i=' + self.melin_path],
-                            cwd=OUTPUT_DIR, stdout=log, stderr=subprocess.STDOUT)
+                            cwd=self.output_dir, stdout=log, stderr=subprocess.STDOUT)
 
         # Get results
         time, pressures = self.__get_last_record()
@@ -206,16 +216,16 @@ class EnvHVAC(Env):
         """
         Cleans every output file except PTFs (*PTF) and EDFs (*.DAT).
         """
-        for file in os.listdir(OUTPUT_DIR):
+        for file in os.listdir(self.output_dir):
             if not file.endswith(('PTF', '.DAT')):
-                os.remove(os.path.join(OUTPUT_DIR, file))
+                os.remove(os.path.join(self.output_dir, file))
 
     def __clean_out_files(self):
         """
         Cleans the output directory where past simulation files are stored.
         """
-        for file in os.listdir(OUTPUT_DIR):
-            os.remove(os.path.join(OUTPUT_DIR, file))
+        for file in os.listdir(self.output_dir):
+            os.remove(os.path.join(self.output_dir, file))
 
     def __update_time(self):
         """
@@ -418,12 +428,12 @@ class EnvHVAC(Env):
             str: path to the EDF.
         """
 
-        edf_files = [os.path.join(OUTPUT_DIR, file) for file in os.listdir(
-            OUTPUT_DIR) if file.endswith('.DAT')]
+        edf_files = [os.path.join(self.output_dir, file) for file in os.listdir(
+            self.output_dir) if file.endswith('.DAT')]
         self.edf_path = edf_files[0] if edf_files else None
 
         if not self.edf_path:
-            raise Exception(''.join(['EDF not found in ', OUTPUT_DIR]))
+            raise Exception(''.join(['EDF not found in ', self.output_dir]))
 
         return self.edf_path
 
