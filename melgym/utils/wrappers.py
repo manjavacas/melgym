@@ -5,6 +5,10 @@ import numpy as np
 
 
 class NormalizedObservations(ObservationWrapper):
+    """
+    Observation normalization. Maps observations to range [0,1].
+    """
+
     def __init__(self, env, min_val, max_val):
         super(ObservationWrapper, self).__init__(env)
         self.min_val = min_val
@@ -13,11 +17,15 @@ class NormalizedObservations(ObservationWrapper):
             low=0, high=1, shape=env.observation_space.shape, dtype=np.float32)
 
     def observation(self, observation):
-        # Normalize to [0, 1]
+        # Normalize in [0, 1]
         return (observation - self.min_val) / (self.max_val - self.min_val)
 
 
 class DenormalizedActions(ActionWrapper):
+    """
+    Action denormalization. Maps [-1,1] to [min_val, max_val].
+    """
+
     def __init__(self, env, min_val, max_val):
         super(ActionWrapper, self).__init__(env)
         self.min_val = min_val
