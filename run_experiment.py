@@ -4,7 +4,6 @@ import argparse
 import json
 import copy
 
-import numpy as np
 import gymnasium as gym
 
 from gymnasium.wrappers.normalize import NormalizeObservation
@@ -14,6 +13,7 @@ from melgym.utils.aux import summary
 
 from stable_baselines3 import PPO, DDPG, TD3, SAC
 from stable_baselines3.common.callbacks import EvalCallback
+# from stable_baselines3.common.evaluation import evaluate_policy
 
 ALGORITHMS = {
     'PPO': PPO,
@@ -108,6 +108,12 @@ def test(env, config):
         env.render()
         i += 1
 
+    # Optional SB3 evaluation
+    # mean_reward, std_reward = evaluate_policy(
+    #     model, env, n_eval_episodes=10)
+    # print('\n***** SB3 EVALUATION *****\n- Mean reward = ' +
+    #       str(mean_reward) + '\n- Std. reward = ' + str(std_reward))
+
 
 config = get_config()
 env = gym.make(config['env']['name'], **config['env']
@@ -116,7 +122,9 @@ env = gym.make(config['env']['name'], **config['env']
 # Normalization wrapper
 env = NormalizeObservation(env)
 
-train(env, config)
-test(env, config)
+if 'train' in config['tasks']:
+    train(env, config)
+if 'test' in config['tasks']:
+    test(env, config)
 
 env.close()

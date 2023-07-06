@@ -20,7 +20,7 @@ class EnvHVAC(Env):
     """
     metadata = {'render_modes': ['pressures', 'distances']}
 
-    def __init__(self, input_file, n_actions, controlled_cvs, control_horizon=5, check_done_time=1_000, max_deviation=40, min_velocity=0, max_velocity=10, render_mode=None, time_bt_frames=0.1):
+    def __init__(self, input_file, n_actions, controlled_cvs, control_horizon=5, check_done_time=1_000, max_deviation=40, min_velocity=0, max_velocity=10, render_mode=None, time_bt_frames=0.1, env_id=None):
         """
         Class constructor.
 
@@ -34,6 +34,8 @@ class EnvHVAC(Env):
             min_velocity (float): minimum value for control actions. Defaults to 0 (m/s).
             max_velocity (float): maximum value for control actions. Defaults to 10 (m/s).
             render_mode (str): render option.
+            time_bt_frames (float): time between rendered frames.
+            env_id (str): custom environment identifier. Used for naming the output directory.
         """
 
         # Observation space
@@ -48,7 +50,8 @@ class EnvHVAC(Env):
             low=-np.ones(n_actions), high=np.ones(n_actions), dtype=np.float32)
 
         # Environment ID and output directory
-        self.env_id = 'melgym_output-' + datetime.now().strftime('%Y%m%d%H%M%S')
+        self.env_id = 'melgym_' + \
+            datetime.now().strftime('%Y-%m-%d_%H:%M:%S') if not env_id else env_id
         self.output_dir = os.path.join(OUTPUT_DIR, self.env_id)
 
         if not os.path.exists(self.output_dir):
@@ -56,7 +59,6 @@ class EnvHVAC(Env):
 
         # Paths
         self.input_path = os.path.join(DATA_DIR, input_file)
-
         self.melin_path = os.path.join(self.output_dir, 'MELIN')
         self.melog_path = os.path.join(self.output_dir, 'MELOG')
 
@@ -69,9 +71,7 @@ class EnvHVAC(Env):
 
         # Aux variables
         self.n_steps = 0
-        self.n_episodes = 0
         self._current_tend = 0
-        self.info = {}
 
         # Tookit
         self.toolkit = Toolkit(self.input_path)
@@ -110,7 +110,6 @@ class EnvHVAC(Env):
         self.__clean_out_files()
         shutil.copy(self.input_path, self.melin_path)
 
-        self.n_episodes += 1
         self.n_steps = 1
 
         self.__update_time()
@@ -121,16 +120,16 @@ class EnvHVAC(Env):
                             cwd=self.output_dir, stdout=log, stderr=subprocess.STDOUT)
 
         # Get initial pressures
-        self.info = {'time': 0.0}
+        info = {'time': 0.0}
         for cv_id in self.__get_edf_cvs():
-            self.info[cv_id] = self.__get_initial_pressure(cv_id)
-        obs = [value for key, value in self.info.items()
+            info[cv_id] = self.__get_initial_pressure(cv_id)
+        obs = [value for key, value in info.items()
                if key in self.controlled_cvs]
 
         # Add CFs redefinition to MELCOR input
         self.__add_cfs_redefinition()
 
-        return np.array(obs, dtype=np.float32), self.info
+        return np.array(obs, dtype=np.float32), info
 
     def step(self, action):
         """
@@ -159,25 +158,23 @@ class EnvHVAC(Env):
         # Input edition
         self.__update_time()
         self.__update_cfs(action)
-
         # MELCOR simulation
         with open(self.melog_path, 'a') as log:
             subprocess.call([MELCOR_PATH, 'ow=o', 'i=' + self.melin_path],
                             cwd=self.output_dir, stdout=log, stderr=subprocess.STDOUT)
-
         # Get results
         time, pressures = self.__get_last_record()
         obs = [value for key, value in pressures.items()
                if key in self.controlled_cvs]
         reward, distances = self.__compute_distances(pressures)
 
-        self.info = {**time, 'pressures': pressures, 'distances': distances}
+        info = {**time, 'pressures': pressures, 'distances': distances}
 
         # Check ending conditions
         terminated = self.__check_termination(distances)
         truncated = self.__check_truncation()
 
-        return np.array(obs, np.float32), -reward, terminated, truncated, self.info
+        return np.array(obs, np.float32), -reward, terminated, truncated, info
 
     def render(self):
         """

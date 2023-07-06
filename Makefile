@@ -8,7 +8,6 @@ gen: clean
 cor:
 	./melgym/exec/MELCOR ./melgym/data/simple.inp
 clean:
-	rm -rf ./melgym/out/*
 	rm -rf ./metrics/
 	rm -f MEGDIA
 	rm -f MELDIA
@@ -19,3 +18,9 @@ clean:
 	rm -f MELRST
 	rm -f *.DAT
 	rm -f extDIAG
+cleanout:
+	rm -rf ./melgym/out/*
+cleantb:
+	rm -rf ./tensorboard/*
+cleanmodels:
+	rm -rf ./best_models/*
