@@ -1,33 +1,30 @@
+from gymnasium import ObservationWrapper, ActionWrapper
+from gymnasium import spaces
+
 import numpy as np
 
-from gymnasium import ActionWrapper
+
+class NormalizedObservations(ObservationWrapper):
+    def __init__(self, env, min_val, max_val):
+        super(ObservationWrapper, self).__init__(env)
+        self.min_val = min_val
+        self.max_val = max_val
+        self.observation_space = spaces.Box(
+            low=0, high=1, shape=env.observation_space.shape, dtype=np.float32)
+
+    def observation(self, observation):
+        # Normalize to [0, 1]
+        return (observation - self.min_val) / (self.max_val - self.min_val)
 
 
-class DenormaliseActionsWrapper(ActionWrapper):
-    def __init__(self, env):
-        super().__init__(env)
-        self.action_space = env.action_space
-        self.real_action_space = env.real_action_space
+class DenormalizedActions(ActionWrapper):
+    def __init__(self, env, min_val, max_val):
+        super(ActionWrapper, self).__init__(env)
+        self.min_val = min_val
+        self.max_val = max_val
+        self.action_space = spaces.Box(
+            low=min_val, high=max_val, shape=env.action_space.shape, dtype=np.float32)
 
     def action(self, action):
-        """
-        Converts normalised actions to their corresponding real values. 
-        If the actions are not normalised, they are returned without applying any change.
-
-        Args:
-            action (np.array): action array.
-
-        Returns:
-            np.array: transformed action values.
-        """
-
-        tr_action = np.zeros_like(action)
-
-        for i, value in enumerate(action):
-            norm_range = self.action_space.high[i] - self.action_space.low[i]
-            real_range = self.real_action_space.high[i] - \
-                self.real_action_space.low[i]
-            tr_action[i] = self.real_action_space.low[i] + \
-                (value - self.action_space.low[i]) * real_range / norm_range
-
-        return tr_action
+        # Map [-1, 1] to [min_val, max_val]
+        return (action + 1) * ((self.max_val - self.min_val) / 2) + self.min_val

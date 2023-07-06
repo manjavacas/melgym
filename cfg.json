@@ -1,5 +1,5 @@
 {
-    "id": "sample",
+    "id": "sac",
     "env": {
         "name": "simple-v0",
         "params": {
@@ -9,14 +9,14 @@
         }
     },
     "algorithm": {
-        "name": "PPO",
+        "name": "SAC",
         "params": {
 
         },
         "train_params": {
-            "total_timesteps": 300000,
-            "eval_freq": 10000,
-            "n_eval_episodes": 1
+            "total_timesteps": 100000,
+            "eval_freq": 2000,
+            "n_eval_episodes": 5
         }
     }
 }
