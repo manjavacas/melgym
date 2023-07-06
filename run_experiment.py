@@ -4,10 +4,13 @@ import argparse
 import json
 import copy
 
+import numpy as np
 import gymnasium as gym
 
+from gymnasium.wrappers.normalize import NormalizeObservation
+
 from melgym.utils.callbacks import MetricsCallback
-from melgym.utils.wrappers import DenormaliseActionsWrapper
+from melgym.utils.aux import summary
 
 from stable_baselines3 import PPO, DDPG, TD3, SAC
 from stable_baselines3.common.callbacks import EvalCallback
@@ -20,22 +23,27 @@ ALGORITHMS = {
 }
 
 
-def summary(episode, action, obs, reward, info):
+def get_config():
     """
-    Prints an episode summary.
+    Parses the experiment json configuration file.
 
-    Args:
-        episode (int): current episode number.
-        action (np.array): last performed action.
-        obs (np.array): last observation.
-        reward (float): last reward.
-        info (dict): additional information.
+    Returns:
+        dict: experiment configuration.
     """
-    print(''.join(['[ACTION] ', str(action), '\n', 80 * '-', '\n[EPISODE] ', str(episode),
-                   '\n[REWARD] ', str(reward), '\n[OBSERVATION] ', str(obs),
-                   '\n[TIME] ', str(info['time']), '\n[PRESSURES] ', str(
-                       info['pressures']),
-                   '\n[DISTANCES] ', str(info['distances']), '\n', 80 * '-']))
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        '--configuration',
+        '-conf',
+        required=True,
+        type=str,
+        dest='configuration',
+        help='Path to experiment configuration (JSON file)'
+    )
+    args = parser.parse_args()
+
+    with open(args.configuration) as json_config:
+        config = json.load(json_config)
+    return config
 
 
 def train(env, config):
@@ -65,11 +73,7 @@ def train(env, config):
 
     # Callbacks
     eval_callback = EvalCallback(
-        env_eval, best_model_save_path='./best_models/' + experiment_id + '/', eval_freq=eval_freq, n_eval_episodes=n_eval_episodes)
-
-    # Action denormalisation
-    env = DenormaliseActionsWrapper(env)
-    env_eval = DenormaliseActionsWrapper(env_eval)
+        env_eval, best_model_save_path='./best_models/' + experiment_id + '/', eval_freq=eval_freq, n_eval_episodes=n_eval_episodes, deterministic=True)
 
     # Model configuration
     if config['algorithm']['name'] in ALGORITHMS:
@@ -98,29 +102,19 @@ def test(env, config):
     truncated = False
     i = 1
     while not done and not truncated:
-        action, _ = model.predict(obs)
+        action, _ = model.predict(obs, deterministic=True)
         obs, reward, truncated, done, info = env.step(action)
         summary(i, action, obs, reward, info)
         env.render()
         i += 1
 
 
-parser = argparse.ArgumentParser()
-parser.add_argument(
-    '--configuration',
-    '-conf',
-    required=True,
-    type=str,
-    dest='configuration',
-    help='Path to experiment configuration (JSON file)'
-)
-args = parser.parse_args()
-
-with open(args.configuration) as json_config:
-    config = json.load(json_config)
-
+config = get_config()
 env = gym.make(config['env']['name'], **config['env']
-               ['params'], render_mode='distances')
+               ['params'], render_mode='pressures')
+
+# Normalization wrapper
+env = NormalizeObservation(env)
 
 train(env, config)
 test(env, config)

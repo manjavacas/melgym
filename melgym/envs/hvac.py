@@ -18,7 +18,7 @@ class EnvHVAC(Env):
     """
     metadata = {'render_modes': ['pressures', 'distances']}
 
-    def __init__(self, input_file, n_actions, controlled_cvs, control_horizon=5, check_done_time=1_000, max_deviation=20, max_vel=10, render_mode=None, time_bt_frames=0.1):
+    def __init__(self, input_file, n_actions, controlled_cvs, control_horizon=5, check_done_time=1_000, max_deviation=40, min_velocity=0, max_velocity=10, render_mode=None, time_bt_frames=0.1):
         """
         Class constructor.
 
@@ -29,7 +29,8 @@ class EnvHVAC(Env):
             control_horizon (int, optional): number of simulation cycles between actions. Defaults to 5.
             check_done_time (int, optional): simulation time allowed before evaluating the termination condition. Defaults to 1000.
             max_deviation (float, optional): maximum distance allowed from original pressures. Defaults to 20 (Pa).
-            max_vel (float): maximum value for control actions. Defaults to 10 (m/s).
+            min_velocity (float): minimum value for control actions. Defaults to 0 (m/s).
+            max_velocity (float): maximum value for control actions. Defaults to 10 (m/s).
             render_mode (str): render option.
         """
 
@@ -39,10 +40,6 @@ class EnvHVAC(Env):
 
         self.observation_space = spaces.Box(
             low=np.zeros(n_obs), high=np.inf * np.ones(n_obs), dtype=np.float32)
-
-        # Real action space [0, max_vel]
-        self.real_action_space = spaces.Box(
-            low=np.zeros(n_actions), high=max_vel * np.ones(n_actions), dtype=np.float32)
 
         # Normalized action space [-1, 1]
         self.action_space = spaces.Box(
@@ -57,6 +54,8 @@ class EnvHVAC(Env):
         self.control_horizon = control_horizon
         self.check_done_time = check_done_time
         self.max_deviation = max_deviation
+        self.max_velocity = max_velocity
+        self.min_velocity = min_velocity
 
         # Aux variables
         self.n_steps = 0
@@ -143,6 +142,9 @@ class EnvHVAC(Env):
             bool: truncated flag. It will be True if pressures keep stable until the imposed time step limit.
             dict: additional step information (last recorded time and pressures).
         """
+
+        # Denormalize action
+        action = self.__denorm_action(action)
 
         # Input edition
         self.__update_time()
@@ -251,6 +253,18 @@ class EnvHVAC(Env):
             self.n_steps += 1
         else:
             raise Exception('No reset has been done before step')
+
+    def __denorm_action(self, action):
+        """
+        Maps [-1,1] actions to [min_velocity, max_velocity]
+
+        Args:
+            action (np.array): current normalized action.
+
+        Returns:
+            np.array: denormalized action.
+        """
+        return ((action + 1) * ((self.max_velocity - self.min_velocity) / 2)) + self.min_velocity
 
     def __get_last_record(self):
         """

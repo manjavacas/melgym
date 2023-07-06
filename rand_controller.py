@@ -1,21 +1,11 @@
 #!/usr/bin/python3
 
+import numpy as np
+import random
 import melgym
 import gymnasium as gym
 
-import random
-
-MAX_DEVIATION = 20
-CHECK_DONE_TIME = 1_000
-CONTROL_HORIZON = 5
-
-
-def summary(episode, action, obs, reward, info):
-    print(''.join(['[ACTION] ', str(action), '\n', 80 * '-', '\n[EPISODE] ', str(episode),
-                   '\n[REWARD] ', str(reward), '\n[OBSERVATION] ', str(obs),
-                   '\n[TIME] ', str(info['time']), '\n[PRESSURES] ', str(
-                       info['pressures']),
-                   '\n[DISTANCES] ', str(info['distances']), '\n', 80 * '-']))
+from melgym.utils.aux import summary
 
 
 def rand_control(env):
@@ -24,8 +14,8 @@ def rand_control(env):
     truncated = False
     n_episode = 1
     while not done and not truncated:
-        # action = env.action_space.sample()
-        action = [random.choice([7., 9., 10.])]
+        action = env.action_space.sample()
+        # action = np.array([-0.85])
         obs, reward, truncated, done, info = env.step(action)
         summary(n_episode, action, obs, reward, info)
         env.render()
@@ -33,7 +23,7 @@ def rand_control(env):
 
 
 if __name__ == '__main__':
-    env = gym.make('simple-v0', control_horizon=CONTROL_HORIZON, check_done_time=CHECK_DONE_TIME,
-                   max_deviation=MAX_DEVIATION, render_mode='pressures')
+    env = gym.make('simple-v0', render_mode='pressures')
+
     rand_control(env)
     env.close()

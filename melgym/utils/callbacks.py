@@ -1,3 +1,5 @@
+import os
+
 from stable_baselines3.common.callbacks import BaseCallback
 
 
@@ -10,7 +12,6 @@ class MetricsCallback(BaseCallback):
         super().__init__(verbose)
         self.csv_save = csv_save
         if self.csv_save:
-            import os
             self.metrics_folder = metrics_folder
             self.log_freq = log_freq
             if not os.path.exists(self.metrics_folder):
