@@ -13,7 +13,6 @@ from melgym.utils.aux import summary
 
 from stable_baselines3 import PPO, DDPG, TD3, SAC
 from stable_baselines3.common.callbacks import EvalCallback
-# from stable_baselines3.common.evaluation import evaluate_policy
 
 ALGORITHMS = {
     'PPO': PPO,
@@ -46,6 +45,24 @@ def get_config():
     return config
 
 
+def apply_wrappers(env, config):
+    """
+    Applies the indicated wrappers to the environment.
+
+    Args:
+        env (gym.Env): default environment.
+        config (dict): configuration dictionary.
+
+    Returns:
+        gym.Env: wrapped environment.
+    """
+    if 'norm_obs' in config['wrappers']:
+        env = NormalizeObservation(env)
+    if 'norm_rew' in config['wrappers']:
+        env = NormalizeReward(env)
+    return env
+
+
 def train(env, config):
     """
     Model training based on user configuration. Includes:
@@ -67,6 +84,9 @@ def train(env, config):
     total_timesteps = train_config['total_timesteps']
     eval_freq = train_config['eval_freq']
     n_eval_episodes = train_config['n_eval_episodes']
+
+    # Apply specified wrappers
+    env = apply_wrappers(env, config)
 
     # Evaluation environment
     env_eval = copy.deepcopy(env)
@@ -100,15 +120,19 @@ def test(env, config):
     obs, _ = env.reset()
     done = False
     truncated = False
+    mean_ep_reward = 0
     i = 1
     while not done and not truncated:
         action, _ = model.predict(obs, deterministic=True)
         obs, reward, truncated, done, info = env.step(action)
         summary(i, action, obs, reward, info)
         env.render()
+        mean_ep_reward += reward / i
         i += 1
+    print('Mean episode reward = ' + str(mean_ep_reward))
 
     # Optional SB3 evaluation
+    # from stable_baselines3.common.evaluation import evaluate_policy
     # mean_reward, std_reward = evaluate_policy(
     #     model, env, n_eval_episodes=10)
     # print('\n***** SB3 EVALUATION *****\n- Mean reward = ' +
@@ -116,12 +140,11 @@ def test(env, config):
 
 
 config = get_config()
+
 env = gym.make(config['env']['name'], **config['env']
                ['params'])
 
-# Normalization wrappers
-env = NormalizeReward(NormalizeObservation(env))
-
+# Train / test
 if 'train' in config['tasks']:
     train(env, config)
 if 'test' in config['tasks']:

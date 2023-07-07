@@ -1,17 +1,19 @@
 {
-    "id": "sac",
+    "id": "td3",
     "tasks": ["train", "test"],
+    "wrappers": ["norm_obs", "norm_reward"],
     "env": {
         "name": "simple-v0",
         "params": {
             "max_deviation": 40,
             "check_done_time": 1000,
             "control_horizon": 5,
-            "render_mode": "distances"
+            "render_mode": "pressures",
+            "time_bt_frames": 1
         }
     },
     "algorithm": {
-        "name": "SAC",
+        "name": "TD3",
         "params": {},
         "train_params": {
             "total_timesteps": 30000,
