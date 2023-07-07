@@ -6,7 +6,7 @@ import copy
 
 import gymnasium as gym
 
-from gymnasium.wrappers.normalize import NormalizeObservation
+from gymnasium.wrappers.normalize import NormalizeObservation, NormalizeReward
 
 from melgym.utils.callbacks import MetricsCallback
 from melgym.utils.aux import summary
@@ -117,10 +117,10 @@ def test(env, config):
 
 config = get_config()
 env = gym.make(config['env']['name'], **config['env']
-               ['params'], render_mode='distances')
+               ['params'])
 
-# Normalization wrapper
-env = NormalizeObservation(env)
+# Normalization wrappers
+env = NormalizeReward(NormalizeObservation(env))
 
 if 'train' in config['tasks']:
     train(env, config)

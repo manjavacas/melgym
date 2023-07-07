@@ -1,20 +1,21 @@
 {
     "id": "sac",
-    "task": ["train", "test"],
+    "tasks": ["train", "test"],
     "env": {
         "name": "simple-v0",
         "params": {
             "max_deviation": 40,
             "check_done_time": 1000,
-            "control_horizon": 5
+            "control_horizon": 5,
+            "render_mode": "distances"
         }
     },
     "algorithm": {
         "name": "SAC",
         "params": {},
         "train_params": {
-            "total_timesteps": 50000,
-            "eval_freq": 2000,
+            "total_timesteps": 30000,
+            "eval_freq": 6000,
             "n_eval_episodes": 5
         }
     }
