@@ -1,7 +1,7 @@
 {
     "id": "SAC",
     "tasks": ["train", "test"],
-    "wrappers": ["norm_obs", "norm_reward"],
+    "wrappers": ["norm_obs", "norm_rew"],
     "env": {
         "name": "simple-v0",
         "params": {
