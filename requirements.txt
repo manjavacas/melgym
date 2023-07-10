@@ -2,5 +2,6 @@ gymnnasium>=0.28.1
 numpy>=1.25.1
 melkit>=0.1.7.2
 matplotlib>=3.7.2
+stable-baselines3>=2.0.0
 tensorboard>=2.13.0
 torch>=2.0.1
