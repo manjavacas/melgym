@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug rand_controller.py",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/rand_controller.py",
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Debug run_experiment.py",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceFolder}/run_experiment.py",
+      "args": [
+        "-config",
+        "cfg.json"
+      ],
+      "console": "integratedTerminal"
+    }
+  ]
+}

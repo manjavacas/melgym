@@ -158,6 +158,7 @@ class EnvHVAC(Env):
         # Input edition
         self.__update_time()
         self.__update_cfs(action)
+        
         # MELCOR simulation
         with open(self.melog_path, 'a') as log:
             subprocess.call([MELCOR_PATH, 'ow=o', 'i=' + self.melin_path],
