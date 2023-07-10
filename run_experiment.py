@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python
 
 import argparse
 import json
@@ -121,14 +121,14 @@ def test(env, config):
     done = False
     truncated = False
     mean_ep_reward = 0
-    i = 1
+    n_steps = 1
     while not done and not truncated:
         action, _ = model.predict(obs, deterministic=True)
         obs, reward, truncated, done, info = env.step(action)
-        summary(i, action, obs, reward, info)
+        summary(n_steps, action, obs, reward, info)
         env.render()
-        mean_ep_reward += reward / i
-        i += 1
+        mean_ep_reward += reward / n_steps
+        n_steps += 1
     print('Mean episode reward = ' + str(mean_ep_reward))
 
     # Optional SB3 evaluation
