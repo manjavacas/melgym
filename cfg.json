@@ -1,5 +1,5 @@
 {
-    "id": "td3",
+    "id": "SAC",
     "tasks": ["train", "test"],
     "wrappers": ["norm_obs", "norm_reward"],
     "env": {
@@ -13,11 +13,11 @@
         }
     },
     "algorithm": {
-        "name": "TD3",
+        "name": "SAC",
         "params": {},
         "train_params": {
             "total_timesteps": 30000,
-            "eval_freq": 6000,
+            "eval_freq": 5000,
             "n_eval_episodes": 5
         }
     }
