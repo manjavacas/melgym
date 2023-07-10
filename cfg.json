@@ -1,5 +1,5 @@
 {
-    "id": "SAC",
+    "id": "sac",
     "tasks": ["train", "test"],
     "wrappers": ["norm_obs", "norm_rew"],
     "env": {
@@ -17,7 +17,7 @@
         "params": {},
         "train_params": {
             "total_timesteps": 30000,
-            "eval_freq": 5000,
+            "eval_freq": 6000,
             "n_eval_episodes": 5
         }
     }
