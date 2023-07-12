@@ -71,7 +71,7 @@ class EnvHVAC(Env):
 
         # Aux variables
         self.n_steps = 0
-        self._current_tend = 0
+        self.current_tend = 0
 
         # Tookit
         self.toolkit = Toolkit(self.input_path)
@@ -241,16 +241,16 @@ class EnvHVAC(Env):
                 lines = f.readlines()
                 edit_line = -1
                 for i, line in enumerate(lines):
+                    # Get TEND line
                     if 'TEND' in line:
                         edit_line = i
-                        self._current_tend = int(
-                            line.split()[1]) if self.n_steps > 1 else 0
                         break
                 if edit_line != -1:
+                    # Set new TEND
                     new_tend = str(
-                        self._current_tend + self.control_horizon * self.n_steps)
+                        self.control_horizon * self.n_steps) if self.n_steps > 1 else str(self.control_horizon)
                     lines[edit_line] = ''.join(['TEND ', new_tend, '\n'])
-
+                    self.current_tend = int(new_tend)
                     # Update file with new TEND
                     f.seek(0)
                     f.writelines([line.strip() + '\n' for line in lines])
@@ -260,7 +260,7 @@ class EnvHVAC(Env):
                         ''.join(['TEND not especified in ', self.input_path]))
             self.n_steps += 1
         else:
-            raise Exception('No reset has been done before step')
+            raise Exception('Error: reset() has not been called before step()')
 
     def __denorm_action(self, action):
         """
@@ -448,7 +448,7 @@ class EnvHVAC(Env):
             bool: True if at least one pressure is out of its allowed limits. False if termination is not yet evaluable or if pressures are inside their limits.
         """
 
-        return any(abs(value) > self.max_deviation for value in distances.values()) and self._current_tend > self.check_done_time
+        return any(abs(value) > self.max_deviation for value in distances.values()) and self.current_tend > self.check_done_time
 
     def __check_truncation(self, max_tend=10_000):
         """
@@ -462,4 +462,4 @@ class EnvHVAC(Env):
             bool: True if the maximum number of steps have been raised. False if not, or if truncation is not yet evaluable.
         """
 
-        return self._current_tend > max_tend and self._current_tend > self.check_done_time
+        return self.current_tend > max_tend and self.current_tend > self.check_done_time
