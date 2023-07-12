@@ -3,7 +3,6 @@ import shutil
 import subprocess
 
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 
 from datetime import datetime
@@ -184,31 +183,7 @@ class EnvHVAC(Env):
         Args:
             time_bt_frames (int, optional): time to wait after plotting. Defaults to 0.1.
         """
-
-        if self.n_steps > 2:
-            _, pressures = self.__get_last_record()
-            match self.render_mode:
-                case 'pressures':
-                    df = pd.read_csv(self.__get_edf_path(),
-                                     delim_whitespace=True, header=None)
-                    df = df.set_index(0)
-                    df.columns = list(pressures.keys())
-                    df = df.apply(pd.to_numeric, errors='coerce')
-
-                    df.plot()
-                    plt.draw()
-                    plt.pause(self.time_bt_frames)
-                    plt.close('all')
-                case 'distances':
-                    _, distances = self.__compute_distances(pressures)
-
-                    plt.bar(list(distances.keys()),
-                            list(distances.values()))
-                    plt.draw()
-                    plt.pause(self.time_bt_frames)
-                    plt.close('all')
-                case _:
-                    pass
+        pass
 
     def close(self):
         """
