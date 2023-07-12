@@ -1,5 +1,5 @@
 {
-    "id": "sac",
+    "id": "ppo",
     "tasks": [
         "train",
         "test"
@@ -19,7 +19,7 @@
         }
     },
     "algorithm": {
-        "name": "SAC",
+        "name": "PPO",
         "params": {},
         "train_params": {
             "total_timesteps": 30000,
