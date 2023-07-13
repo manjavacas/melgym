@@ -1,5 +1,5 @@
 {
-    "id": "ppo",
+    "id": "td3",
     "tasks": [
         "train",
         "test"
@@ -15,11 +15,11 @@
             "check_done_time": 500,
             "control_horizon": 10,
             "render_mode": "pressures",
-            "time_bt_frames": 0.5
+            "time_bt_frames": 0.01
         }
     },
     "algorithm": {
-        "name": "PPO",
+        "name": "TD3",
         "params": {},
         "train_params": {
             "total_timesteps": 40000,

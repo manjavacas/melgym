@@ -24,4 +24,6 @@ cleantb:
 	rm -rf ./tensorboard/*
 cleanmodels:
 	rm -rf ./best_models/*
-cleanall: clean cleanout cleantb cleanmodels
+cleanmetrics:
+	rm -rf ./ep_metrics/*
+cleanall: clean cleanout cleantb cleanmodels cleanmetrics
