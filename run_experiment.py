@@ -93,13 +93,15 @@ def train(env, config):
 
     # Callbacks
     eval_callback = EvalCallback(
-        env_eval, best_model_save_path='./best_models/' + experiment_id + '/', eval_freq=eval_freq, n_eval_episodes=n_eval_episodes, deterministic=True)
+        env_eval, best_model_save_path=config['best_models_dir'] +
+        experiment_id + '/',
+        eval_freq=eval_freq, n_eval_episodes=n_eval_episodes, deterministic=True)
 
     # Model configuration
     if config['algorithm']['name'] in ALGORITHMS:
         model_class = ALGORITHMS[config['algorithm']['name']]
         model = model_class('MlpPolicy', env, verbose=1,
-                            tensorboard_log='./tensorboard/' + experiment_id, **model_config)
+                            tensorboard_log=config['tensorboard_dir'] + experiment_id, **model_config)
     else:
         raise Exception('Incorrect algorithm name in configuration file.')
 
@@ -116,7 +118,8 @@ def test(env, config):
         model_id (str, optional): name of the model to be loaded. Defaults to 'best_model'.
     """
     model_class = ALGORITHMS[config['algorithm']['name']]
-    model = model_class.load('./best_models/' + config['id'] + '/best_model')
+    model = model_class.load(
+        config['best_models_dir'] + config['id'] + '/best_model')
     obs, _ = env.reset()
     done = False
     truncated = False
@@ -142,7 +145,7 @@ def test(env, config):
 config = get_config()
 
 env = gym.make(config['env']['name'], **config['env']
-               ['params'])
+               ['params'], env_id=config['id'])
 
 # Train / test
 if 'train' in config['tasks']:

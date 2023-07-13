@@ -20,7 +20,7 @@ class EnvHVAC(Env):
     """
     metadata = {'render_modes': ['pressures', 'distances']}
 
-    def __init__(self, input_file, n_actions, controlled_cvs, control_horizon=5, check_done_time=1_000, max_deviation=40, min_velocity=0, max_velocity=10, render_mode=None, time_bt_frames=0.1, env_id=None):
+    def __init__(self, input_file, n_actions, controlled_cvs, control_horizon=5, check_done_time=500, max_deviation=40, min_velocity=0, max_velocity=10, max_tend=10_000, render_mode=None, time_bt_frames=0.1, env_id=None):
         """
         Class constructor.
 
@@ -29,13 +29,14 @@ class EnvHVAC(Env):
             n_actions (int): number of inlet air velocities to be controlled.
             controlled_cvs (list): list of controlled CVs IDs (e.g. CV001).
             control_horizon (int, optional): number of simulation cycles between actions. Defaults to 5.
-            check_done_time (int, optional): simulation time allowed before evaluating the termination condition. Defaults to 1000.
+            check_done_time (int, optional): simulation time allowed before evaluating the termination condition. Defaults to 500.
             max_deviation (float, optional): maximum distance allowed from original pressures. Defaults to 20 (Pa).
-            min_velocity (float): minimum value for control actions. Defaults to 0 (m/s).
-            max_velocity (float): maximum value for control actions. Defaults to 10 (m/s).
-            render_mode (str): render option.
-            time_bt_frames (float): time between rendered frames.
-            env_id (str): custom environment identifier. Used for naming the output directory.
+            min_velocity (float, optional): minimum value for control actions. Defaults to 0 (m/s).
+            max_velocity (float. optional): maximum value for control actions. Defaults to 10 (m/s).
+            max_tend (int, optional): maximum TEND before truncation. Defaults to 10000.
+            render_mode (str, optional): render option.
+            time_bt_frames (float, optional): time between rendered frames.
+            env_id (str, optional): custom environment identifier. Used for naming the output directory.
         """
 
         # Observation space
@@ -51,7 +52,7 @@ class EnvHVAC(Env):
 
         # Environment ID and output directory
         self.env_id = 'melgym_' + \
-            datetime.now().strftime('%Y-%m-%d_%H:%M:%S') if not env_id else env_id
+            datetime.now().strftime('%Y%m%d_%H:%M:%S') if not env_id else env_id
         self.output_dir = os.path.join(OUTPUT_DIR, self.env_id)
 
         if not os.path.exists(self.output_dir):
@@ -68,11 +69,12 @@ class EnvHVAC(Env):
         self.max_deviation = max_deviation
         self.max_velocity = max_velocity
         self.min_velocity = min_velocity
+        self.max_tend = max_tend
 
         # Aux variables
         self.n_steps = 0
         self.current_tend = 0
-
+        
         # Tookit
         self.toolkit = Toolkit(self.input_path)
 
@@ -187,28 +189,25 @@ class EnvHVAC(Env):
 
         if self.n_steps > 2:
             _, pressures = self.__get_last_record()
-            match self.render_mode:
-                case 'pressures':
-                    df = pd.read_csv(self.__get_edf_path(),
-                                     delim_whitespace=True, header=None)
-                    df = df.set_index(0)
-                    df.columns = list(pressures.keys())
-                    df = df.apply(pd.to_numeric, errors='coerce')
+            if self.render_mode == 'pressures':
+                df = pd.read_csv(self.__get_edf_path(),
+                                 delim_whitespace=True, header=None)
+                df = df.set_index(0)
+                df.columns = list(pressures.keys())
+                df = df.apply(pd.to_numeric, errors='coerce')
 
-                    df.plot()
-                    plt.draw()
-                    plt.pause(self.time_bt_frames)
-                    plt.close('all')
-                case 'distances':
-                    _, distances = self.__compute_distances(pressures)
+                df.plot()
+                plt.draw()
+                plt.pause(self.time_bt_frames)
+                plt.close('all')
+            elif self.render_mode == 'distances':
+                _, distances = self.__compute_distances(pressures)
 
-                    plt.bar(list(distances.keys()),
-                            list(distances.values()))
-                    plt.draw()
-                    plt.pause(self.time_bt_frames)
-                    plt.close('all')
-                case _:
-                    pass
+                plt.bar(list(distances.keys()),
+                        list(distances.values()))
+                plt.draw()
+                plt.pause(self.time_bt_frames)
+                plt.close('all')
 
     def close(self):
         """
@@ -450,16 +449,13 @@ class EnvHVAC(Env):
 
         return any(abs(value) > self.max_deviation for value in distances.values()) and self.current_tend > self.check_done_time
 
-    def __check_truncation(self, max_tend=10_000):
+    def __check_truncation(self):
         """
         Checks the truncation condition of an episode. Waits until check_done_time is raised to be evaluated.
         An episode is truncated if the number of steps is greater than a value specified in max_tend.
-
-        Args:
-            max_tend (int, optional): maximum TEND for an episode. Defaults to 1e4.
 
         Returns:
             bool: True if the maximum number of steps have been raised. False if not, or if truncation is not yet evaluable.
         """
 
-        return self.current_tend > max_tend and self.current_tend > self.check_done_time
+        return self.current_tend > self.max_tend and self.current_tend > self.check_done_time

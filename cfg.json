@@ -1,5 +1,5 @@
 {
-    "id": "ppo",
+    "id": "sac",
     "tasks": [
         "train",
         "test"
@@ -12,19 +12,21 @@
         "name": "simple-v0",
         "params": {
             "max_deviation": 40,
-            "check_done_time": 1000,
+            "check_done_time": 500,
             "control_horizon": 5,
             "render_mode": "pressures",
-            "time_bt_frames": 1
+            "time_bt_frames": 0.5
         }
     },
     "algorithm": {
-        "name": "PPO",
+        "name": "SAC",
         "params": {},
         "train_params": {
-            "total_timesteps": 30000,
-            "eval_freq": 6000,
+            "total_timesteps": 50000,
+            "eval_freq": 10000,
             "n_eval_episodes": 5
         }
-    }
+    },
+    "tensorboard_dir": "./tensorboard/",
+    "best_models_dir": "./best_models/"
 }
