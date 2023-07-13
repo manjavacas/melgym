@@ -74,7 +74,7 @@ class EnvHVAC(Env):
         # Aux variables
         self.n_steps = 0
         self.current_tend = 0
-        
+
         # Tookit
         self.toolkit = Toolkit(self.input_path)
 
@@ -83,7 +83,7 @@ class EnvHVAC(Env):
         if render_mode is not None:
             if render_mode in self.metadata['render_modes']:
                 self.render_mode = render_mode
-                plt.ion()
+                self.fig, self.ax = plt.subplots()
             else:
                 raise Exception(
                     'The specified render format is not available.')
@@ -186,7 +186,6 @@ class EnvHVAC(Env):
         Args:
             time_bt_frames (int, optional): time to wait after plotting. Defaults to 0.1.
         """
-
         if self.n_steps > 2:
             _, pressures = self.__get_last_record()
             if self.render_mode == 'pressures':
@@ -196,18 +195,16 @@ class EnvHVAC(Env):
                 df.columns = list(pressures.keys())
                 df = df.apply(pd.to_numeric, errors='coerce')
 
-                df.plot()
-                plt.draw()
-                plt.pause(self.time_bt_frames)
-                plt.close('all')
+                self.ax.clear()
+                df.plot(ax=self.ax)
             elif self.render_mode == 'distances':
                 _, distances = self.__compute_distances(pressures)
 
-                plt.bar(list(distances.keys()),
-                        list(distances.values()))
-                plt.draw()
-                plt.pause(self.time_bt_frames)
-                plt.close('all')
+                self.ax.clear()
+                self.ax.bar(list(distances.keys()), list(distances.values()))
+
+            plt.draw()
+            plt.pause(self.time_bt_frames)
 
     def close(self):
         """
