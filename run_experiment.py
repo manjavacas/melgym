@@ -8,7 +8,7 @@ import gymnasium as gym
 
 from gymnasium.wrappers.normalize import NormalizeObservation, NormalizeReward
 
-from melgym.utils.callbacks import MetricsCallback
+from melgym.utils.callbacks import TensorboardMetricsCallback
 from melgym.utils.aux import summary
 
 from stable_baselines3 import PPO, DDPG, TD3, SAC
@@ -106,7 +106,7 @@ def train(env, config):
         raise Exception('Incorrect algorithm name in configuration file.')
 
     model.learn(total_timesteps=total_timesteps,
-                progress_bar=True, callback=[eval_callback, MetricsCallback()])
+                progress_bar=True, callback=[eval_callback, TensorboardMetricsCallback()])
 
 
 def test(env, config):
@@ -133,13 +133,6 @@ def test(env, config):
         mean_ep_reward += reward / n_steps
         n_steps += 1
     print('Mean episode reward = ' + str(mean_ep_reward))
-
-    # Optional SB3 evaluation
-    # from stable_baselines3.common.evaluation import evaluate_policy
-    # mean_reward, std_reward = evaluate_policy(
-    #     model, env, n_eval_episodes=10)
-    # print('\n***** SB3 EVALUATION *****\n- Mean reward = ' +
-    #       str(mean_reward) + '\n- Std. reward = ' + str(std_reward))
 
 
 config = get_config()
