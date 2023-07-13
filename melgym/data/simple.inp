@@ -5,7 +5,7 @@
 
 *EOR* MELGEN
 
-TITLE     BRANCH
+TITLE     SIMPLE
 
 **********************************************************
 *                       NGC INPUT                        *
@@ -443,7 +443,7 @@ EDF001A1  CVH-P.6
 
 WARNINGLEVEL 0
 
-TITLE       BRANCH
+TITLE       SIMPLE
 
 CPULEFT     100.
 CPULIM      100000.
@@ -453,9 +453,9 @@ SOFTDTMIN   0.1  1000
 
 RESTART     -1
 
-TEND 5
+TEND 10
 
-*           TIME        DTMAX     DTMIN    DTEDT     DTPLT     DTRST
-TIME1       0.0         1.0       1.0      5.0     1000.0    5.0
+*           TIME        DTMAX     DTMIN    DTEDT    DTPLT     DTRST
+TIME1       0.0         1.0       1.0      10.0     1000.0    10.0
 
 . * END MELCOR

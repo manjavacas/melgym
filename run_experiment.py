@@ -8,7 +8,7 @@ import gymnasium as gym
 
 from gymnasium.wrappers.normalize import NormalizeObservation, NormalizeReward
 
-from melgym.utils.callbacks import TensorboardMetricsCallback
+from melgym.utils.callbacks import TbMetricsCallback, EpisodicDataCallback
 from melgym.utils.aux import summary
 
 from stable_baselines3 import PPO, DDPG, TD3, SAC
@@ -106,7 +106,7 @@ def train(env, config):
         raise Exception('Incorrect algorithm name in configuration file.')
 
     model.learn(total_timesteps=total_timesteps,
-                progress_bar=True, callback=[eval_callback, TensorboardMetricsCallback()])
+                progress_bar=True, callback=[eval_callback, TbMetricsCallback(), EpisodicDataCallback()])
 
 
 def test(env, config):
@@ -126,10 +126,10 @@ def test(env, config):
     mean_ep_reward = 0
     n_steps = 1
     while not done and not truncated:
+        env.render()
         action, _ = model.predict(obs, deterministic=True)
         obs, reward, truncated, done, info = env.step(action)
         summary(n_steps, action, obs, reward, info)
-        env.render()
         mean_ep_reward += reward / n_steps
         n_steps += 1
     print('Mean episode reward = ' + str(mean_ep_reward))

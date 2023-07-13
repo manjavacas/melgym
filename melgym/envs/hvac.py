@@ -20,7 +20,7 @@ class EnvHVAC(Env):
     """
     metadata = {'render_modes': ['pressures', 'distances']}
 
-    def __init__(self, input_file, n_actions, controlled_cvs, control_horizon=5, check_done_time=500, max_deviation=40, min_velocity=0, max_velocity=10, max_tend=10_000, render_mode=None, time_bt_frames=0.1, env_id=None):
+    def __init__(self, input_file, n_actions, controlled_cvs, control_horizon=10, check_done_time=500, max_deviation=40, min_velocity=0, max_velocity=10, max_tend=10_000, render_mode=None, time_bt_frames=0.1, env_id=None):
         """
         Class constructor.
 
@@ -28,7 +28,7 @@ class EnvHVAC(Env):
             input_file (str): name of the file with the MELGEN/MELCOR input data.
             n_actions (int): number of inlet air velocities to be controlled.
             controlled_cvs (list): list of controlled CVs IDs (e.g. CV001).
-            control_horizon (int, optional): number of simulation cycles between actions. Defaults to 5.
+            control_horizon (int, optional): number of simulation cycles between actions. Defaults to 10.
             check_done_time (int, optional): simulation time allowed before evaluating the termination condition. Defaults to 500.
             max_deviation (float, optional): maximum distance allowed from original pressures. Defaults to 20 (Pa).
             min_velocity (float, optional): minimum value for control actions. Defaults to 0 (m/s).
@@ -177,34 +177,38 @@ class EnvHVAC(Env):
         terminated = self.__check_termination(distances)
         truncated = self.__check_truncation()
 
+        self.n_steps += 1
+
         return np.array(obs, np.float32), -reward, terminated, truncated, info
 
     def render(self):
         """
         Plots all pressures / distances evolution during simulation time.
-
-        Args:
-            time_bt_frames (int, optional): time to wait after plotting. Defaults to 0.1.
         """
-        if self.n_steps > 2:
-            _, pressures = self.__get_last_record()
-            if self.render_mode == 'pressures':
-                df = pd.read_csv(self.__get_edf_path(),
-                                 delim_whitespace=True, header=None)
-                df = df.set_index(0)
-                df.columns = list(pressures.keys())
-                df = df.apply(pd.to_numeric, errors='coerce')
+        self.ax.clear()
 
-                self.ax.clear()
-                df.plot(ax=self.ax)
-            elif self.render_mode == 'distances':
-                _, distances = self.__compute_distances(pressures)
+        # Initial pressures
+        pressures = {cv_id: self.__get_initial_pressure(
+            cv_id) for cv_id in self.controlled_cvs}
+        df = pd.DataFrame(pressures, index=[0])
+        df0 = df.copy()
 
-                self.ax.clear()
-                self.ax.bar(list(distances.keys()), list(distances.values()))
+        # Simulated pressures
+        if self.n_steps > 1:
+            df = pd.read_csv(self.__get_edf_path(),
+                             delim_whitespace=True, header=None)
+            df = df.set_index(0)
+            df.columns = list(pressures.keys())
+            df = pd.concat([df0, df], ignore_index=True)
 
-            plt.draw()
-            plt.pause(self.time_bt_frames)
+        if self.render_mode == 'pressures':
+            df.plot(ax=self.ax)
+        elif self.render_mode == 'distances':
+            _, distances = self.__compute_distances(pressures)
+            self.ax.bar(list(distances.keys()), list(distances.values()))
+
+        plt.draw()
+        plt.pause(self.time_bt_frames)
 
     def close(self):
         """
@@ -254,7 +258,6 @@ class EnvHVAC(Env):
                 else:
                     raise Exception(
                         ''.join(['TEND not especified in ', self.input_path]))
-            self.n_steps += 1
         else:
             raise Exception('Error: reset() has not been called before step()')
 
