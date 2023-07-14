@@ -16,7 +16,7 @@ class TbMetricsCallback(BaseCallback):
     def _on_step(self) -> bool:
         # Actions (normalized)
         norm_action = self.locals['actions'][-1][-1]
-        self.logger.record('sim_data/norm_action', norm_action)
+        self.logger.record('actions/norm_action', norm_action)
 
         # Actions (real)
         real_action = (norm_action + 1) * 10 / 2
@@ -24,7 +24,7 @@ class TbMetricsCallback(BaseCallback):
 
         # Pressures
         for key, value in self.locals['infos'][-1]['pressures'].items():
-            self.logger.record('actions/' + key, value)
+            self.logger.record('pressures/' + key, value)
 
         # Distances
         for key, value in self.locals['infos'][-1]['distances'].items():
