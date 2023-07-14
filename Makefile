@@ -1,4 +1,4 @@
-all: clean run
+all: cleanmetrics run
 rand:
 	./rand_controller.py
 run:
@@ -8,7 +8,6 @@ gen: clean
 cor:
 	./melgym/exec/MELCOR ./melgym/data/simple.inp
 clean:
-	rm -rf ./metrics/
 	rm -f MEGDIA
 	rm -f MELDIA
 	rm -f MELMES

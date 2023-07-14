@@ -1,4 +1,4 @@
-from gymnasium import ObservationWrapper, ActionWrapper
+from gymnasium import ObservationWrapper, ActionWrapper, RewardWrapper
 from gymnasium import spaces
 
 import numpy as np
