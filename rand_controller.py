@@ -1,26 +1,33 @@
 #!/usr/bin/env python
 
 import melgym
-
-import numpy as np
 import gymnasium as gym
 
 from melgym.utils.aux import summary
 
 
-def rand_control(env):
-    obs, _ = env.reset()
-    done = False
-    truncated = False
-    n_steps = 1
+N_TEST_EPISODES = 1
 
-    while not done and not truncated:
-        env.render()
-        action = env.action_space.sample()
-        # action = np.array([-0.826])
-        obs, reward, truncated, done, info = env.step(action)
-        summary(n_steps, action, obs, reward, info)
-        n_steps += 1
+
+def rand_control(env):
+    """
+    Random controller for testing purposes.
+
+    Args:
+        env (gym.Env): gymnasium environment.
+    """
+    for _ in range(N_TEST_EPISODES):
+        obs, _ = env.reset()
+        done = False
+        truncated = False
+        n_steps = 1
+        while not done and not truncated:
+            env.render()
+            action = env.action_space.sample()
+            # action = np.array([-0.826])
+            obs, reward, truncated, done, info = env.step(action)
+            summary(n_steps, action, obs, reward, info)
+            n_steps += 1
 
 
 if __name__ == '__main__':

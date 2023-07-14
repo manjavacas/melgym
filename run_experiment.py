@@ -86,8 +86,7 @@ def get_callbacks(env, config):
         n_eval_episodes = train_config['n_eval_episodes']
         callbacks.append(EvalCallback(
             env_eval, best_model_save_path=config['paths']['best_models_dir'] +
-            experiment_id + '/',
-            eval_freq=eval_freq, n_eval_episodes=n_eval_episodes, deterministic=True))
+            experiment_id + '/', eval_freq=eval_freq, n_eval_episodes=n_eval_episodes, deterministic=True))
     if 'TbMetricsCallback' in config['callbacks']:
         callbacks.append(TbMetricsCallback())
     if 'EpisodicDataCallback' in config['callbacks']:
