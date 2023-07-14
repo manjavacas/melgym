@@ -63,12 +63,42 @@ def apply_wrappers(env, config):
     return env
 
 
+def get_callbacks(env, config):
+    """
+    Gets the list of callbacks to be applied.
+
+    Args:
+        env (gym.Env): default environment.
+        config (dict): configuration file info.
+
+    Returns:
+        list: list of callbacks to be applied.
+    """
+
+    experiment_id = config['id']
+    train_config = config['algorithm']['train_params']
+
+    callbacks = []
+    if 'EvalCallback' in config['callbacks']:
+        # Evaluation environment
+        env_eval = copy.deepcopy(env)
+        eval_freq = train_config['eval_freq']
+        n_eval_episodes = train_config['n_eval_episodes']
+        callbacks.append(EvalCallback(
+            env_eval, best_model_save_path=config['paths']['best_models_dir'] +
+            experiment_id + '/',
+            eval_freq=eval_freq, n_eval_episodes=n_eval_episodes, deterministic=True))
+    if 'TbMetricsCallback' in config['callbacks']:
+        callbacks.append(TbMetricsCallback())
+    if 'EpisodicDataCallback' in config['callbacks']:
+        callbacks.append(EpisodicDataCallback())
+
+    return callbacks
+
+
 def train(env, config):
     """
-    Model training based on user configuration. Includes:
-        - Periodic evaluation.
-        - Action denormalisation.
-        - Metrics callback.
+    Model training based on user configuration.
 
     Args:
         env (gym.Env): training environment
@@ -79,39 +109,29 @@ def train(env, config):
 
     experiment_id = config['id']
     model_config = config['algorithm']['params']
-    train_config = config['algorithm']['train_params']
-
-    total_timesteps = train_config['total_timesteps']
-    eval_freq = train_config['eval_freq']
-    n_eval_episodes = train_config['n_eval_episodes']
+    total_timesteps = config['algorithm']['train_params']['total_timesteps']
 
     # Apply specified wrappers
     env = apply_wrappers(env, config)
 
-    # Evaluation environment
-    env_eval = copy.deepcopy(env)
-
     # Callbacks
-    eval_callback = EvalCallback(
-        env_eval, best_model_save_path=config['best_models_dir'] +
-        experiment_id + '/',
-        eval_freq=eval_freq, n_eval_episodes=n_eval_episodes, deterministic=True)
+    callbacks = get_callbacks(env, config)
 
     # Model configuration
     if config['algorithm']['name'] in ALGORITHMS:
         model_class = ALGORITHMS[config['algorithm']['name']]
         model = model_class('MlpPolicy', env, verbose=1,
-                            tensorboard_log=config['tensorboard_dir'] + experiment_id, **model_config)
+                            tensorboard_log=config['paths']['tensorboard_dir'] + experiment_id, **model_config)
     else:
         raise Exception('Incorrect algorithm name in configuration file.')
 
     model.learn(total_timesteps=total_timesteps,
-                progress_bar=True, callback=[eval_callback, TbMetricsCallback(), EpisodicDataCallback()])
+                progress_bar=True, callback=callbacks)
 
 
 def test(env, config):
     """
-    Runs a trained model.
+    Runs a trained model during an episode.
 
     Args:
         env (gym.Env): environment.
@@ -119,7 +139,7 @@ def test(env, config):
     """
     model_class = ALGORITHMS[config['algorithm']['name']]
     model = model_class.load(
-        config['best_models_dir'] + config['id'] + '/best_model')
+        config['paths']['best_models_dir'] + config['id'] + '/best_model')
     obs, _ = env.reset()
     done = False
     truncated = False

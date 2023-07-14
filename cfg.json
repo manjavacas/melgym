@@ -4,18 +4,13 @@
         "train",
         "test"
     ],
-    "wrappers": [
-        "norm_obs",
-        "norm_rew"
-    ],
     "env": {
         "name": "simple-v0",
         "params": {
             "max_deviation": 40,
             "check_done_time": 500,
             "control_horizon": 10,
-            "render_mode": "pressures",
-            "time_bt_frames": 0.01
+            "render_mode": "pressures"
         }
     },
     "algorithm": {
@@ -27,6 +22,17 @@
             "n_eval_episodes": 5
         }
     },
-    "tensorboard_dir": "./tensorboard/",
-    "best_models_dir": "./best_models/"
+    "wrappers": [
+        "norm_obs",
+        "norm_rew"
+    ],
+    "callbacks": [
+        "EvalCallback",
+        "TbMetricsCallback",
+        "EpisodicDataCallback"
+    ],
+    "paths": {
+        "tensorboard_dir": "./tensorboard/",
+        "best_models_dir": "./best_models/"
+    }
 }
