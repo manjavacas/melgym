@@ -91,7 +91,8 @@ def get_callbacks(env, config):
     if 'TbMetricsCallback' in config['callbacks']:
         callbacks.append(TbMetricsCallback())
     if 'EpisodicDataCallback' in config['callbacks']:
-        callbacks.append(EpisodicDataCallback())
+        callbacks.append(EpisodicDataCallback(
+            save_path=config['paths']['ep_metrics_dir']))
 
     return callbacks
 

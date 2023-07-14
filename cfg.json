@@ -1,5 +1,5 @@
 {
-    "id": "td3",
+    "id": "sac-baseline",
     "tasks": [
         "train",
         "test"
@@ -14,17 +14,18 @@
         }
     },
     "algorithm": {
-        "name": "TD3",
-        "params": {},
+        "name": "SAC",
+        "params": {
+            "stats_window_size": 1
+        },
         "train_params": {
-            "total_timesteps": 40000,
-            "eval_freq": 5000,
+            "total_timesteps": 20000,
+            "eval_freq": 1000,
             "n_eval_episodes": 5
         }
     },
     "wrappers": [
-        "norm_obs",
-        "norm_rew"
+        "norm_obs"
     ],
     "callbacks": [
         "EvalCallback",
@@ -33,6 +34,7 @@
     ],
     "paths": {
         "tensorboard_dir": "./tensorboard/",
-        "best_models_dir": "./best_models/"
+        "best_models_dir": "./best_models/",
+        "ep_metrics_dir": "./ep_metrics/"
     }
 }

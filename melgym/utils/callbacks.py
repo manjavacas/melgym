@@ -14,13 +14,21 @@ class TbMetricsCallback(BaseCallback):
         super().__init__(verbose)
 
     def _on_step(self) -> bool:
-        # Last action (normalized)
+        # Actions (normalized)
         norm_action = self.locals['actions'][-1][-1]
-        self.logger.record('sim_data/last_norm_action', norm_action)
+        self.logger.record('sim_data/norm_action', norm_action)
 
-        # Last action (real)
+        # Actions (real)
         real_action = (norm_action + 1) * 10 / 2
-        self.logger.record('sim_data/last_real_action', real_action)
+        self.logger.record('actions/real_action', real_action)
+
+        # Pressures
+        for key, value in self.locals['infos'][-1]['pressures'].items():
+            self.logger.record('actions/' + key, value)
+
+        # Distances
+        for key, value in self.locals['infos'][-1]['distances'].items():
+            self.logger.record('distances/' + key, value)
 
         return True
 
@@ -30,13 +38,14 @@ class EpisodicDataCallback(BaseCallback):
     Custom callback for registering episode information.
     """
 
-    def __init__(self, verbose=0, save_freq=10, save_path='ep_metrics/'):
+    def __init__(self, save_path, verbose=0, save_freq=10):
         super().__init__(verbose)
-        self.ep_data = []
-        self.step_data = {}
+
         self.save_freq = save_freq
         self.save_path = save_path
         self.num_episodes = 1
+        self.ep_data = []
+        self.step_data = {}
 
         if not os.path.exists(self.save_path):
             os.makedirs(self.save_path)
