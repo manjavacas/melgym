@@ -16,8 +16,8 @@ def rand_control(env):
 
     while not done and not truncated:
         env.render()
-        # action = env.action_space.sample()
-        action = np.array([-0.842])
+        action = env.action_space.sample()
+        # action = np.array([-0.826])
         obs, reward, truncated, done, info = env.step(action)
         summary(n_steps, action, obs, reward, info)
         n_steps += 1
