@@ -12,6 +12,8 @@ class TbMetricsCallback(BaseCallback):
 
     def __init__(self, verbose=0):
         super().__init__(verbose)
+        self.n_ep_steps = 0
+        self.mean_ep_reward = 0
 
     def _on_step(self) -> bool:
         # Actions (normalized)
@@ -29,6 +31,15 @@ class TbMetricsCallback(BaseCallback):
         # Distances
         for key, value in self.locals['infos'][-1]['distances'].items():
             self.logger.record('distances/' + key, value)
+
+        # Mean episode reward
+        self.n_ep_steps += 1
+        self.mean_ep_reward = self.locals['rewards'][-1] + (self.mean_ep_reward / self.n_ep_steps)
+
+        if self.locals['dones'][-1]:
+            self.logger.record('episodic/mean_ep_reward', self.mean_ep_reward)
+            self.n_ep_steps = 0
+            self.mean_ep_reward = 0
 
         return True
 

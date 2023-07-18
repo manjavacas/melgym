@@ -127,6 +127,8 @@ def train(env, config):
 
     model.learn(total_timesteps=total_timesteps,
                 progress_bar=True, callback=callbacks)
+    
+    model.save(config['paths']['best_models_dir'] + config['id'] + '/last_model')
 
 
 def test(env, config):
