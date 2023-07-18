@@ -91,13 +91,11 @@ class EnvHVAC(Env):
     def reset(self, seed=None, options=None):
         """
         Environment initialization.
-            1. Cleans past simulations outputs.
-            2. Generates a copy from original input file.
-            3. Updates simulation times according to the specified control horizon.
-            4. Executes MELGEN, generating an initial restart file.
-            5. Gets the initial pressures for each CV.
-
-        After that, CFs redefinitions are added to the MELCOR input for future control steps.
+            1. Generates a copy from original input file.
+            2. Updates the simulation time according to the specified control horizon.
+            3. Executes MELGEN, generating an initial restart file.
+            4. Gets the initial pressures for each CV.
+            5. CFs redefinitions are added to the MELCOR input for future control steps.
 
         Args:
             seed (int, optional): random seed. Defaults to None.
@@ -123,7 +121,7 @@ class EnvHVAC(Env):
 
         # Get initial pressures
         info = {'time': 0.0}
-        for cv_id in self.__get_edf_cvs():
+        for cv_id in self.controlled_cvs:
             info[cv_id] = self.__get_initial_pressure(cv_id)
         obs = [value for key, value in info.items()
                if key in self.controlled_cvs]
@@ -152,13 +150,20 @@ class EnvHVAC(Env):
             bool: termination flag. It will be True if any pressure exceeds its imposed limits.
             bool: truncated flag. It will be True if pressures keep stable until the imposed time step limit.
             dict: additional step information (last recorded time and pressures).
+
+        Raises:
+            Exception: if step() is called without an initial call to reset().
         """
 
         # Denormalize action
         action = self.__denorm_action(action)
 
         # Input edition
-        self.__update_time()
+        if self.n_steps > 0:
+            self.__update_time()
+        else:
+            raise Exception('Error: reset() has not been called before step()')
+
         self.__update_cfs(action)
 
         # MELCOR simulation
@@ -234,32 +239,29 @@ class EnvHVAC(Env):
 
         Raises:
             Exception: if no TEND register is found in the input file.
-            Exception: if a  step is performed without an initial call to reset.
         """
-        if self.n_steps > 0:
-            with open(self.melin_path, 'r+') as f:
-                lines = f.readlines()
-                edit_line = -1
-                for i, line in enumerate(lines):
-                    # Get TEND line
-                    if 'TEND' in line:
-                        edit_line = i
-                        break
-                if edit_line != -1:
-                    # Set new TEND
-                    new_tend = str(
-                        self.control_horizon * self.n_steps) if self.n_steps > 1 else str(self.control_horizon)
-                    lines[edit_line] = ''.join(['TEND ', new_tend, '\n'])
-                    self.current_tend = int(new_tend)
-                    # Update file with new TEND
-                    f.seek(0)
-                    f.writelines([line.strip() + '\n' for line in lines])
-                    f.truncate()
-                else:
-                    raise Exception(
-                        ''.join(['TEND not especified in ', self.input_path]))
-        else:
-            raise Exception('Error: reset() has not been called before step()')
+
+        with open(self.melin_path, 'r+') as f:
+            lines = f.readlines()
+            edit_line = -1
+            for i, line in enumerate(lines):
+                # Get TEND line
+                if 'TEND' in line:
+                    edit_line = i
+                    break
+            if edit_line != -1:
+                # Set new TEND
+                new_tend = str(
+                    self.control_horizon * self.n_steps) if self.n_steps > 1 else str(self.control_horizon)
+                lines[edit_line] = ''.join(['TEND ', new_tend, '\n'])
+                self.current_tend = int(new_tend)
+                # Update file with new TEND
+                f.seek(0)
+                f.writelines([line.strip() + '\n' for line in lines])
+                f.truncate()
+            else:
+                raise Exception(
+                    ''.join(['TEND not especified in ', self.input_path]))
 
     def __denorm_action(self, action):
         """
@@ -294,14 +296,14 @@ class EnvHVAC(Env):
                 raise Exception('Error reading empty EDF.')
 
             time['time'] = float(last_line[0])
-            for i, cv_id in enumerate(self.__get_edf_cvs()):
+            for i, cv_id in enumerate(self.controlled_cvs):
                 record[cv_id] = np.float32(last_line[i+1])
 
         return time, record
 
     def __add_cfs_redefinition(self, cf_keyword='CONTROLLER'):
         """
-        Includes in the MELCOR input the definitions of the CFs to be overwritten.
+        Includes the definitions of the CFs to be overwritten in the MELCOR input.
 
         Args:
             cf_keyword (str, optional): keyword used for identifying an air inlet controller. Defaults to 'CONTROLLER'.
@@ -392,26 +394,6 @@ class EnvHVAC(Env):
         """
 
         return float(self.toolkit.get_cv(cv_id).get_field('PVOL'))
-
-    def __get_edf_cvs(self):
-        """
-        Retrieves those CVs whose pressure is monitored in the EDF.
-
-        Returns:
-            list: list of CV ids.
-        """
-
-        cv_ids = []
-
-        pressure_vars = [
-            var for var in self.toolkit.get_edf_vars() if var.startswith('CVH-P.')]
-
-        for var in pressure_vars:
-            cv_number = var[var.find('.') + 1:]
-            cv_ids.append(
-                ''.join(['CV', '0' * (3 - len(cv_number)), cv_number]))
-
-        return cv_ids
 
     def __get_edf_path(self):
         """

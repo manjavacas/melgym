@@ -1,5 +1,5 @@
 {
-    "id": "sac-baseline",
+    "id": "td3-baseline",
     "tasks": [
         "train",
         "test"
@@ -14,12 +14,12 @@
         }
     },
     "algorithm": {
-        "name": "SAC",
+        "name": "TD3",
         "params": {
             "stats_window_size": 1
         },
         "train_params": {
-            "total_timesteps": 20000,
+            "total_timesteps": 40000,
             "eval_freq": 1000,
             "n_eval_episodes": 5
         }
