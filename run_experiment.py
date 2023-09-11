@@ -4,6 +4,7 @@ import argparse
 import json
 import copy
 
+import numpy as np
 import gymnasium as gym
 
 from gymnasium.wrappers.normalize import NormalizeObservation, NormalizeReward
@@ -13,6 +14,7 @@ from melgym.utils.aux import summary
 
 from stable_baselines3 import PPO, DDPG, TD3, SAC
 from stable_baselines3.common.callbacks import EvalCallback
+from stable_baselines3.common.noise import NormalActionNoise
 
 ALGORITHMS = {
     'PPO': PPO,
@@ -122,13 +124,17 @@ def train(env, config):
         model_class = ALGORITHMS[config['algorithm']['name']]
         model = model_class('MlpPolicy', env, verbose=1,
                             tensorboard_log=config['paths']['tensorboard_dir'] + experiment_id, **model_config)
+        # Uncomment for noisy actions
+        # model = model_class('MlpPolicy', env, verbose=1,
+        #                     tensorboard_log=config['paths']['tensorboard_dir'] + experiment_id, **model_config, action_noise=NormalActionNoise(mean=np.array([0]), sigma=np.array([0.1])))
     else:
         raise Exception('Incorrect algorithm name in configuration file.')
 
     model.learn(total_timesteps=total_timesteps,
                 progress_bar=True, callback=callbacks)
-    
-    model.save(config['paths']['best_models_dir'] + config['id'] + '/last_model')
+
+    model.save(config['paths']['best_models_dir'] +
+               config['id'] + '/last_model')
 
 
 def test(env, config):

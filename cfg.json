@@ -1,5 +1,5 @@
 {
-    "id": "td3-baseline",
+    "id": "td3",
     "tasks": [
         "train",
         "test"
@@ -10,13 +10,14 @@
             "max_deviation": 40,
             "check_done_time": 500,
             "control_horizon": 10,
-            "render_mode": "pressures"
+            "render_mode": "distances"
         }
     },
     "algorithm": {
         "name": "TD3",
         "params": {
-            "stats_window_size": 1
+            "stats_window_size": 1,
+            "learning_rate": 0.01
         },
         "train_params": {
             "total_timesteps": 40000,

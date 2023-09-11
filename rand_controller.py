@@ -2,6 +2,7 @@
 
 import melgym
 import gymnasium as gym
+import numpy as np
 
 from melgym.utils.aux import summary
 
@@ -31,6 +32,6 @@ def rand_control(env):
 
 
 if __name__ == '__main__':
-    env = gym.make('simple-v0', render_mode='pressures', time_bt_frames=.01)
+    env = gym.make('simple-v0', render_mode='distances', time_bt_frames=.01)
     rand_control(env)
     env.close()

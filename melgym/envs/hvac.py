@@ -192,25 +192,25 @@ class EnvHVAC(Env):
         """
         self.ax.clear()
 
-        # Initial pressures
-        pressures = {cv_id: self.__get_initial_pressure(
-            cv_id) for cv_id in self.controlled_cvs}
-        df = pd.DataFrame(pressures, index=[0])
-        df0 = df.copy()
-
-        # Simulated pressures
-        if self.n_steps > 1:
-            df = pd.read_csv(self.__get_edf_path(),
-                             delim_whitespace=True, header=None)
-            df = df.set_index(0)
-            df.columns = list(pressures.keys())
-            df = pd.concat([df0, df], ignore_index=True)
-
         if self.render_mode == 'pressures':
+            # Initial pressures
+            init_pressures = {cv_id: self.__get_initial_pressure(
+                cv_id) for cv_id in self.controlled_cvs}
+            df = pd.DataFrame(init_pressures, index=[0])
+            df0 = df.copy()
+            # Rest of pressures
+            if self.n_steps > 1:
+                df = pd.read_csv(self.__get_edf_path(),
+                                 delim_whitespace=True, header=None)
+                df = df.set_index(0)
+                df.columns = list(init_pressures.keys())
+                df = pd.concat([df0, df], ignore_index=True)
             df.plot(ax=self.ax)
-        elif self.render_mode == 'distances':
+        elif self.render_mode == 'distances' and self.n_steps > 1:
+            _, pressures = self.__get_last_record()
             _, distances = self.__compute_distances(pressures)
-            self.ax.bar(list(distances.keys()), list(distances.values()))
+            self.ax.bar(list(distances.keys()), [
+                        float(value) for value in distances.values()])
 
         plt.draw()
         plt.pause(self.time_bt_frames)
