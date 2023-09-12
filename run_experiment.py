@@ -113,20 +113,17 @@ def train(env, config):
     model_config = config['algorithm']['params']
     total_timesteps = config['algorithm']['train_params']['total_timesteps']
 
-    # Apply specified wrappers
-    env = apply_wrappers(env, config)
-
     # Callbacks
     callbacks = get_callbacks(env, config)
 
     # Model configuration
     if config['algorithm']['name'] in ALGORITHMS:
         model_class = ALGORITHMS[config['algorithm']['name']]
-        model = model_class('MlpPolicy', env, verbose=1,
-                            tensorboard_log=config['paths']['tensorboard_dir'] + experiment_id, **model_config)
-        # Uncomment for noisy actions
         # model = model_class('MlpPolicy', env, verbose=1,
-        #                     tensorboard_log=config['paths']['tensorboard_dir'] + experiment_id, **model_config, action_noise=NormalActionNoise(mean=np.array([0]), sigma=np.array([0.1])))
+        #                     tensorboard_log=config['paths']['tensorboard_dir'] + experiment_id, **model_config)
+        # Uncomment for noisy actions
+        model = model_class('MlpPolicy', env, verbose=1,
+                            tensorboard_log=config['paths']['tensorboard_dir'] + experiment_id, **model_config, action_noise=NormalActionNoise(mean=np.array([0]), sigma=np.array([0.1])))
     else:
         raise Exception('Incorrect algorithm name in configuration file.')
 
@@ -167,6 +164,8 @@ config = get_config()
 
 env = gym.make(config['env']['name'], **config['env']
                ['params'], env_id=config['id'])
+
+env = apply_wrappers(env, config)
 
 # Train / test
 if 'train' in config['tasks']:
