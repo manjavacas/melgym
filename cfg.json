@@ -1,28 +1,27 @@
 {
-    "id": "td3",
+    "id": "sac",
     "tasks": [
         "train",
         "test"
     ],
     "env": {
-        "name": "simple-v0",
+        "name": "hvac-v0",
         "params": {
             "max_deviation": 40,
             "check_done_time": 500,
             "control_horizon": 10,
-            "render_mode": "pressures"
+            "render_mode": "distances"
         }
     },
     "algorithm": {
-        "name": "TD3",
+        "name": "SAC",
         "params": {
-            "stats_window_size": 1,
-            "learning_rate": 0.003
+            "stats_window_size": 1
         },
         "train_params": {
-            "total_timesteps": 40000,
-            "eval_freq": 1000,
-            "n_eval_episodes": 5
+            "total_timesteps": 20000,
+            "eval_freq": 5000,
+            "n_eval_episodes": 3
         }
     },
     "wrappers": [
