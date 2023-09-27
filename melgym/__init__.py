@@ -29,3 +29,13 @@ register(
         'controlled_cvs': ['CV086', 'CV083', 'CV026', 'CV011', 'CV006', 'CV001']
     }
 )
+
+register(
+    id='hvac-v0',
+    entry_point='melgym.envs:EnvHVAC',
+    kwargs={
+        'input_file': 'hvac.inp',
+        'n_actions': 1,
+        'controlled_cvs': ['CV001', 'CV006', 'CV011']
+    }
+)
