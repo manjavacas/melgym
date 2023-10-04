@@ -1,7 +1,6 @@
 {
     "id": "sac",
     "tasks": [
-        "train",
         "test"
     ],
     "env": {
