@@ -5,7 +5,7 @@
         "test"
     ],
     "env": {
-        "name": "hvac-v0",
+        "name": "branch0-v0",
         "params": {
             "max_deviation": 40,
             "check_done_time": 500,
