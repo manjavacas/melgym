@@ -4,9 +4,9 @@ rand:
 run:
 	./run_experiment.py -conf cfg.json
 gen: clean
-	./melgym/exec/MELGEN ow=o i=./melgym/data/hvac.inp
+	./melgym/exec/MELGEN ow=o i=./melgym/data/branch_0.inp
 cor:
-	./melgym/exec/MELCOR ./melgym/data/hvac.inp
+	./melgym/exec/MELCOR ./melgym/data/branch_0.inp
 clean:
 	rm -f MEGDIA
 	rm -f MELDIA
