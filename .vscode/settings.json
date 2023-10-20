@@ -1,3 +1,16 @@
 {
-    "python.analysis.typeCheckingMode": "basic"
+    "python.analysis.typeCheckingMode": "basic",
+    "[melcor]": {
+        "editor.foldingStrategy": "auto",
+        "editor.foldingRules": {
+            "block1": {
+                "open": "^\\s*\\*{7,}\\s*$",
+                "close": "^\\s*\\*{7,}\\s*$"
+            },
+            "block2": {
+                "open": "^\\s*\\*{7,}\\s*$|^\\s*\\*{7,}-+\\s*$",
+                "close": "^\\s*\\*{7,}\\s*$"
+            }
+        }
+    }
 }

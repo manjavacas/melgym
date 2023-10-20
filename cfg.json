@@ -1,6 +1,7 @@
 {
-    "id": "sac",
+    "id": "td3",
     "tasks": [
+        "train",
         "test"
     ],
     "env": {
@@ -15,10 +16,11 @@
     "algorithm": {
         "name": "SAC",
         "params": {
-            "stats_window_size": 1
+            "stats_window_size": 1,
+            "learning_rate": 0.001
         },
         "train_params": {
-            "total_timesteps": 20000,
+            "total_timesteps": 40000,
             "eval_freq": 5000,
             "n_eval_episodes": 3
         }
