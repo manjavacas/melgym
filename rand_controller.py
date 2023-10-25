@@ -25,13 +25,12 @@ def rand_control(env):
         while not done and not truncated:
             env.render()
             action = env.action_space.sample()
-            # action = np.array([-0.826])
             obs, reward, truncated, done, info = env.step(action)
             summary(n_steps, action, obs, reward, info)
             n_steps += 1
 
 
 if __name__ == '__main__':
-    env = gym.make('simple-v0', render_mode='distances', time_bt_frames=.01)
+    env = gym.make('branch0-v0', render_mode='pressures', time_bt_frames=.01)
     rand_control(env)
     env.close()
