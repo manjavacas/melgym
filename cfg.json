@@ -1,7 +1,6 @@
 {
     "id": "td3",
     "tasks": [
-        "train",
         "test"
     ],
     "env": {
@@ -10,11 +9,11 @@
             "max_deviation": 40,
             "check_done_time": 500,
             "control_horizon": 10,
-            "render_mode": "distances"
+            "render_mode": "pressures"
         }
     },
     "algorithm": {
-        "name": "SAC",
+        "name": "TD3",
         "params": {
             "stats_window_size": 1,
             "learning_rate": 0.001
