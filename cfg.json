@@ -1,5 +1,5 @@
 {
-    "id": "td3",
+    "id": "td3-rew2",
     "tasks": [
         "test"
     ],
@@ -9,7 +9,7 @@
             "max_deviation": 40,
             "check_done_time": 500,
             "control_horizon": 10,
-            "render_mode": "pressures"
+            "render_mode": "distances"
         }
     },
     "algorithm": {
