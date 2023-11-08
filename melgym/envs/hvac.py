@@ -380,8 +380,8 @@ class EnvHVAC(Env):
             distances[cv_id] = last_record[cv_id] - \
                 self.__get_initial_pressure(cv_id)
 
-        # return sum(pow(abs(value), 2) for value in distances.values()), distances
-        return sum(abs(value) for value in distances.values()), distances
+        return sum(pow(abs(value), 2) for value in distances.values()), distances
+        # return sum(abs(value) for value in distances.values()), distances
 
     def __get_initial_pressure(self, cv_id):
         """
