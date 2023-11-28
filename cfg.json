@@ -1,5 +1,5 @@
 {
-    "id": "td3-rew2",
+    "id": "td3-lr001",
     "tasks": [
         "test"
     ],
@@ -20,7 +20,7 @@
         },
         "train_params": {
             "total_timesteps": 40000,
-            "eval_freq": 5000,
+            "eval_freq": 10000,
             "n_eval_episodes": 3
         }
     },
