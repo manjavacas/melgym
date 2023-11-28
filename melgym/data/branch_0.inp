@@ -26,7 +26,7 @@
             CV00100   R001  2  0  1
             CV00101   0  0
             CV001A0   3
-            CV001A1   PVOL    101270.0
+            CV001A1   PVOL    101295.0
             CV001A2   TATM    293.15  RHUM  0.6
             CV001A3   MLFR.4  0.78
             CV001A6   MLFR.5  0.21
@@ -158,7 +158,7 @@
             CV08300   SB4  2  2  5
             CV08301   0   0
             CV083A0   3
-            CV083A1   PVOL    101270.0
+            CV083A1   PVOL    101295.0
             CV083A3   TATM    293.15    RHUM 0.6
             CV083A5   MLFR.4  0.78
             CV083A6   MLFR.5  0.21
