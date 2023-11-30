@@ -4,7 +4,7 @@
         "test"
     ],
     "env": {
-        "name": "branch0-v0",
+        "name": "branch0-v2",
         "params": {
             "max_deviation": 40,
             "check_done_time": 500,
