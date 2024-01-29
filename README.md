@@ -17,7 +17,7 @@ In the current implementation fo MELGYM, the goal is to maintain stable pressure
 The process followed during a MELGYM run consists of the following steps:
 
 * When the environment is created/restarted, MELGYM executes **MELGEN** and returns as **observation** the initial state of the simulation (in this case, the pressures of the controlled CVs).
-* For each agent-environment interaction, MELGYM updates the current MELCOR model based on the received **action** and runs a simulation for T cycles.
+* For each agent-environment interaction, MELGYM updates the current MELCOR model based on the received **action** and runs a simulation for _T_ cycles.
 * At the end of the simulation, the last records of the generated **EDF** are read, representing the latest pressure values of the CVs. These values allow the calculation of the distances to the target pressures, the sum of which is sent to the agent as a **reward** signal.
 
 <p align="center">
