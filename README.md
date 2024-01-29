@@ -2,7 +2,7 @@
     <img src="./docs/logo.png" alt="drawing" width="400"/>
 </p>
 
-A [Gymnasium](https://github.com/Farama-Foundation/Gymnasium)-based interface for continuous control using [MELCOR](https://melcor.sandia.gov/) v1.8.6 and [MELKIT](https://github.com/manjavacas/melkit/). Designed to enable reinforcement learning control in MELCOR simulations.
+A [Gymnasium](https://github.com/Farama-Foundation/Gymnasium)-based interface for continuous control using [MELCOR](https://melcor.sandia.gov/) 1.8.6 and [MELKIT](https://github.com/manjavacas/melkit/). Designed to enable reinforcement learning control in MELCOR simulations.
 
 ## ⚙️ How it works?
 
