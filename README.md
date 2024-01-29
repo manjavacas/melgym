@@ -40,6 +40,7 @@ The following image shows a summary of the implemented functions and the low-lev
 
 The script [run_experiment.py](./run_experiment.py) allows to launch experiments using the configuration defined in [cfg.json](./cfg.json). This file defines the RL algorithm to be used, the environment, and includes additional configuration (wrappers, paths, callbacks, etc.).
 
+## 🧰 Side projects
 
-
+The modification and query of MELCOR files is done with our tool [MELKIT](https://github.com/manjavacas/melkit/). Feel free to help us improve it!
 
