@@ -42,5 +42,5 @@ The script [run_experiment.py](./run_experiment.py) allows to launch experiments
 
 ## 🧰 Side projects
 
-The modification and query of MELCOR files is done with our tool [MELKIT](https://github.com/manjavacas/melkit/). Feel free to help us improve it!
+The modification and query of MELCOR files is done with our tool [MELKIT](https://github.com/manjavacas/melkit/). Feel free to help us improving it!
 
