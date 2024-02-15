@@ -31,6 +31,6 @@ def rand_control(env):
 
 
 if __name__ == '__main__':
-    env = gym.make('branch0-v2', render_mode='pressures', time_bt_frames=.01)
+    env = gym.make('branch_1', render_mode='pressures', time_bt_frames=.01)
     rand_control(env)
     env.close()

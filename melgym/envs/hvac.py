@@ -209,8 +209,8 @@ class EnvHVAC(Env):
         elif self.render_mode == 'distances' and self.n_steps > 1:
             _, pressures = self.__get_last_record()
             _, distances = self.__compute_distances(pressures)
-            self.ax.bar(list(distances.keys()), [
-                        float(value) for value in distances.values()])
+            self.ax.bar(list(distances.keys()),
+                        [float(value) for value in distances.values()])
 
         plt.draw()
         plt.pause(self.time_bt_frames)
