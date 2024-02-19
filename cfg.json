@@ -5,7 +5,7 @@
         "test"
     ],
     "env": {
-        "name": "branch_1",
+        "name": "branch_2",
         "params": {
             "max_deviation": 40,
             "check_done_time": 500,
@@ -22,7 +22,7 @@
         "train_params": {
             "total_timesteps": 40000,
             "eval_freq": 10000,
-            "n_eval_episodes": 3
+            "n_eval_episodes": 1
         }
     },
     "wrappers": [
