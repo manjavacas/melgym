@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "configurations": [
     {
       "name": "Debug rand_controller.py",
@@ -14,7 +14,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/run_experiment.py",
       "args": [
-        "-config",
+        "-conf",
         "cfg.json"
       ],
       "console": "integratedTerminal"

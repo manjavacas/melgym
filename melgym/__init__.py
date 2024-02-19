@@ -26,6 +26,6 @@ register(
     kwargs={
         'input_file': 'branch_2.inp',
         'n_actions': 1,
-        'controlled_cvs': ['CV015', 'CV023', 'CV024', 'CV054', 'CV080', 'CV081', 'CV082', 'CV089']
+        'controlled_cvs': ['CV015', 'CV023', 'CV024', 'CV054', 'CV080', 'CV081', 'CV082', 'CV089', 'CV096']
     }
 )

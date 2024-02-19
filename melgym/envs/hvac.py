@@ -7,6 +7,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 from datetime import datetime
+from math import ceil
 
 from gymnasium import Env, spaces
 from melkit.toolkit import Toolkit
@@ -289,15 +290,22 @@ class EnvHVAC(Env):
         time = {}
         record = {}
 
+        n_cvs = len(self.controlled_cvs)
+
         with open(self.__get_edf_path(), 'r') as f:
             try:
-                last_line = f.readlines()[-1].split()
+                lines = f.readlines()
+                last_registered = []
+                for line in reversed(lines):
+                    last_registered = line.split() + last_registered
+                    if len(last_registered) >= n_cvs + 1:
+                        break
             except:
                 raise Exception('Error reading empty EDF.')
 
-            time['time'] = float(last_line[0])
+            time['time'] = float(last_registered[0])
             for i, cv_id in enumerate(self.controlled_cvs):
-                record[cv_id] = np.float32(last_line[i+1])
+                record[cv_id] = np.float32(last_registered[i+1])
 
         return time, record
 
