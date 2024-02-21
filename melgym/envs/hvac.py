@@ -21,7 +21,7 @@ class EnvHVAC(Env):
     """
     metadata = {'render_modes': ['pressures', 'distances']}
 
-    def __init__(self, input_file, n_actions, controlled_cvs, control_horizon=10, check_done_time=500, max_deviation=40, min_velocity=0, max_velocity=10, max_tend=10_000, render_mode=None, time_bt_frames=0.01, env_id=None):
+    def __init__(self, input_file, n_actions, controlled_cvs, control_horizon=10, check_done_time=500, max_deviation=40, min_velocity=0, max_velocity=10, max_tend=10_000, render_mode=None, ylims=(101000, 101350), time_bt_frames=0.01, env_id=None):
         """
         Class constructor.
 
@@ -36,6 +36,7 @@ class EnvHVAC(Env):
             max_velocity (float. optional): maximum value for control actions. Defaults to 10 (m/s).
             max_tend (int, optional): maximum TEND before truncation. Defaults to 10000.
             render_mode (str, optional): render option.
+            ylims (tuple, optional): ylims for plotting.
             time_bt_frames (float, optional): time between rendered frames. Defaults to 0.01.
             env_id (str, optional): custom environment identifier. Used for naming the output directory.
         """
@@ -63,6 +64,7 @@ class EnvHVAC(Env):
         self.input_path = os.path.join(DATA_DIR, input_file)
         self.melin_path = os.path.join(self.output_dir, 'MELIN')
         self.melog_path = os.path.join(self.output_dir, 'MELOG')
+        self.edf_path = None
 
         # Control variables
         self.control_horizon = control_horizon
@@ -79,15 +81,50 @@ class EnvHVAC(Env):
         # Tookit
         self.toolkit = Toolkit(self.input_path)
 
+        # Initial pressures
+        self.init_pressures = {cv_id: self.__get_initial_pressure(
+            cv_id) for cv_id in self.controlled_cvs}
+
         # Render
-        self.time_bt_frames = time_bt_frames
-        if render_mode is not None:
-            if render_mode in self.metadata['render_modes']:
-                self.render_mode = render_mode
-                self.fig, self.ax = plt.subplots()
-            else:
-                raise Exception(
-                    'The specified render format is not available.')
+        if render_mode == 'pressures':
+
+            self.render_mode = render_mode
+            self.time_bt_frames = time_bt_frames
+
+            plt.ion()
+
+            _, self.axs = plt.subplots(1, 2, figsize=(14, 8))
+
+            # set initial x,y values
+            self.x = [self.current_tend]
+            self.ys = []
+            for cv, pressure in self.init_pressures.items():
+                self.ys.append({'cv': cv, 'values': [pressure]})
+
+            # create plots
+            self.graphs = []
+            for record in self.ys:
+                self.graphs.append(
+                    self.axs[0].plot(self.x, record['values'], label=record['cv'])[0])
+
+            # add hlines with ISO classes
+            iso_classes = [(101065, 'C4'), (101215, 'C3'),
+                           (101235, 'C2'), (101295, 'C1')]
+            for pressure, iso_class in iso_classes:
+                self.axs[0].axhline(y=pressure, color='black',
+                                    linestyle='--', linewidth=0.5)
+                self.axs[0].text(9.5, pressure, iso_class, color='black',
+                                 fontsize=10, ha='left', va='bottom')
+
+            # ajust legend and ylims
+            self.axs[0].legend(loc='upper center', bbox_to_anchor=(
+                0.5, 1.15), ncol=4, fancybox=True)
+            self.axs[0].set_ylim(ylims)
+ 
+            plt.pause(self.time_bt_frames)
+        
+        else:
+            raise Exception('The specified render format is not available.')
 
     def reset(self, seed=None, options=None):
         """
@@ -123,7 +160,7 @@ class EnvHVAC(Env):
         # Get initial pressures
         info = {'time': 0.0}
         for cv_id in self.controlled_cvs:
-            info[cv_id] = self.__get_initial_pressure(cv_id)
+            info[cv_id] = self.init_pressures[cv_id]
         obs = [value for key, value in info.items()
                if key in self.controlled_cvs]
 
@@ -191,30 +228,32 @@ class EnvHVAC(Env):
         """
         Plots all pressures / distances evolution during simulation time.
         """
-        self.ax.clear()
+        if self.render_mode == 'pressures' and self.n_steps > 1:
 
-        if self.render_mode == 'pressures':
-            # Initial pressures
-            init_pressures = {cv_id: self.__get_initial_pressure(
-                cv_id) for cv_id in self.controlled_cvs}
-            df = pd.DataFrame(init_pressures, index=[0])
-            df0 = df.copy()
-            # Rest of pressures
-            if self.n_steps > 1:
-                df = pd.read_csv(self.__get_edf_path(),
-                                 delim_whitespace=True, header=None)
-                df = df.set_index(0)
-                df.columns = list(init_pressures.keys())
-                df = pd.concat([df0, df], ignore_index=True)
-            df.plot(ax=self.ax)
-        elif self.render_mode == 'distances' and self.n_steps > 1:
-            _, pressures = self.__get_last_record()
-            _, distances = self.__compute_distances(pressures)
-            self.ax.bar(list(distances.keys()),
-                        [float(value) for value in distances.values()])
+            # Plot 1 (pressure evolution)
+            self.x.append(self.current_tend)
+            current_pressures = self.__get_last_record()[1]
 
-        plt.draw()
-        plt.pause(self.time_bt_frames)
+            for y, graph in zip(self.ys, self.graphs):
+                y['values'].append(current_pressures[y['cv']])
+                graph.set_data(self.x, y['values'])
+
+            self.axs[0].set_xlim(self.x[0], self.x[-1])
+            # also: plt.xlim(self.x[-2], self.x[-1])
+
+            # Plot 2 (pressure distance)            
+            _, distances = self.__compute_distances(current_pressures)
+            cv_ids = [cv_id for cv_id in distances.keys()]
+            distances= [distance for distance in distances.values()]
+            
+            self.axs[1].clear()
+            self.axs[1].bar(cv_ids, distances, color='r')
+            
+            self.axs[1].set_xlabel('CV')
+            self.axs[1].set_ylabel('Distance')
+            self.axs[1].set_xticklabels(cv_ids, rotation=45)
+
+            plt.pause(self.time_bt_frames)
 
     def close(self):
         """
@@ -386,7 +425,7 @@ class EnvHVAC(Env):
 
         for cv_id in ids:
             distances[cv_id] = last_record[cv_id] - \
-                self.__get_initial_pressure(cv_id)
+                self.init_pressures[cv_id]
 
         # return sum(pow(abs(value), 2) for value in distances.values()), distances
         return sum(abs(value) for value in distances.values()), distances
