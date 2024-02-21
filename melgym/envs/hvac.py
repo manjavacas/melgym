@@ -243,7 +243,7 @@ class EnvHVAC(Env):
                 graph.set_data(self.x, y['values'])
 
             self.axs[0].set_xlim(self.x[0], self.x[-1])
-            ## also try: plt.xlim(self.x[-2], self.x[-1])
+            ## also try: self.axs[0].set_xlim(self.x[-2], self.x[-1])
 
             # PLOT 2: pressures distances
             _, distances = self.__compute_distances(current_pressures)
