@@ -21,8 +21,8 @@ cleanout:
 	rm -rf ./melgym/out/*
 cleantb:
 	rm -rf ./tensorboard/*
-cleanmodels:
-	rm -rf ./best_models/*
 cleanmetrics:
 	rm -rf ./ep_metrics/*
-cleanall: clean cleanout cleantb cleanmodels cleanmetrics
+cleanmodels:
+	rm -rf ./best_models/*
+cleanall: clean cleanout cleantb cleanmetrics

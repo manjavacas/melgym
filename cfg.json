@@ -1,7 +1,6 @@
 {
-    "id": "td3-lr001",
+    "id": "td3-lr001-b2",
     "tasks": [
-        "train",
         "test"
     ],
     "env": {
@@ -20,7 +19,7 @@
             "learning_rate": 0.001
         },
         "train_params": {
-            "total_timesteps": 40000,
+            "total_timesteps": 30000,
             "eval_freq": 10000,
             "n_eval_episodes": 1
         }
