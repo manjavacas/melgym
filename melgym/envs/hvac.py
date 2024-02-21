@@ -86,45 +86,49 @@ class EnvHVAC(Env):
             cv_id) for cv_id in self.controlled_cvs}
 
         # Render
-        if render_mode == 'pressures':
+        if render_mode:
+            if render_mode == 'pressures':
 
-            self.render_mode = render_mode
-            self.time_bt_frames = time_bt_frames
+                self.render_mode = render_mode
+                self.time_bt_frames = time_bt_frames
 
-            plt.ion()
+                plt.ion()
 
-            _, self.axs = plt.subplots(1, 2, figsize=(14, 8))
+                _, self.axs = plt.subplots(1, 2, figsize=(14, 8))
 
-            # set initial x,y values
-            self.x = [self.current_tend]
-            self.ys = []
-            for cv, pressure in self.init_pressures.items():
-                self.ys.append({'cv': cv, 'values': [pressure]})
+                ## set initial x,y values
+                self.x = [self.current_tend]
+                self.ys = []
+                for cv, pressure in self.init_pressures.items():
+                    self.ys.append({'cv': cv, 'values': [pressure]})
 
-            # create plots
-            self.graphs = []
-            for record in self.ys:
-                self.graphs.append(
-                    self.axs[0].plot(self.x, record['values'], label=record['cv'])[0])
+                ## create plots
+                self.graphs = []
+                for record in self.ys:
+                    self.graphs.append(
+                        self.axs[0].plot(self.x, record['values'], label=record['cv'])[0])
 
-            # add hlines with ISO classes
-            iso_classes = [(101065, 'C4'), (101215, 'C3'),
-                           (101235, 'C2'), (101295, 'C1')]
-            for pressure, iso_class in iso_classes:
-                self.axs[0].axhline(y=pressure, color='black',
-                                    linestyle='--', linewidth=0.5)
-                self.axs[0].text(9.5, pressure, iso_class, color='black',
-                                 fontsize=10, ha='left', va='bottom')
+                ## add hlines with ISO classes
+                iso_classes = [(101065, 'C4'), (101215, 'C3'),
+                               (101235, 'C2'), (101295, 'C1')]
+                for pressure, iso_class in iso_classes:
+                    self.axs[0].axhline(y=pressure, color='black',
+                                        linestyle='--', linewidth=0.5)
+                    self.axs[0].text(9.5, pressure, iso_class, color='black',
+                                     fontsize=10, ha='left', va='bottom')
 
-            # ajust legend and ylims
-            self.axs[0].legend(loc='upper center', bbox_to_anchor=(
-                0.5, 1.15), ncol=4, fancybox=True)
-            self.axs[0].set_ylim(ylims)
- 
-            plt.pause(self.time_bt_frames)
-        
+                ## ajust legend and ylims
+                self.axs[0].legend(loc='upper center', bbox_to_anchor=(
+                    0.5, 1.15), ncol=4, fancybox=True)
+                self.axs[0].set_ylim(ylims)
+
+                plt.pause(self.time_bt_frames)
+
+            else:
+                raise Exception(
+                    'The specified render format is not available.')
         else:
-            raise Exception('The specified render format is not available.')
+            print('Running without rendering...')
 
     def reset(self, seed=None, options=None):
         """
@@ -230,7 +234,7 @@ class EnvHVAC(Env):
         """
         if self.render_mode == 'pressures' and self.n_steps > 1:
 
-            # Plot 1 (pressure evolution)
+            # PLOT 1: pressures evolution
             self.x.append(self.current_tend)
             current_pressures = self.__get_last_record()[1]
 
@@ -239,16 +243,16 @@ class EnvHVAC(Env):
                 graph.set_data(self.x, y['values'])
 
             self.axs[0].set_xlim(self.x[0], self.x[-1])
-            # also: plt.xlim(self.x[-2], self.x[-1])
+            ## also try: plt.xlim(self.x[-2], self.x[-1])
 
-            # Plot 2 (pressure distance)            
+            # PLOT 2: pressures distances
             _, distances = self.__compute_distances(current_pressures)
             cv_ids = [cv_id for cv_id in distances.keys()]
-            distances= [distance for distance in distances.values()]
-            
+            distances = [distance for distance in distances.values()]
+
             self.axs[1].clear()
             self.axs[1].bar(cv_ids, distances, color='r')
-            
+
             self.axs[1].set_xlabel('CV')
             self.axs[1].set_ylabel('Distance')
             self.axs[1].set_xticklabels(cv_ids, rotation=45)

@@ -1,0 +1,29 @@
+id: sac-b1
+tasks:
+- train
+- test
+env:
+  name: branch_1
+  params:
+    max_deviation: 40
+    check_done_time: 500
+    control_horizon: 10
+algorithm:
+  name: SAC
+  params:
+    stats_window_size: 1
+    learning_rate: 0.003
+  train_params:
+    total_timesteps: 10000
+    eval_freq: 2500
+    n_eval_episodes: 1
+wrappers:
+- norm_obs
+callbacks:
+- EvalCallback
+- TbMetricsCallback
+- EpisodicDataCallback
+paths:
+  tensorboard_dir: "./tensorboard/"
+  best_models_dir: "./best_models/"
+  ep_metrics_dir: "./ep_metrics/"
