@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import argparse
-import json
+import yaml
 import copy
 
 import numpy as np
@@ -42,8 +42,8 @@ def get_config():
     )
     args = parser.parse_args()
 
-    with open(args.configuration) as json_config:
-        config = json.load(json_config)
+    with open(args.configuration) as yaml_config:
+        config = yaml.safe_load(yaml_config)
     return config
 
 

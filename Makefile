@@ -2,7 +2,7 @@ all: cleanmetrics run
 rand:
 	./rand_controller.py
 run:
-	./run_experiment.py -conf cfg.json
+	./run_experiment.py -conf cfg.yaml
 gen: clean
 	./melgym/exec/MELGEN ow=o i=./melgym/data/branch_2.inp
 cor:
