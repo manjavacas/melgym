@@ -8,6 +8,7 @@ env:
     max_deviation: 40
     check_done_time: 500
     control_horizon: 10
+    # render_mode: "pressures"
 algorithm:
   name: SAC
   params:
