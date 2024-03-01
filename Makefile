@@ -1,12 +1,14 @@
+BRANCH ?= foo
+
 all: cleanmetrics run
 rand:
 	./rand_controller.py
 run:
 	./run_experiment.py -conf cfg.yaml
 gen: clean
-	./melgym/exec/MELGEN ow=o i=./melgym/data/branch_2.inp
+	./melgym/exec/MELGEN ow=o i=./melgym/data/$(BRANCH).inp
 cor:
-	./melgym/exec/MELCOR ./melgym/data/branch_2.inp
+	./melgym/exec/MELCOR ./melgym/data/$(BRANCH).inp
 clean:
 	rm -f MEGDIA
 	rm -f MELDIA
