@@ -29,3 +29,13 @@ register(
         'controlled_cvs': ['CV015', 'CV023', 'CV024', 'CV054', 'CV080', 'CV081', 'CV082', 'CV089', 'CV096']
     }
 )
+
+register(
+    id='branch_3',
+    entry_point='melgym.envs:EnvHVAC',
+    kwargs={
+        'input_file': 'branch_3.inp',
+        'n_actions': 1,
+        'controlled_cvs': ['CV002', 'CV010', 'CV014', 'CV017', 'CV018', 'CV024', 'CV053', 'CV056', 'CV057', 'CV058', 'CV095']
+    }
+)
