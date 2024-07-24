@@ -44,7 +44,8 @@
             FL0010T   3.75 4.75
             FL001T0   2 001
 
-            CF00100   VEL-R001-EX  DIVIDE  1  8293.0  0.0
+            * CF00100   VEL-R001-EX  DIVIDE  1  8293.0  0.0
+            CF00100   VEL-R001-EX  DIVIDE  1  4000.0  0.0
             CF00110   0.0  3600.0  TIME
 
             CF95400   P-R001  L-GE  2  1.0  0.0

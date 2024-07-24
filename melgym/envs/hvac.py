@@ -87,10 +87,11 @@ class EnvHVAC(Env):
 
         # Render
         if render_mode:
-            if render_mode == 'pressures':
+            
+            self.render_mode = render_mode
+            self.time_bt_frames = time_bt_frames
 
-                self.render_mode = render_mode
-                self.time_bt_frames = time_bt_frames
+            if self.render_mode == 'pressures':
 
                 plt.ion()
 

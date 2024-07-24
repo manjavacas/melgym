@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./docs/logo.png" alt="drawing" width="400"/>
+    <img src="./docs/source/_static/logo.png" alt="drawing" width="400"/>
 </p>
 
 [![Release](https://badgen.net/github/release/manjavacas/melgym)]() ![License](https://img.shields.io/badge/license-GPLv3-blue) [![Contributors](https://badgen.net/github/contributors/manjavacas/melgym)]() 
@@ -11,7 +11,7 @@ A [Gymnasium](https://github.com/Farama-Foundation/Gymnasium)-based interface fo
 MELGYM is oriented to modify MELCOR **control functions (CFs)** between restart dumps. This allows pseudo-continuous control using the agent-agent interaction environment described below:
 
 <p align="center">
-    <img src="./docs/mdp-simp.png" alt="drawing" width="400"/>
+    <img src="./docs/source/_static/mdp-simp.png" alt="drawing" width="400"/>
 </p>
 
 In the current implementation fo MELGYM, the goal is to maintain stable pressures in a series of control volumes by modifying the flow rate of a given flow path. However, this framework can be adapted to perform additional control functions (e.g. temperature control, gas concentrations, etc.).
@@ -23,19 +23,19 @@ The process followed during a MELGYM run consists of the following steps:
 * At the end of the simulation, the last records of the generated **EDF** are read, representing the latest pressure values of the CVs. These values allow the calculation of the distances to the target pressures, the sum of which is sent to the agent as a **reward** signal.
 
 <p align="center">
-    <img src="./docs/mdp.png" alt="drawing" width="500"/>
+    <img src="./docs/source/_static/mdp.png" alt="drawing" width="500"/>
 </p>
 
 MELGYM leverages MELCOR's restart capabilities to modify CFs every few simulation cycles. Therefore, each time a **warm start** is performed, the model starts from the last registered state and continues simulating under the new configuration defined by the agent.
 
 <p align="center">
-    <img src="./docs/restart.png" alt="drawing" width="500"/>
+    <img src="./docs/source/_static/restart.png" alt="drawing" width="500"/>
 </p>
 
 The following image shows a summary of the implemented functions and the low-level **agent-environment interaction**:
 
 <p align="center">
-    <img src="./docs/melgym.png" alt="drawing" width="900"/>
+    <img src="./docs/source/_static/melgym.png" alt="drawing" width="900"/>
 </p>
 
 ## 🖥️ Setting up experiments

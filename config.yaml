@@ -1,19 +1,19 @@
-id: sac-b3
+id: td3-lr001-b2
 tasks:
 # - train
 - test
 env:
-  name: branch_3
+  name: branch_2
   params:
     max_deviation: 40
     check_done_time: 500
     control_horizon: 10
     render_mode: "pressures"
 algorithm:
-  name: SAC
+  name: TD3
   params:
     stats_window_size: 1
-    # learning_rate: 0.001
+    learning_rate: 0.001
   train_params:
     total_timesteps: 50000
     eval_freq: 10000
