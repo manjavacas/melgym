@@ -2,7 +2,9 @@
     <img src="./docs/source/_static/logo.png" alt="drawing" width="400"/>
 </p>
 
-[![Release](https://badgen.net/github/release/manjavacas/melgym)]() ![License](https://img.shields.io/badge/license-GPLv3-blue) [![Contributors](https://badgen.net/github/contributors/manjavacas/melgym)]() 
+[![Release](https://badgen.net/github/release/manjavacas/melgym)]()
+![License](https://img.shields.io/badge/license-GPLv3-blue)
+[![Contributors](https://badgen.net/github/contributors/manjavacas/melgym)]() 
 
 A [Gymnasium](https://github.com/Farama-Foundation/Gymnasium)-based interface for continuous control using [MELCOR](https://melcor.sandia.gov/) 1.8.6 and [MELKIT](https://github.com/manjavacas/melkit/). Designed to enable reinforcement learning control in MELCOR simulations.
 

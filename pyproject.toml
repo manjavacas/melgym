@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "melgym"
+version = "v1.5"
+description = "A Gymnasium-based interface for MELCOR."
+authors = ["Antonio Manjavacas <manjavacas@ugr.es>"]
+license = "LICENSE"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+gymnasium = "^0.29.1"
+stable-baselines3 = "^2.3.2"
+melkit = "^0.3.2"
+pyyaml = "^6.0.1"
+sphinx = "^7.4.7"
+tensorboard = "^2.17.0"
+matplotlib = "^3.9.1"
+numpy = "^2.0.1"
+torch = "^2.3.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
