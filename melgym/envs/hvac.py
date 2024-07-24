@@ -1,3 +1,10 @@
+"""
+HVAC control environment.
+
+Given a set of control volumes fed by a common FL, the aim is to find the optimal air inlet that balances the pressure of the CVs.
+It is assumed that each CV has a manually adjusted exhaust depending on its total volume and confinement level.
+"""
+
 import os
 import shutil
 import subprocess

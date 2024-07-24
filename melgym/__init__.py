@@ -1,3 +1,7 @@
+"""
+MELGYM module.
+"""
+
 from gymnasium.envs.registration import register
 
 register(

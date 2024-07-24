@@ -1,4 +1,4 @@
-melgym.utils.wrappers.DenormalizedActions
+﻿melgym.utils.wrappers.DenormalizedActions
 =========================================
 
 .. currentmodule:: melgym.utils.wrappers
@@ -19,6 +19,7 @@ melgym.utils.wrappers.DenormalizedActions
       ~DenormalizedActions.action
       ~DenormalizedActions.class_name
       ~DenormalizedActions.close
+      ~DenormalizedActions.get_wrapper_attr
       ~DenormalizedActions.render
       ~DenormalizedActions.reset
       ~DenormalizedActions.step

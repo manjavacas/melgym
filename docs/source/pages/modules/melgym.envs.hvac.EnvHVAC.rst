@@ -1,4 +1,4 @@
-melgym.envs.hvac.EnvHVAC
+﻿melgym.envs.hvac.EnvHVAC
 ========================
 
 .. currentmodule:: melgym.envs.hvac
@@ -17,6 +17,7 @@ melgym.envs.hvac.EnvHVAC
    
       ~EnvHVAC.__init__
       ~EnvHVAC.close
+      ~EnvHVAC.get_wrapper_attr
       ~EnvHVAC.render
       ~EnvHVAC.reset
       ~EnvHVAC.step

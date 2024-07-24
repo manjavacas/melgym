@@ -1,4 +1,4 @@
-melgym.utils.wrappers.NormalizedObservations
+﻿melgym.utils.wrappers.NormalizedObservations
 ============================================
 
 .. currentmodule:: melgym.utils.wrappers
@@ -18,6 +18,7 @@ melgym.utils.wrappers.NormalizedObservations
       ~NormalizedObservations.__init__
       ~NormalizedObservations.class_name
       ~NormalizedObservations.close
+      ~NormalizedObservations.get_wrapper_attr
       ~NormalizedObservations.observation
       ~NormalizedObservations.render
       ~NormalizedObservations.reset

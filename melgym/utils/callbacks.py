@@ -1,3 +1,6 @@
+"""
+Custom callbacks.
+"""
 
 import os
 
@@ -7,15 +10,27 @@ from stable_baselines3.common.callbacks import BaseCallback
 
 class TbMetricsCallback(BaseCallback):
     """
-    Custom callback for adding additional logger data.
+    Custom callback for adding additional data to TensorBoard.
     """
 
     def __init__(self, verbose=0):
+        """
+        Class constructor
+
+        Args:
+            verbose (int, optional): verbose option. Defaults to 0.
+        """
         super().__init__(verbose)
         self.n_ep_steps = 0
         self.mean_ep_reward = 0
 
     def _on_step(self) -> bool:
+        """
+        Step-by-step logging function. Adds information about actions, observations and rewards.
+
+        Returns:
+            bool (bool, optional): default return. Defaults to True.
+        """
         # Actions (normalized)
         norm_action = self.locals['actions'][-1][-1]
         self.logger.record('actions/norm_action', norm_action)
@@ -46,10 +61,18 @@ class TbMetricsCallback(BaseCallback):
 
 class EpisodicDataCallback(BaseCallback):
     """
-    Custom callback for registering episode information.
+    Custom callback for registering episodic information.
     """
 
     def __init__(self, save_path, verbose=0, save_freq=10):
+        """
+        Class constructor.
+
+        Args:
+            save_path (string): path for file saving.
+            verbose (int, optional): verbose option. Defaults to 0.
+            save_freq (int, optional): steps between data dumps. Defaults to 10.
+        """
         super().__init__(verbose)
 
         self.save_freq = save_freq
@@ -62,6 +85,12 @@ class EpisodicDataCallback(BaseCallback):
             os.makedirs(self.save_path)
 
     def _on_step(self) -> bool:
+        """
+        Step-by-step logging function. Records information about actions, observations and rewards.
+
+        Returns:
+            bool (bool, optional): default return. Defaults to True.
+        """
 
         # Get step data
         self.step_data['tend'] = self.locals['infos'][-1]['time']

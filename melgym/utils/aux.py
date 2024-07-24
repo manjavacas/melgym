@@ -1,6 +1,10 @@
-def summary(episode, action, obs, reward, info, min_velocity=0, max_velocity=10):
+"""
+Auxiliary tools.
+"""
+
+def summary(episode, action, obs, reward, info, min_velocity=0, max_velocity=10) -> None:
     """
-    Prints a step summary.
+    Prints summary information for one environment step.
 
     Args:
         step (int): current step number.
@@ -8,9 +12,11 @@ def summary(episode, action, obs, reward, info, min_velocity=0, max_velocity=10)
         obs (np.array): last observation.
         reward (float): last reward.
         info (dict): additional information.
-        max_velocity (float): max action value. Defaults to 10.
         min_velocity (float): min action value. Defaults to 0.
+        max_velocity (float): max action value. Defaults to 10.
     """
+
+
     print(''.join(['\n', 80 * '-', '\nStep ', str(episode), 2 * '\n',
                    '[ACTION (norm)] ', str(action), '\n',
                    '[ACTION (real)] ', str(

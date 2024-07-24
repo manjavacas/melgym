@@ -1,3 +1,6 @@
+"""
+Constants declarations.
+"""
 
 import os
 
