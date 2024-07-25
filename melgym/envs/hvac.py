@@ -263,7 +263,7 @@ class EnvHVAC(Env):
 
             self.axs[1].set_xlabel('CV')
             self.axs[1].set_ylabel('Distance')
-            self.axs[1].set_xticklabels(cv_ids, rotation=45)
+            #self.axs[1].set_xticklabels(cv_ids, rotation=45)
 
             plt.pause(self.time_bt_frames)
 

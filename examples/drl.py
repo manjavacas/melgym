@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 import melgym
 import gymnasium as gym
 from stable_baselines3 import TD3
