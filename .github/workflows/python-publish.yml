@@ -1,0 +1,39 @@
+# This workflow will upload a Python Package using Twine when a release is created
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python#publishing-to-package-registries
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Upload Python Package
+
+on:
+  release:
+    types: [published, edited]
+    
+jobs:
+  update-pypi:
+    env:
+      PYPI_USER: ${{ secrets.PYPI_USER }}
+      PYPI_API_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+
+    name: PyPi package update
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        if: "${{ env.PYPI_USER != '' && env.PYPI_API_TOKEN != '' }}"
+        uses: actions/checkout@v2
+
+      - name: Preparing dist directory
+        if: ${{ env.PYPI_USER != '' && env.PYPI_API_TOKEN != '' }}
+        run: python setup.py sdist
+
+      - name: Publish a Python distribution to PyPi
+        if: ${{ env.PYPI_USER != '' && env.PYPI_API_TOKEN != '' }}
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          user: ${{ env.PYPI_USER }}
+          password: ${{ env.PYPI_API_TOKEN }}
+          skip_existing: true
+          verbose: true
