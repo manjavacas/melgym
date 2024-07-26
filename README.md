@@ -5,6 +5,8 @@
 [![Release](https://badgen.net/github/release/manjavacas/melgym)]()
 ![License](https://img.shields.io/badge/license-GPLv3-blue)
 [![Contributors](https://badgen.net/github/contributors/manjavacas/melgym)]() 
+[![Documentation Status](https://readthedocs.org/projects/melgym/badge/?version=latest)](https://melgym.readthedocs.io/en/latest/?badge=latest)
+
 
 MELGYM is a [Gymnasium](https://github.com/Farama-Foundation/Gymnasium)-based tool designed to facilitate interactive control over [MELCOR](https://melcor.sandia.gov/) 1.8.6 simulations.
 
