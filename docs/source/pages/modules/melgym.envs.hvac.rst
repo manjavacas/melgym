@@ -2,7 +2,8 @@ melgym.envs.hvac
 ================
 
 .. automodule:: melgym.envs.hvac
-  
+   :private-members:   
+
    
    
    

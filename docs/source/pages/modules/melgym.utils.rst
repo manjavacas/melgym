@@ -2,7 +2,8 @@ melgym.utils
 ============
 
 .. automodule:: melgym.utils
-  
+   :private-members:   
+
    
    
    

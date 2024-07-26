@@ -5,7 +5,8 @@
 
 .. autoclass:: DenormalizedActions
    :members:                                                           
-   :undoc-members:               
+   :undoc-members:     
+   :private-members:          
 
    
    .. automethod:: __init__
@@ -27,19 +28,27 @@
    
    
 
-   
-   
-   .. rubric:: Attributes
+   .. 
+   .. 
+   .. .. rubric:: Attributes
 
-   .. autosummary::
-   
-      ~DenormalizedActions.action_space
-      ~DenormalizedActions.metadata
-      ~DenormalizedActions.np_random
-      ~DenormalizedActions.observation_space
-      ~DenormalizedActions.render_mode
-      ~DenormalizedActions.reward_range
-      ~DenormalizedActions.spec
-      ~DenormalizedActions.unwrapped
-   
-   
+   .. .. autosummary::
+   .. 
+   ..    ~DenormalizedActions.action_space
+   ..
+   ..    ~DenormalizedActions.metadata
+   ..
+   ..    ~DenormalizedActions.np_random
+   ..
+   ..    ~DenormalizedActions.observation_space
+   ..
+   ..    ~DenormalizedActions.render_mode
+   ..
+   ..    ~DenormalizedActions.reward_range
+   ..
+   ..    ~DenormalizedActions.spec
+   ..
+   ..    ~DenormalizedActions.unwrapped
+   ..
+   .. 
+   .. 

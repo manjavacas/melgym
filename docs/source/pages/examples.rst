@@ -1,11 +1,15 @@
 .. _examples:
 
 Examples
-========
+********
 
-In this section, some basic usage examples of MELGYM are shown.
+Manual training and testing of a DRL agent
+==========================================
 
-Example
--------------------
+.. literalinclude:: ../_static/code/drl.py
 
-.. literalinclude:: ../../../examples/drl.py
+
+Automatic training and testing
+==============================
+
+.. literalinclude:: ../_static/code/sample-config.yml

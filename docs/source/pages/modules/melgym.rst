@@ -2,7 +2,8 @@
 ======
 
 .. automodule:: melgym
-  
+   :private-members:   
+
    
    
    

@@ -2,7 +2,8 @@ melgym.envs
 ===========
 
 .. automodule:: melgym.envs
-  
+   :private-members:   
+
    
    
    

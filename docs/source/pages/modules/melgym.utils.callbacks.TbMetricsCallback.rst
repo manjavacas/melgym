@@ -1,11 +1,12 @@
-melgym.utils.callbacks.TbMetricsCallback
+﻿melgym.utils.callbacks.TbMetricsCallback
 ========================================
 
 .. currentmodule:: melgym.utils.callbacks
 
 .. autoclass:: TbMetricsCallback
    :members:                                                           
-   :undoc-members:               
+   :undoc-members:     
+   :private-members:          
 
    
    .. automethod:: __init__
@@ -27,14 +28,17 @@ melgym.utils.callbacks.TbMetricsCallback
    
    
 
-   
-   
-   .. rubric:: Attributes
+   .. 
+   .. 
+   .. .. rubric:: Attributes
 
-   .. autosummary::
-   
-      ~TbMetricsCallback.logger
-      ~TbMetricsCallback.training_env
-      ~TbMetricsCallback.model
-   
-   
+   .. .. autosummary::
+   .. 
+   ..    ~TbMetricsCallback.logger
+   ..
+   ..    ~TbMetricsCallback.training_env
+   ..
+   ..    ~TbMetricsCallback.model
+   ..
+   .. 
+   .. 

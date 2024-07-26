@@ -1,7 +1,8 @@
 {{ fullname | escape | underline}}
 
 .. automodule:: {{ fullname }}
-  
+   :private-members:   
+
    {% block attributes %}
    {% if attributes %}
    .. rubric:: Module Attributes

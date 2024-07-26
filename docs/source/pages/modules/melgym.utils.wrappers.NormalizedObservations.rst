@@ -5,7 +5,8 @@
 
 .. autoclass:: NormalizedObservations
    :members:                                                           
-   :undoc-members:               
+   :undoc-members:     
+   :private-members:          
 
    
    .. automethod:: __init__
@@ -27,19 +28,27 @@
    
    
 
-   
-   
-   .. rubric:: Attributes
+   .. 
+   .. 
+   .. .. rubric:: Attributes
 
-   .. autosummary::
-   
-      ~NormalizedObservations.action_space
-      ~NormalizedObservations.metadata
-      ~NormalizedObservations.np_random
-      ~NormalizedObservations.observation_space
-      ~NormalizedObservations.render_mode
-      ~NormalizedObservations.reward_range
-      ~NormalizedObservations.spec
-      ~NormalizedObservations.unwrapped
-   
-   
+   .. .. autosummary::
+   .. 
+   ..    ~NormalizedObservations.action_space
+   ..
+   ..    ~NormalizedObservations.metadata
+   ..
+   ..    ~NormalizedObservations.np_random
+   ..
+   ..    ~NormalizedObservations.observation_space
+   ..
+   ..    ~NormalizedObservations.render_mode
+   ..
+   ..    ~NormalizedObservations.reward_range
+   ..
+   ..    ~NormalizedObservations.spec
+   ..
+   ..    ~NormalizedObservations.unwrapped
+   ..
+   .. 
+   .. 

@@ -5,7 +5,8 @@
 
 .. autoclass:: EnvHVAC
    :members:                                                           
-   :undoc-members:               
+   :undoc-members:     
+   :private-members:          
 
    
    .. automethod:: __init__
@@ -24,19 +25,27 @@
    
    
 
-   
-   
-   .. rubric:: Attributes
+   .. 
+   .. 
+   .. .. rubric:: Attributes
 
-   .. autosummary::
-   
-      ~EnvHVAC.metadata
-      ~EnvHVAC.np_random
-      ~EnvHVAC.render_mode
-      ~EnvHVAC.reward_range
-      ~EnvHVAC.spec
-      ~EnvHVAC.unwrapped
-      ~EnvHVAC.action_space
-      ~EnvHVAC.observation_space
-   
-   
+   .. .. autosummary::
+   .. 
+   ..    ~EnvHVAC.metadata
+   ..
+   ..    ~EnvHVAC.np_random
+   ..
+   ..    ~EnvHVAC.render_mode
+   ..
+   ..    ~EnvHVAC.reward_range
+   ..
+   ..    ~EnvHVAC.spec
+   ..
+   ..    ~EnvHVAC.unwrapped
+   ..
+   ..    ~EnvHVAC.action_space
+   ..
+   ..    ~EnvHVAC.observation_space
+   ..
+   .. 
+   .. 

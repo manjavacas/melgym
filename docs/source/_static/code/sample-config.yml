@@ -1,0 +1,30 @@
+id: example
+tasks:
+    - train
+    - test
+env:
+    name: branch_1
+    params:
+        max_deviation: 40
+        check_done_time: 500
+        control_horizon: 10
+        render_mode: 'pressures'
+algorithm:
+    name: TD3
+    params:
+        batch_size: 128
+        learning_rate: 0.001
+    train_params:
+        total_timesteps: 50000
+        eval_freq: 10000
+        n_eval_episodes: 1
+wrappers:
+    - norm_obs
+callbacks:
+    - EvalCallback
+    - TbMetricsCallback
+    - EpisodicDataCallback
+paths:
+    tensorboard_dir: './tensorboard/'
+    best_models_dir: './best_models/'
+    ep_metrics_dir: './ep_metrics/'

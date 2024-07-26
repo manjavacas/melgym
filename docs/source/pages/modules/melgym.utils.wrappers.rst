@@ -2,7 +2,8 @@ melgym.utils.wrappers
 =====================
 
 .. automodule:: melgym.utils.wrappers
-  
+   :private-members:   
+
    
    
    

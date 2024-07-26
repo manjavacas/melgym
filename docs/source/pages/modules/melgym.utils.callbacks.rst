@@ -2,7 +2,8 @@ melgym.utils.callbacks
 ======================
 
 .. automodule:: melgym.utils.callbacks
-  
+   :private-members:   
+
    
    
    

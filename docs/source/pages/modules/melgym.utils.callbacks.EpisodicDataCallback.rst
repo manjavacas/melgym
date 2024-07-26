@@ -1,11 +1,12 @@
-melgym.utils.callbacks.EpisodicDataCallback
+﻿melgym.utils.callbacks.EpisodicDataCallback
 ===========================================
 
 .. currentmodule:: melgym.utils.callbacks
 
 .. autoclass:: EpisodicDataCallback
    :members:                                                           
-   :undoc-members:               
+   :undoc-members:     
+   :private-members:          
 
    
    .. automethod:: __init__
@@ -27,14 +28,17 @@ melgym.utils.callbacks.EpisodicDataCallback
    
    
 
-   
-   
-   .. rubric:: Attributes
+   .. 
+   .. 
+   .. .. rubric:: Attributes
 
-   .. autosummary::
-   
-      ~EpisodicDataCallback.logger
-      ~EpisodicDataCallback.training_env
-      ~EpisodicDataCallback.model
-   
-   
+   .. .. autosummary::
+   .. 
+   ..    ~EpisodicDataCallback.logger
+   ..
+   ..    ~EpisodicDataCallback.training_env
+   ..
+   ..    ~EpisodicDataCallback.model
+   ..
+   .. 
+   .. 
