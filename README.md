@@ -1,5 +1,5 @@
 <p align="center">
-    <img src="./docs/source/_static/images/logo.png" alt="drawing" width="400"/>
+    <img src="./docs/source/_static/images/logo.png" alt="logo" width="400"/>
 </p>
 
 [![Release](https://badgen.net/github/release/manjavacas/melgym)]()
@@ -15,7 +15,7 @@ Every control functionality in MELCOR is determined by Control Functions (CFs). 
 MELGYM allows the definition of external user-defined controllers, allowing the use of reinforcement learning agents or any other custom/external control algorithm.
 
 <p align="center">
-    <img src="./docs/source/_static/images/mdp-simp.png" alt="drawing" width="400"/>
+    <img src="./docs/source/_static/images/mdp-simp.png" alt="mdp" width="400"/>
 </p>
 
 ## ⚙️ How it works?
@@ -23,7 +23,7 @@ MELGYM allows the definition of external user-defined controllers, allowing the 
 MELGYM leverages MELCOR's restart capabilities to modify CFs every few simulation cycles. Just before a *warm start* is performed, the underlying MELCOR model is modified according to the last registered simulation state, and continues running until the next control action is performed.
 
 <p align="center">
-    <img src="./docs/source/_static/images/mdp.png" alt="drawing" width="500"/>
+    <img src="./docs/source/_static/images/mdp.png" alt="mpd-2" width="500"/>
 </p>
 
 > Check the MELGYM documentation for more detailed information.
