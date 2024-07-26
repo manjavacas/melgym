@@ -12,6 +12,16 @@ Control conditions are defined a priori and sometimes requires the concatenation
 
 MELGYM allows the definition of external user-defined controllers, allowing the use of **reinforcement learning** agents or any other custom/external **control** algorithm.
 
+.. figure:: ../_static/images/mdp-simp.png
+    :align: center
+    :scale: 27 %
+
+\
+
+.. warning:: The MELGEN and MELCOR executables are **NOT INCLUDED** in this package, as they are not freely distributable. The execution of MELGYM requires both executables, which must be located in the respective paths ``melgym/exec/MELGEN`` and ``melgym/exect/MELCOR``.
+
+.. note:: Access to this MEGEN/MELCOR exectuables can be requested via the `Sandia National Laboratories website <https://www.sandia.gov/MELCOR/code-distribution/>`_.
+
 How MELGYM works
 ================
 
@@ -48,6 +58,13 @@ Therefore, MELGYM modifies the input model every few simulation cycles. Each tim
 
     Control actions modify the current MELCOR model, and are performed just before each warm start
 
+Finally, the following image shows a summary of the implemented functions and the low-level agent-environment interaction.
+
+.. figure:: ../_static/images/functions.png
+    :align: center
+    :scale: 9 %
+
+    Low-level diagram of the agent-environment interaction loop
 
 Reinforcement learning integration
 ==================================
@@ -84,7 +101,7 @@ MELGYM enables the integration of DRL-based control in MELCOR simulations. The p
 
 Note that the outputs provided by the MELCOR *External Data File* (EDF) are parsed into observations that the agent uses to determine the next control action to be performed, as well as to calculate the associated reward. In addition, actions consist of modifications on the control elements allowed by the MELGYM environment. The observed variables, actions and rewards will depend on the environment.
 
-.. note:: MELGYM adheres to the standard `Gymnasium <https://gymnasium.farama.org/>`_ interface, so its environments implement its typical methdos (e.g. *reset*, *step*, *render*, ...).
+.. note:: MELGYM adheres to the standard `Gymnasium <https://gymnasium.farama.org/>`_ interface, so its environments implement its typical methdos (e.g. *reset*, *step*, *render*, ...). The definition of the agent depends on the user preferences, but MELGYM is highly integrated with the `Stable-Baselines3 <https://stable-baselines3.readthedocs.io/en/master/>`_ library, so its use is highly encouraged.
 
 See also
 ========

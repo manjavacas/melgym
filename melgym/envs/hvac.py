@@ -224,7 +224,7 @@ class EnvHVAC(Env):
         time, pressures = self.__get_last_record()
         obs = [value for key, value in pressures.items()
                if key in self.controlled_cvs]
-        reward, distances = self.__compute_distances(pressures)
+        reward, distances = self.__compute_reward(pressures)
 
         info = {**time, 'pressures': pressures, 'distances': distances}
 
@@ -254,7 +254,7 @@ class EnvHVAC(Env):
             ## also try: self.axs[0].set_xlim(self.x[-2], self.x[-1])
 
             # PLOT 2: pressures distances
-            _, distances = self.__compute_distances(current_pressures)
+            _, distances = self.__compute_reward(current_pressures)
             cv_ids = [cv_id for cv_id in distances.keys()]
             distances = [distance for distance in distances.values()]
 
@@ -419,7 +419,7 @@ class EnvHVAC(Env):
             f.writelines(lines)
             f.truncate()
 
-    def __compute_distances(self, last_record):
+    def __compute_reward(self, last_record):
         """
         Computes the sum of the distances of each controlled CV pressure to their initial (target) value.
 

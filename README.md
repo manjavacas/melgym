@@ -1,50 +1,69 @@
 <p align="center">
-    <img src="./docs/source/_static/logo.png" alt="drawing" width="400"/>
+    <img src="./docs/source/_static/images/logo.png" alt="drawing" width="400"/>
 </p>
 
 [![Release](https://badgen.net/github/release/manjavacas/melgym)]()
 ![License](https://img.shields.io/badge/license-GPLv3-blue)
 [![Contributors](https://badgen.net/github/contributors/manjavacas/melgym)]() 
 
-A [Gymnasium](https://github.com/Farama-Foundation/Gymnasium)-based interface for continuous control using [MELCOR](https://melcor.sandia.gov/) 1.8.6 and [MELKIT](https://github.com/manjavacas/melkit/). Designed to enable reinforcement learning control in MELCOR simulations.
+MELGYM is a [Gymnasium](https://github.com/Farama-Foundation/Gymnasium)-based tool designed to facilitate interactive control over [MELCOR](https://melcor.sandia.gov/) 1.8.6 simulations.
+
+Every control functionality in MELCOR is determined by Control Functions (CFs). However, the batch execution mode of MELCOR makes it difficult to interactively control and modify functions under certain user-defined conditions. Control conditions are defined a priori and sometimes requires the concatenation of several CFs that must be done in an unfriendly way.
+
+MELGYM allows the definition of external user-defined controllers, allowing the use of reinforcement learning agents or any other custom/external control algorithm.
+
+<p align="center">
+    <img src="./docs/source/_static/images/mdp-simp.png" alt="drawing" width="400"/>
+</p>
 
 ## ⚙️ How it works?
 
-MELGYM is oriented to modify MELCOR **control functions (CFs)** between restart dumps. This allows pseudo-continuous control using the agent-agent interaction environment described below:
+MELGYM leverages MELCOR's restart capabilities to modify CFs every few simulation cycles. Just before a *warm start* is performed, the underlying MELCOR model is modified according to the last registered simulation state, and continues running until the next control action is performed.
 
 <p align="center">
-    <img src="./docs/source/_static/mdp-simp.png" alt="drawing" width="400"/>
+    <img src="./docs/source/_static/images/mdp.png" alt="drawing" width="500"/>
 </p>
 
-In the current implementation fo MELGYM, the goal is to maintain stable pressures in a series of control volumes by modifying the flow rate of a given flow path. However, this framework can be adapted to perform additional control functions (e.g. temperature control, gas concentrations, etc.).
-
-The process followed during a MELGYM run consists of the following steps:
-
-* When the environment is created/restarted, MELGYM executes **MELGEN** and returns as **observation** the initial state of the simulation (in this case, the pressures of the controlled CVs).
-* For each agent-environment interaction, MELGYM updates the current MELCOR model based on the received **action** and runs a simulation for _T_ cycles.
-* At the end of the simulation, the last records of the generated **EDF** are read, representing the latest pressure values of the CVs. These values allow the calculation of the distances to the target pressures, the sum of which is sent to the agent as a **reward** signal.
-
-<p align="center">
-    <img src="./docs/source/_static/mdp.png" alt="drawing" width="500"/>
-</p>
-
-MELGYM leverages MELCOR's restart capabilities to modify CFs every few simulation cycles. Therefore, each time a **warm start** is performed, the model starts from the last registered state and continues simulating under the new configuration defined by the agent.
-
-<p align="center">
-    <img src="./docs/source/_static/restart.png" alt="drawing" width="500"/>
-</p>
-
-The following image shows a summary of the implemented functions and the low-level **agent-environment interaction**:
-
-<p align="center">
-    <img src="./docs/source/_static/melgym.png" alt="drawing" width="900"/>
-</p>
+> Check the MELGYM documentation for more detailed information.
 
 ## 🖥️ Setting up experiments
 
-The script [run_experiment.py](./run_experiment.py) allows to launch experiments using the configuration defined in [cfg.json](./cfg.json). This file defines the RL algorithm to be used, the environment, and includes additional configuration (wrappers, paths, callbacks, etc.).
+MELGYM environments adhere to the Gymnasium interface, and can be combined with DRL libraries such as [Stable-Baselines3](https://stable-baselines3.readthedocs.io/en/master/).
+
+```python
+import melgym
+import gymnasium as gym
+from stable_baselines3 import TD3
+
+env = gym.make('branch_1', render_mode='pressures')
+
+# Training
+agent = TD3('MlpPolicy', env)
+agent.learn(total_timesteps=10_000)
+
+# Evaluation
+obs, info = env.reset()
+done = trunc = False
+
+while not (done or trunc):
+    env.render()
+    act, _ = agent.predict(obs)
+    obs, rew, trunc, done, info = env.step(act)      
+
+env.close()
+```
+
+For faster experimentation, the [run_experiment.py](./run_experiment.py) script allows to launch experiments by using the configuration defined in [config.yaml](./config.yaml).
+
+```
+$ ./run_experiment.py -conf config.yaml
+```
+
+## 🚀 Contributing
+
+See our [contributing](./CONTRIBUTING.md) guidelines.
 
 ## 🧰 Side projects
 
-The modification and query of MELCOR files is done with our tool [MELKIT](https://github.com/manjavacas/melkit/). Feel free to help us improving it!
+MELGYM rely on the auxiliar toolbox [MELKIT](https://github.com/manjavacas/melkit/). Feel free to help us improving both projects!
 
