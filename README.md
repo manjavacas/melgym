@@ -26,7 +26,7 @@ MELGYM leverages MELCOR's restart capabilities to modify CFs every few simulatio
     <img src="./docs/source/_static/images/mdp.png" alt="mpd-2" width="500"/>
 </p>
 
-> Check the MELGYM documentation for more detailed information.
+> Check the [MELGYM documentation](https://melgym.readthedocs.io/) for more detailed information.
 
 ## 🖥️ Setting up experiments
 
