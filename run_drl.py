@@ -119,11 +119,11 @@ def train(env, config):
     # Model configuration
     if config['algorithm']['name'] in ALGORITHMS:
         model_class = ALGORITHMS[config['algorithm']['name']]
-        # model = model_class('MlpPolicy', env, verbose=1,
-        #                     tensorboard_log=config['paths']['tensorboard_dir'] + experiment_id, **model_config)
-        # Uncomment for noisy actions
         model = model_class('MlpPolicy', env, verbose=1,
-                            tensorboard_log=config['paths']['tensorboard_dir'] + experiment_id, **model_config, action_noise=NormalActionNoise(mean=np.array([0]), sigma=np.array([0.1])))
+                            tensorboard_log=config['paths']['tensorboard_dir'] + experiment_id, **model_config)
+        # Uncomment for noisy actions
+        # model = model_class('MlpPolicy', env, verbose=1,
+        #                     tensorboard_log=config['paths']['tensorboard_dir'] + experiment_id, **model_config, action_noise=NormalActionNoise(mean=np.array([0]), sigma=np.array([0.1])))
     else:
         raise Exception('Incorrect algorithm name in configuration file.')
 

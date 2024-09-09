@@ -1,6 +1,7 @@
-BRANCH ?= foo
+BRANCH ?= pid
 
 all: cleanmetrics run
+gencor: gen cor
 rand:
 	./rand_controller.py
 run:

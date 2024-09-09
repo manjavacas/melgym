@@ -15,6 +15,16 @@ register(
 )
 
 register(
+    id='presscontrol',
+    entry_point='melgym.envs:EnvPress',
+    kwargs={
+        'input_file': 'presscontrol.inp',
+        'n_actions': 1,
+        'controlled_cvs': ['CV002']
+    }
+)
+
+register(
     id='branch_1',
     entry_point='melgym.envs:EnvHVAC',
     kwargs={

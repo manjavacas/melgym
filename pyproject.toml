@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "melgym"
-version = "v1.5"
+version = "v1.6"
 description = "A Gymnasium-based interface for MELCOR."
 authors = ["Antonio Manjavacas <manjavacas@ugr.es>"]
 license = "LICENSE"

@@ -1,22 +1,18 @@
-id: td3-lr001-b2
+id: ppo-press
 tasks:
 # - train
 - test
 env:
-  name: branch_2
+  name: presscontrol
   params:
-    max_deviation: 40
-    check_done_time: 500
-    control_horizon: 10
     render_mode: "pressures"
 algorithm:
-  name: TD3
+  name: PPO
   params:
-    stats_window_size: 1
     learning_rate: 0.001
   train_params:
-    total_timesteps: 50000
-    eval_freq: 10000
+    total_timesteps: 10000
+    eval_freq: 2000
     n_eval_episodes: 1
 wrappers:
 - norm_obs
