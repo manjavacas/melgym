@@ -8,7 +8,7 @@
 [![Documentation Status](https://readthedocs.org/projects/melgym/badge/?version=latest)](https://melgym.readthedocs.io/en/latest/?badge=latest)
 
 
-MELGYM is a [Gymnasium](https://github.com/Farama-Foundation/Gymnasium)-based tool designed to facilitate interactive control over [MELCOR](https://melcor.sandia.gov/) 1.8.6 simulations.
+**MELGYM** is a [Gymnasium](https://github.com/Farama-Foundation/Gymnasium)-based tool designed to facilitate interactive control over [MELCOR](https://melcor.sandia.gov/) 1.8.6 simulations.
 
 Every control functionality in MELCOR is determined by Control Functions (CFs). However, the batch execution mode of MELCOR makes it difficult to interactively control and modify functions under certain user-defined conditions. Control conditions are defined a priori and sometimes requires the concatenation of several CFs that must be done in an unfriendly way.
 
