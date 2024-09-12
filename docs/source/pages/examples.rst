@@ -6,11 +6,11 @@ Examples
 Manual training and testing of a DRL agent
 ==========================================
 
-Here is an example script where a DRL agent is trained and evaluated in the MELGYM **branch_1** environment:
+Here is an example script where a DRL agent is trained and evaluated in the MELGYM **presscontrol** environment:
 
 .. literalinclude:: ../_static/code/drl.py
 
-The instantiation of the environment is similar to any inherited Gymnasium environment. On the other hand, the Stable-Baselines3 implementation of a TD3 agent is used, which is instantiated and trained during a number of user-specified timesteps. Once trained, we carry out the evaluation of the model during a complete episode.
+The instantiation of the environment is similar to any inherited Gymnasium environment. On the other hand, the Stable-Baselines3 implementation of a PPO agent is used, which is instantiated and trained during a number of user-specified timesteps. Once trained, we carry out the evaluation of the model during a complete episode.
 
 Automatic training and testing
 ==============================

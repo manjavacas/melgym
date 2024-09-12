@@ -103,7 +103,4 @@ Note that the outputs provided by the MELCOR *External Data File* (EDF) are pars
 
 .. note:: MELGYM adheres to the standard `Gymnasium <https://gymnasium.farama.org/>`_ interface, so its environments implement its typical methdos (e.g. *reset*, *step*, *render*, ...). The definition of the agent depends on the user preferences, but MELGYM is highly integrated with the `Stable-Baselines3 <https://stable-baselines3.readthedocs.io/en/master/>`_ library, so its use is highly encouraged.
 
-See also
-========
-
-After this introduction, go to section :ref:`examples` for a hands-on explanation of how a DRL controller can be used with MELGYM.
+.. tip:: After this introduction, go to section :ref:`examples` for a hands-on explanation of how a DRL controller can be used with MELGYM.

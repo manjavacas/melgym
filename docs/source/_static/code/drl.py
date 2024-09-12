@@ -1,11 +1,12 @@
 import melgym
 import gymnasium as gym
-from stable_baselines3 import TD3
 
-env = gym.make('branch_1', render_mode='pressures')
+from stable_baselines3 import PPO
+
+env = gym.make('presscontrol', render_mode='pressures')
 
 # Training
-agent = TD3('MlpPolicy', env)
+agent = PPO('MlpPolicy', env)
 agent.learn(total_timesteps=10_000)
 
 # Evaluation

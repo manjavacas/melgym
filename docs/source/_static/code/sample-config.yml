@@ -1,22 +1,19 @@
 id: example
 tasks:
-    - train
-    - test
+  - train
+  - test
 env:
-    name: branch_1
+  name: presscontrol
+  params:
     params:
-        max_deviation: 40
-        check_done_time: 500
-        control_horizon: 10
         render_mode: 'pressures'
 algorithm:
-    name: TD3
+    name: PPO
     params:
-        batch_size: 128
-        learning_rate: 0.001
+        learning_rate: 0.0003
     train_params:
         total_timesteps: 50000
-        eval_freq: 10000
+        eval_freq: 5000
         n_eval_episodes: 1
 wrappers:
     - norm_obs

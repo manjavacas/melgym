@@ -1,4 +1,4 @@
-melgym.envs
+﻿melgym.envs
 ===========
 
 .. automodule:: melgym.envs
@@ -30,4 +30,5 @@ melgym.envs
    :recursive:
 
    hvac
+   pressure
 

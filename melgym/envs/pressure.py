@@ -37,7 +37,7 @@ class EnvPress(Env):
     """
     metadata = {'render_modes': ['pressures']}
 
-    def __init__(self, input_file, n_actions, controlled_cvs, control_horizon=10, check_done_time=500, max_deviation=300, min_velocity=0, max_velocity=40, max_tend=10_000, render_mode=None, ylims=(100000, 102000), time_bt_frames=0.01, env_id=None):
+    def __init__(self, input_file, n_actions, controlled_cvs, control_horizon=10, check_done_time=500, max_deviation=500, min_velocity=0, max_velocity=20, max_tend=10_000, render_mode=None, ylims=None, time_bt_frames=0.01, env_id=None):
         """
         Class constructor.
 
@@ -52,7 +52,7 @@ class EnvPress(Env):
             max_velocity (float. optional): maximum value for control actions. Defaults to 10 (m/s).
             max_tend (int, optional): maximum TEND before truncation. Defaults to 10000.
             render_mode (str, optional): render option.
-            ylims (tuple, optional): ylims for plotting.
+            ylims (tuple, optional): ylims for plotting. Defaults to None.
             time_bt_frames (float, optional): time between rendered frames. Defaults to 0.01.
             env_id (str, optional): custom environment identifier. Used for naming the output directory.
         """
