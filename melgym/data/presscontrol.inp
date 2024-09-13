@@ -93,7 +93,7 @@ FL002S0   1.0   1.0   1.0
 FL002T0   2  002
 
 CF00200   VEL-OUT EQUALS 1 1.0
-CF00210   1.0  0.0  CFVALU.6  * 5-constant, 6-PID, 7-DRL
+CF00210   1.0  0.0  CFVALU.7  * 5-constant, 6-PID, 7-DRL
 
 ** Control - Constant **
 

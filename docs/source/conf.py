@@ -25,7 +25,7 @@ pygments_style = 'sphinx'
 # -- Options for HTML output -------------------------------------------------
 
 html_theme = 'sphinx_rtd_theme'
-html_logo = '_static/images/logo.png'
+html_logo = '_static/images/logo-2.png'
 
 html_static_path = [
     '_static'
