@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "melgym"
 version = "v1.6"
-description = "A Gymnasium-based interface for MELCOR."
+description = "A Gymnasium-based interface for continuous control using MELCOR."
 authors = ["Antonio Manjavacas <manjavacas@ugr.es>"]
 license = "LICENSE"
 readme = "README.md"
