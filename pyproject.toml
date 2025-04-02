@@ -8,6 +8,7 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.10"
+gymnasium = "^1.1.1"
 
 
 [build-system]
