@@ -1,19 +1,27 @@
 ---
-name: "🛠️ FEATURE"
-about: Propose a new feature
-title: "[FEATURE]:"
-labels: Feature proposal
-assignees: ''
+name: "🚀 Feature Request"
+about: Propose a new feature or enhancement for MELGYM
+title: "[FEATURE] <brief description>"
+labels: ["enhancement"]
+assignees: ""
 ---
 
-## Feature description
+## ✨ Feature Description
 
-<!--- A clear and concise description of the feature. -->
+<!-- Provide a clear and concise description of the feature, explaining its purpose and benefits. -->
 
-## Additional considerations
+## 🎯 Problem Statement
 
-<!--- Any kind of information to be considered. -->
+<!-- Describe the problem this feature aims to solve. Why is it needed? -->
 
-## Proposed solution
+## 📌 Use Case
 
-<!--- A proposed way to address its implementation. -->
+<!-- Provide examples of how this feature will be used in practice. -->
+
+## 💡 Proposed Solution
+
+<!-- Suggest a possible implementation approach. If applicable, include technical details or references. -->
+
+## 🔗 Additional Considerations
+
+<!-- Add any relevant information, such as dependencies, potential challenges, or alternative solutions. -->

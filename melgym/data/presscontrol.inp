@@ -56,7 +56,8 @@ FL00101   1.0    1.0   1.0
 FL00102	  3
 FL001S0   1.0    1.0   1.0
 * FL001T0   1     001     * Variable (TF)
-* FL001T0   2     001     * Constant (CF)
+* FL001T0   1     001     * Constant (CF)
+FL001T0   2     007    * Variable (MELGYM)
 
 ** Constant inlet
 
@@ -65,11 +66,12 @@ FL001S0   1.0    1.0   1.0
 
 ** Variable inlet (1)
 
-* TF00100   VEL-IN    4     1.0
-* TF00110   0.0       1.0
-* TF00111   1e4       0.5
-* TF00112   2e4       0.5
-* TF00113   3e4       0.0
+TF00100   VEL-IN    5     1.0
+TF00110   0.0       1.0
+TF00111   1e4       0.5
+TF00112   2e4       1.5
+TF00113   3e4       0.5
+TF00114   4e4       1.0
 
 * Variable inlet (2)
 
@@ -93,25 +95,25 @@ FL002S0   1.0   1.0   1.0
 FL002T0   2  002
 
 CF00200   VEL-OUT EQUALS 1 1.0
-CF00210   1.0  0.0  CFVALU.7  * 5-constant, 6-PID, 7-DRL
+CF00210   1.0  0.0  CFVALU.5  * 5-constant, 6-PID, 7-DRL
 
 ** Control - Constant **
 
-CF00500   CONSTANT EQUALS 1 5.0
+CF00500   CONSTANT EQUALS 1 1.0
 CF00510   0.0  1.0  TIME
 
 ** Control - PID **
 
-CF00300 SETPOINT EQUALS 1 1.0
-CF00310 0.0 101000.0 TIME
+* CF00300 SETPOINT EQUALS 1 1.0
+* CF00310 0.0 101000.0 TIME
 
-CF00400 ERROR ADD 2 1.0
-CF00410 1.0 0.0 CVH-P.2
-CF00411 -1.0 0.0 CFVALU.3
+* CF00400 ERROR ADD 2 1.0
+* CF00410 1.0 0.0 CVH-P.2
+* CF00411 -1.0 0.0 CFVALU.3
 
-CF00600 VEL-OUT PID 1 1.0 
-CF00603 0.005 0.002 0.001
-CF00610 1.0 0.0 CFVALU.4
+* CF00600 VEL-OUT PID 1 1.0 
+* CF00603 0.005 0.002 0.001
+* CF00610 1.0 0.0 CFVALU.4
 
 ** Control - DRL **
 
@@ -151,7 +153,7 @@ CPULEFT     100.
 CPULIM      100000.
 CYMESF      100 100
 
-TEND        3e4
+TEND        5e4
 
 *           TIME        DTMAX    DTMIN     DTEDT    DTPLT     DTRST
 TIME1       0.0         10.0     0.1       10.0     100.0     10.0
