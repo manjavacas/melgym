@@ -38,21 +38,19 @@ class MelcorEnv(gym.Env):
 
         self.render_mode = render_mode
 
-        ########################## Files #########################
-
+        # Files and paths
         self.melcor_model = melcor_model
-
         model_name = os.path.basename(melcor_model)
         self.output_dir = os.path.join(OUTPUT_DIR, model_name.split(
             '.')[0] + f'_{datetime.now().strftime("%Y_%m_%d-%H_%M_%S")}')
 
         self.melin_path = os.path.join(self.output_dir, 'MELIN')
         self.melog_path = os.path.join(self.output_dir, 'MELOG')
+        self.edf_path = os.path.join(self.output_dir, 'MELEDF')
 
         self.toolkit = None
 
-        ############## Observation and action spaces #############
-
+        # Observation and action spaces
         self.control_cfs = control_cfs
         self.controlled_values = self._get_controlled_variables(melcor_model)
         if 'TIME' in self.controlled_values:
@@ -72,8 +70,7 @@ class MelcorEnv(gym.Env):
             dtype=np.float64
         )
 
-        #################### Simulation params ###################
-
+        # Simulation params
         self.control_horizon = control_horizon
         self.n_steps = 0
         self.current_tend = 0
@@ -110,9 +107,33 @@ class MelcorEnv(gym.Env):
                        dtype=self.observation_space.dtype)
 
         # Add CFs redefinition to MELCOR input
-        self.__add_cfs_redefinition()
+        self._add_cfs_redefinition()
 
         return obs, info
+
+    def step(self, action):
+
+        # Update time
+        if self.n_steps > 0:
+            self._update_time()
+        else:
+            raise Exception("Error: reset() has not been called before step()")
+
+        # Apply action
+        self._update_cfs(action)
+
+        # MELCOR simulation
+        with open(self.melog_path, 'a') as log:
+            subprocess.call([MELCOR_PATH, 'ow=o', 'i=' + self.melin_path],
+            cwd=self.output_dir, stdout=log, stderr=subprocess.STDOUT)
+        
+        # Process output
+
+    def render(self):
+        raise NotImplementedError
+
+    def close(self):
+        raise NotImplementedError
 
     def _get_controlled_variables(self, melcor_model):
         """
@@ -154,7 +175,7 @@ class MelcorEnv(gym.Env):
         except FileNotFoundError:
             raise FileNotFoundError(f"Input file {self.melin_path} not found.")
 
-    def __add_cfs_redefinition(self):
+    def _add_cfs_redefinition(self):
         """
         Includes the definitions of the CFs to be overwritten in the MELCOR input, inserting them after "*EOR* MELCOR".
         If the marker is not found, the block is inserted before the last line.
@@ -183,3 +204,43 @@ class MelcorEnv(gym.Env):
 
         with open(self.melin_path, 'w') as f:
             f.write(''.join(new_lines))
+
+    def _update_cfs(self, action):
+        """
+        Updates the scale factor of every controlled CF in the MELCOR input according to a given action.
+
+        Args:
+            action (np.array): New scale factors to assign to the CFs.
+
+        Raises:
+            Exception: If the marker "*EOR* MELCOR" is not found.
+        """
+        with open(self.melin_path, 'r') as f:
+            lines = f.readlines()
+
+        # Search for "*EOR* MELCOR" line
+        try:
+            marker_index = next(i for i, line in enumerate(
+                lines) if "*EOR* MELCOR" in line)
+        except StopIteration:
+            raise Exception(
+                "Marker '*EOR* MELCOR' not found in the input file")
+
+        action_idx = 0
+        num_actions = len(action)
+
+        # Update scale factors in CFs after marker
+        for i in range(marker_index + 1, len(lines)):
+            tokens = lines[i].split()
+            if not tokens or len(tokens) < 5 or not tokens[0].endswith('00'):
+                continue
+
+            cf_id = tokens[0][:-2]
+
+            if cf_id in self.control_cfs and action_idx < num_actions:
+                tokens[4] = str(action[action_idx])
+                action_idx += 1
+                lines[i] = ' '.join(tokens) + '\n'
+
+        with open(self.melin_path, 'w') as f:
+            f.writelines(lines)

@@ -55,7 +55,7 @@ FL00100   INLET  001   002   3.0  3.0
 FL00101   1.0    1.0   1.0
 FL00102	  3
 FL001S0   1.0    1.0   1.0
-FL001T0   1      001   * Constant CF
+FL001T0   2      001   * Constant CF
 
 ** Constant inlet
 
@@ -68,15 +68,15 @@ FL00200   OUTLET  002   001   3.0  3.0
 FL00201   1.0     1.0   1.0
 FL00202	  3
 FL002S0   1.0     1.0   1.0
-FL002T0   2       002
+FL002T0   2       007
 
-CF00200   VEL-OUT EQUALS 1 1.0
-CF00210   1.0  0.0  CFVALU.7  * 5-constant, 6-PID, 7-MELGYM
+* CF00200   VEL-OUT EQUALS 1 1.0
+* CF00210   1.0  0.0  CFVALU.7  * 5-constant, 6-PID, 7-MELGYM
 
 ** Control - Constant **
 
-CF00500   CONSTANT EQUALS 1 1.0
-CF00510   0.0  1.0  TIME
+* CF00500   CONSTANT EQUALS 1 1.0
+* CF00510   0.0  1.0  TIME
 
 ** Control - PID **
 
@@ -108,7 +108,7 @@ CF99910   0.0  1.0  TIME
 **********************************************************
 
 EDF00100  OUTPUT 1 WRITE
-EDF00101  OUTPUT.DAT
+EDF00101  MELEDF
 EDF00102  8E20.12
 EDF00110  1. 10.
 EDF001A1  CVH-P.2 

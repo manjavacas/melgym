@@ -9,7 +9,7 @@ register(
     entry_point='melgym.envs.melcor_env:MelcorEnv',
     kwargs={
         'melcor_model': 'melgym/data/pressure.inp',
-        'control_cfs': ['CF007', 'CF005'],
+        'control_cfs': ['CF007'],
         'min_action_value': 0.0,
         'max_action_value': 10.0
     }
