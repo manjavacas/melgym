@@ -1,3 +1,6 @@
+"""
+Generic MELCOR control environment.
+"""
 
 import os
 import shutil
@@ -10,7 +13,7 @@ from melkit.toolkit import Toolkit
 from typing import Optional
 from datetime import datetime
 
-from ..utils.constants import *
+from ..utils.constants import OUTPUT_DIR, MELCOR_PATH, MELGEN_PATH
 
 
 class MelcorEnv(gym.Env):
