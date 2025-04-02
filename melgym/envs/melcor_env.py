@@ -14,6 +14,13 @@ from ..utils.constants import *
 
 
 class MelcorEnv(gym.Env):
+    """
+    MELCOR control environment.
+
+    The redefinition of CF scale factors is used to control the variables recorded in the EDF.
+
+    A rewriting is used between restarts of the CFnnn00s specified in the MELCOR input, given a number of timesteps defined as the control horizon.
+    """
 
     def __init__(
         self,
@@ -88,20 +95,25 @@ class MelcorEnv(gym.Env):
         super().reset(seed=seed)
 
         # Create output folder and copy input file
-        os.makedirs(self.output_dir)
+        os.makedirs(self.output_dir, exist_ok=True)
         shutil.copy(self.melcor_model, self.melin_path)
 
         self.toolkit = Toolkit(self.melin_path)
         self.toolkit.remove_comments(overwrite=True)
 
+        # Set initial TEND
         self.n_steps = 1
         self._update_time()
 
         # MELGEN execution
-        with open(self.melog_path, 'a') as log:
-            subprocess.call([MELGEN_PATH, self.melin_path],
-                            cwd=self.output_dir, stdout=log, stderr=subprocess.STDOUT)
+        try:
+            with open(self.melog_path, 'a') as log:
+                subprocess.run([MELGEN_PATH, self.melin_path],
+                               cwd=self.output_dir, stdout=log, stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(f"MELCOR execution failed: {e}")
 
+        # Initial state
         info = {'time': 0.0}
         obs = np.zeros(self.observation_space.shape,
                        dtype=self.observation_space.dtype)
@@ -112,6 +124,23 @@ class MelcorEnv(gym.Env):
         return obs, info
 
     def step(self, action):
+        """
+        Executes a step in the MELCOR environment by applying the given action, 
+        running a MELCOR simulation during a given control horizon, and retrieving the latest state.
+
+        Args:
+            action (np.array): An array of control values (CFs scale factors) to be applied.
+
+        Returns:
+            tuple:
+                - np.array: Observations, representing the latest EDF values after simulation.
+                - float: Reward calculated based on the new state.
+                - bool: Whether the episode has terminated.
+                - bool: Whether the episode was truncated.
+                - dict: Additional metadata, including:
+                    - "TIME" (float): The current simulation time.
+                    - Controlled variable names as keys with their respective values.
+        """
 
         # Update time
         if self.n_steps > 0:
@@ -123,11 +152,27 @@ class MelcorEnv(gym.Env):
         self._update_cfs(action)
 
         # MELCOR simulation
-        with open(self.melog_path, 'a') as log:
-            subprocess.call([MELCOR_PATH, 'ow=o', 'i=' + self.melin_path],
-            cwd=self.output_dir, stdout=log, stderr=subprocess.STDOUT)
-        
-        # Process output
+        try:
+            with open(self.melog_path, 'a') as log:
+                subprocess.call([MELCOR_PATH, 'ow=o', 'i=' + self.melin_path],
+                                cwd=self.output_dir, stdout=log, stderr=subprocess.STDOUT)
+        except subprocess.CalledProcessError as e:
+            raise RuntimeError(f"MELCOR execution failed: {e}")
+
+        # Get observation
+        time, *obs = self._get_last_edf_data()
+
+        info = {'TIME': time}
+        info.update(dict(zip(self.controlled_values, obs)))
+
+        # Compute reward
+        reward = self._compute_reward(info)
+
+        # Check termination / truncation
+        termination = self._check_termination(info)
+        truncation = self._check_truncation(info)
+
+        return np.array(obs, dtype=np.float64), reward, termination, truncation, info
 
     def render(self):
         raise NotImplementedError
@@ -244,3 +289,29 @@ class MelcorEnv(gym.Env):
 
         with open(self.melin_path, 'w') as f:
             f.writelines(lines)
+
+    def _get_last_edf_data(self):
+        """
+        Reads the last recorded values from the EDF file.
+
+        Returns:
+            list[str]: A list containing the last recorded values.
+        """
+        n_values = len(self.controlled_values) + 1
+        with open(self.edf_path, 'rb') as edf:
+            edf.seek(0, os.SEEK_END)
+            file_size = edf.tell()
+            buffer_size = min(4096, file_size)
+            edf.seek(-buffer_size, os.SEEK_END)
+            values = edf.read().decode(errors='ignore').split()[-n_values:]
+
+        return values
+
+    def _compute_reward(self, info):
+        return 0
+
+    def _check_termination(self, info):
+        return False
+
+    def _check_truncation(self, info):
+        return False
