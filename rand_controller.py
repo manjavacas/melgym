@@ -3,6 +3,9 @@
 import melgym
 import gymnasium as gym
 
+import numpy as np
+
+
 def rand_control(env, n_episodes=1):
     """
     Random controller for testing purposes.

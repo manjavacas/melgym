@@ -14,8 +14,6 @@ class PressureEnv(MelcorEnv):
     def render(self):
         """
         Renders the environment.
-
-        In this example, rendering simply prints the current simulation time and controlled values.
         """
         try:
             values = self._get_last_edf_data()
@@ -62,4 +60,4 @@ class PressureEnv(MelcorEnv):
         Returns:
             bool: True if the episode should be truncated, False otherwise.
         """
-        return float(info['TIME']) > 100.0
+        return False

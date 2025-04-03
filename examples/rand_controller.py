@@ -3,6 +3,8 @@
 import melgym
 import gymnasium as gym
 
+import numpy as np
+
 
 def rand_control(env, n_episodes=1):
     """
@@ -15,11 +17,12 @@ def rand_control(env, n_episodes=1):
     for _ in range(n_episodes):
         obs, _ = env.reset()
         done = trunc = False
-
         while not (done or trunc):
             action = env.action_space.sample()
             obs, reward, done, trunc, info = env.step(action)
             env.render()
+
+    env.close()
 
 
 if __name__ == '__main__':
