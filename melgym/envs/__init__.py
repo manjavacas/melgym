@@ -1,5 +1,5 @@
 """ 
 Control environments provided by MELGYM.
-"""
 
-from melgym.envs.melcor_env import MelcorEnv
+Custom environments must inherit from the base MelcorEnv class.
+"""

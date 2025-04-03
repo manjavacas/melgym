@@ -1,5 +1,5 @@
 """
-Generic MELCOR control environment.
+Generic MELCOR environment.
 """
 
 import os
@@ -14,11 +14,11 @@ from typing import Optional
 from datetime import datetime
 
 from ..utils.constants import OUTPUT_DIR, MELCOR_PATH, MELGEN_PATH
-
+from ..utils.exceptions import MelgymError, MelgymWarning
 
 class MelcorEnv(gym.Env):
     """
-    MELCOR Control Environment
+    MELCOR control environment.
 
     This environment redefines CF scale factors to control the variables recorded in the EDF. Between restarts, each CFnnn00 entry (automatically included in the MELCOR input) is rewritten after a specified number of timesteps, as defined by the control horizon.
     """
@@ -127,7 +127,7 @@ class MelcorEnv(gym.Env):
                 subprocess.run([self.melgen_path, self.melin_path],
                                cwd=self.output_dir, stdout=log, stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
-            raise RuntimeError(f"MELGEN execution failed: {e}")
+            raise MelgymError(f"MELGEN execution failed: {e}")
 
         # Initial state
         info = {'time': 0.0}
@@ -165,7 +165,7 @@ class MelcorEnv(gym.Env):
         if self.n_steps > 0:
             self._update_time()
         else:
-            raise Exception("Error: reset() has not been called before step()")
+            raise MelgymError("Error: reset() has not been called before step()")
 
         # Apply action
         self._update_cfs(action)
@@ -176,7 +176,7 @@ class MelcorEnv(gym.Env):
                 subprocess.call([self.melcor_path, 'ow=o', 'i=' + self.melin_path],
                                 cwd=self.output_dir, stdout=log, stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
-            raise RuntimeError(f"MELCOR execution failed: {e}")
+            raise MelgymError(f"MELCOR execution failed: {e}")
 
         # Get observation
         time, *obs = self._get_last_edf_data()
@@ -210,7 +210,7 @@ class MelcorEnv(gym.Env):
         try:
             subprocess.run(["pkill", "-f", self.melcor_path], check=False)
             subprocess.run(["pkill", "-f", self.melgen_path], check=False)
-        except Exception as e:
+        except MelgymWarning as e:
             print(f"Warning: Failed to terminate MELCOR/MELGEN processes: {e}")
 
     def _update_time(self):
@@ -300,8 +300,8 @@ class MelcorEnv(gym.Env):
             marker_index = next(i for i, line in enumerate(
                 lines) if "*EOR* MELCOR" in line)
         except StopIteration:
-            raise Exception(
-                "Marker '*EOR* MELCOR' not found in the input file")
+            raise MelgymError(
+                "Marker '*EOR* MELCOR' not found in the input file.")
 
         action_idx = 0
         num_actions = len(action)
@@ -327,26 +327,31 @@ class MelcorEnv(gym.Env):
         Reads the last recorded values from the EDF file.
 
         Returns:
-            list[str]: A list containing the last recorded values.
+            np.array: An array containing the last recorded values as np.float64.
 
         Raises:
             FileNotFoundError: If the EDF file is not found.
+            ValueError: If the file cannot be parsed correctly.
         """
         try:
             with open(self.edf_path, 'rb') as edf:
-                n_values = len(self.controlled_values) + 1
-
                 edf.seek(0, os.SEEK_END)
                 file_size = edf.tell()
                 buffer_size = min(4096, file_size)
                 edf.seek(-buffer_size, os.SEEK_END)
 
-                values = edf.read().decode(errors='ignore').split()[-n_values:]
+                # Leer los últimos valores
+                raw_data = edf.read().decode(errors='ignore').split()
+                values = raw_data[-(len(self.controlled_values) + 1):]
+
+                # Convertir a NumPy array con dtype float64
+                return np.fromstring(" ".join(values), sep=" ", dtype=np.float64)
 
         except FileNotFoundError:
-            raise FileNotFoundError(f"Input file {self.melin_path} not found.")
+            raise FileNotFoundError(f"EDF file {self.edf_path} not found.")
+        except ValueError:
+            raise ValueError(f"Failed to parse numerical values from EDF file: {self.edf_path}")
 
-        return values
 
     def _compute_reward(self, obs, info):
         """

@@ -1,3 +1,3 @@
 """
-Includes several utilities, constants and callbacks/wrappers.
+Constants and utilities.
 """

@@ -7,6 +7,7 @@ import numpy as np
 
 N_TEST_EPISODES = 1
 
+
 def rand_control(env):
     """
     Random controller for testing purposes.
@@ -18,12 +19,14 @@ def rand_control(env):
         obs, _ = env.reset()
         done = False
         truncated = False
-        for i in range(100):
+        while not (done or truncated):
             action = env.action_space.sample()
-            obs, reward, truncated, done, info = env.step(action)
-            print(info)
+            obs, reward, done, truncated, info = env.step(action)
+            print(info, reward, done, truncated)
+            env.render()
 
     env.close()
+
 
 if __name__ == '__main__':
     env = gym.make('pressure')
