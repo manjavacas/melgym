@@ -164,6 +164,7 @@ class MelcorEnv(gym.Env):
         # Update time
         if self.n_steps > 0:
             self._update_time()
+            self.n_steps += 1
         else:
             raise MelgymError("Error: reset() has not been called before step()")
 
@@ -351,7 +352,6 @@ class MelcorEnv(gym.Env):
             raise FileNotFoundError(f"EDF file {self.edf_path} not found.")
         except ValueError:
             raise ValueError(f"Failed to parse numerical values from EDF file: {self.edf_path}")
-
 
     def _compute_reward(self, obs, info):
         """

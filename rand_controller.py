@@ -2,27 +2,21 @@
 
 import melgym
 import gymnasium as gym
-import numpy as np
 
-
-N_TEST_EPISODES = 1
-
-
-def rand_control(env):
+def rand_control(env, n_episodes=1):
     """
     Random controller for testing purposes.
 
     Args:
         env (gym.Env): gymnasium environment.
+        n_episodes (int): Number of episodes to run.
     """
-    for _ in range(N_TEST_EPISODES):
+    for _ in range(n_episodes):
         obs, _ = env.reset()
-        done = False
-        truncated = False
-        while not (done or truncated):
+        done = trunc = False
+        while not (done or trunc):
             action = env.action_space.sample()
-            obs, reward, done, truncated, info = env.step(action)
-            print(info, reward, done, truncated)
+            obs, reward, done, trunc, info = env.step(action)
             env.render()
 
     env.close()
