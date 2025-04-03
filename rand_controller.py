@@ -3,8 +3,6 @@
 import melgym
 import gymnasium as gym
 
-import numpy as np
-
 
 def rand_control(env, n_episodes=1):
     """
@@ -20,6 +18,7 @@ def rand_control(env, n_episodes=1):
         while not (done or trunc):
             action = env.action_space.sample()
             obs, reward, done, trunc, info = env.step(action)
+            print(obs, reward, action, info)
             env.render()
 
     env.close()
@@ -27,5 +26,5 @@ def rand_control(env, n_episodes=1):
 
 if __name__ == '__main__':
     env = gym.make('pressure')
-    rand_control(env, n_episodes=10)
+    rand_control(env, n_episodes=1)
     env.close()

@@ -24,16 +24,15 @@ class PressureEnv(MelcorEnv):
     """
 
     metadata = {
-        "render_modes": ["rgb_array"],
+        "render_modes": ['human'],
         "render_fps": 30
     }
 
     def __init__(self, melcor_model, control_cfs, min_action_value, max_action_value,
-                 setpoints, max_deviation=1e3, max_episode_len=1e4, warmup_time=50, render_mode=None):
+                 setpoints, max_deviation, max_episode_len, warmup_time=0, render_mode=None):
         """
         Initializes the PressureEnv environment.
         """
-        # Initialize the parent class (MelcorEnv) with the appropriate arguments
         super().__init__(melcor_model=melcor_model, control_cfs=control_cfs,
                          min_action_value=min_action_value, max_action_value=max_action_value)
 
@@ -43,7 +42,7 @@ class PressureEnv(MelcorEnv):
         self.max_episode_len = max_episode_len
         self.warmup_time = warmup_time
 
-        # Rendering
+        # Rendering settings
         if render_mode:
             self.render_mode = render_mode
         self.time_data = []
@@ -119,7 +118,7 @@ class PressureEnv(MelcorEnv):
         Returns:
             bool: True if the episode should terminate, False otherwise.
         """
-        return np.any(np.abs(obs - np.array(self.setpoints)) > self.max_deviation) and info['TIME'] > self.warmup_time
+        return np.any(np.abs(obs - np.array(self.setpoints)) > self.max_deviation)
 
     def _check_truncation(self, obs, info):
         """

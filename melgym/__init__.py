@@ -12,6 +12,8 @@ register(
         'control_cfs': ['CF007'],
         'min_action_value': 0.0,
         'max_action_value': 10.0,
+        'max_deviation': 5e4,
+        'max_episode_len': 1e3,
         'setpoints': [101000.0]
     }
 )
