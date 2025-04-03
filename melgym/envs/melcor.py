@@ -16,6 +16,7 @@ from datetime import datetime
 from ..utils.constants import OUTPUT_DIR, MELCOR_PATH, MELGEN_PATH
 from ..utils.exceptions import MelgymError, MelgymWarning
 
+
 class MelcorEnv(gym.Env):
     """
     MELCOR control environment.
@@ -110,8 +111,13 @@ class MelcorEnv(gym.Env):
         """
         super().reset(seed=seed)
 
-        # Create output folder and copy input file
-        os.makedirs(self.output_dir, exist_ok=True)
+        if os.path.exists(self.output_dir):
+            # Clean output directory from previous runs
+            self._clean_out_files()
+        else:
+            # Create output folder and copy input file
+            os.makedirs(self.output_dir, exist_ok=True)
+
         shutil.copy(self.melcor_model, self.melin_path)
 
         self.toolkit = Toolkit(self.melin_path)
@@ -166,7 +172,8 @@ class MelcorEnv(gym.Env):
             self._update_time()
             self.n_steps += 1
         else:
-            raise MelgymError("Error: reset() has not been called before step()")
+            raise MelgymError(
+                "Error: reset() has not been called before step()")
 
         # Apply action
         self._update_cfs(action)
@@ -185,12 +192,15 @@ class MelcorEnv(gym.Env):
         info = {'TIME': time}
         info.update(dict(zip(self.controlled_values, obs)))
 
-        # Compute reward
-        reward = self._compute_reward(obs, info)
-
         # Check termination / truncation
         termination = self._check_termination(obs, info)
         truncation = self._check_truncation(obs, info)
+
+        info['termination'] = termination
+        info['truncation'] = truncation
+
+        # Compute reward
+        reward = self._compute_reward(obs, info)
 
         return np.array(obs, dtype=np.float64), reward, termination, truncation, info
 
@@ -213,6 +223,13 @@ class MelcorEnv(gym.Env):
             subprocess.run(["pkill", "-f", self.melgen_path], check=False)
         except MelgymWarning as e:
             print(f"Warning: Failed to terminate MELCOR/MELGEN processes: {e}")
+
+    def _clean_out_files(self):
+        """
+        Cleans the output directory where past simulation files are stored.
+        """
+        for file in os.listdir(self.output_dir):
+            os.remove(os.path.join(self.output_dir, file))
 
     def _update_time(self):
         """
@@ -351,7 +368,8 @@ class MelcorEnv(gym.Env):
         except FileNotFoundError:
             raise FileNotFoundError(f"EDF file {self.edf_path} not found.")
         except ValueError:
-            raise ValueError(f"Failed to parse numerical values from EDF file: {self.edf_path}")
+            raise ValueError(
+                f"Failed to parse numerical values from EDF file: {self.edf_path}")
 
     def _compute_reward(self, obs, info):
         """

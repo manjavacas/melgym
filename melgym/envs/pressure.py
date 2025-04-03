@@ -5,11 +5,36 @@ from melgym.envs.melcor import MelcorEnv
 
 class PressureEnv(MelcorEnv):
     """
-    Presure control environment.
+    Pressure control environment.
 
     This subclass implements the reward, termination, truncation, and rendering methods
     for a pressure control environment.
+
+    Args:
+        melcor_model (str): Path to the MELCOR model file.
+        control_cfs (list): List of controlled CFs.
+        min_action_value (float): Minimum action value.
+        max_action_value (float): Maximum action value.
+        setpoints (list): List of setpoints.
+        max_deviation (float): Maximum deviation from setpoints.
+        max_episode_len (float): Maximum length of an episode before truncation.
+        warmup_time (float): Time before checking for termination.
     """
+
+    def __init__(self, melcor_model, control_cfs, min_action_value, max_action_value,
+                 setpoints=None, max_deviation=1e4, max_episode_len=1e2, warmup_time=100):
+        """
+        Initializes the PressureEnv environment.
+        """
+        # Initialize the parent class (MelcorEnv) with the appropriate arguments
+        super().__init__(melcor_model=melcor_model, control_cfs=control_cfs,
+                         min_action_value=min_action_value, max_action_value=max_action_value)
+
+        # Initialize the PressureEnv-specific arguments
+        self.setpoints = setpoints
+        self.max_deviation = max_deviation
+        self.max_episode_len = max_episode_len
+        self.warmup_time = warmup_time
 
     def render(self):
         """
@@ -47,7 +72,7 @@ class PressureEnv(MelcorEnv):
         Returns:
             bool: True if the episode should terminate, False otherwise.
         """
-        return False
+        return np.any(np.abs(obs - np.array(self.setpoints)) > self.max_deviation) and info['TIME'] > self.warmup_time
 
     def _check_truncation(self, obs, info):
         """
@@ -60,4 +85,4 @@ class PressureEnv(MelcorEnv):
         Returns:
             bool: True if the episode should be truncated, False otherwise.
         """
-        return False
+        return info['TIME'] >= self.max_episode_len
