@@ -2,10 +2,9 @@
 
 import melgym
 import gymnasium as gym
-import numpy as np
-
 
 N_TEST_EPISODES = 1
+
 
 def rand_control(env):
     """
@@ -21,9 +20,8 @@ def rand_control(env):
 
         while not done and not truncated:
             action = env.action_space.sample()
-            obs, reward, truncated, done, info = env.step(action)
+            obs, reward, done, truncated, info = env.step(action)
             print(info)
-
 
 
 if __name__ == '__main__':
