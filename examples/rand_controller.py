@@ -15,12 +15,11 @@ def rand_control(env):
     """
     for _ in range(N_TEST_EPISODES):
         obs, _ = env.reset()
-        done = False
-        truncated = False
+        done = trunc = False
 
-        while not done and not truncated:
+        while not (done or trunc):
             action = env.action_space.sample()
-            obs, reward, done, truncated, info = env.step(action)
+            obs, reward, done, trunc, info = env.step(action)
             print(info)
 
 

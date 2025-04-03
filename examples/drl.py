@@ -17,6 +17,6 @@ done = trunc = False
 while not (done or trunc):
     env.render()
     act, _ = agent.predict(obs)
-    obs, rew, trunc, done, info = env.step(act)      
+    obs, rew, done, trunc, info = env.step(act)      
 
 env.close()
