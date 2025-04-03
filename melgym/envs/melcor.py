@@ -32,7 +32,6 @@ class MelcorEnv(gym.Env):
         max_action_value: float,
         control_horizon: int = 10,
         output_dir: Optional[str] = None,
-        render_mode: Optional[str] = None,
         melgen_path: Optional[str] = None,
         melcor_path: Optional[str] = None
     ):
@@ -50,8 +49,6 @@ class MelcorEnv(gym.Env):
             melgen_path (Optional[str]): Path to the MELGEN executable. If None, the default path in exec directory is used.
             melcor_path (Optional[str]): Path to the MELCOR executable. If None, the default path in exec directory is used.
         """
-
-        self.render_mode = render_mode
 
         # Files and paths
         self.melcor_model = melcor_model

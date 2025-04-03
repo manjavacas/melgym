@@ -15,18 +15,16 @@ def rand_control(env, n_episodes=1):
         n_episodes (int): Number of episodes to run.
     """
     for _ in range(n_episodes):
-        print(60 * '-')
         obs, _ = env.reset()
         done = trunc = False
         while not (done or trunc):
             action = env.action_space.sample()
             obs, reward, done, trunc, info = env.step(action)
-            env.render()
 
     env.close()
 
 
 if __name__ == '__main__':
-    env = gym.make('pressure')
+    env = gym.make('pressure', render_mode='rgb_array')
     rand_control(env, n_episodes=100)
     env.close()
