@@ -18,11 +18,9 @@ from ..utils.constants import OUTPUT_DIR, MELCOR_PATH, MELGEN_PATH
 
 class MelcorEnv(gym.Env):
     """
-    MELCOR control environment.
+    MELCOR Control Environment
 
-    The redefinition of CF scale factors is used to control the variables recorded in the EDF.
-
-    A rewriting is used between restarts of the CFnnn00s specified in the MELCOR input, given a number of timesteps defined as the control horizon.
+    This environment redefines CF scale factors to control the variables recorded in the EDF. Between restarts, each CFnnn00 entry (automatically included in the MELCOR input) is rewritten after a specified number of timesteps, as defined by the control horizon.
     """
 
     def __init__(
@@ -32,7 +30,10 @@ class MelcorEnv(gym.Env):
         min_action_value: float,
         max_action_value: float,
         control_horizon: int = 10,
-        render_mode: Optional[str] = None
+        output_dir: Optional[str] = None,
+        render_mode: Optional[str] = None,
+        melgen_path: Optional[str] = None,
+        melcor_path: Optional[str] = None
     ):
         """
         Initializes the MELCOR environment.
@@ -42,27 +43,37 @@ class MelcorEnv(gym.Env):
             control_cfs (list[str]): List of controlled CFs.
             min_action_value (float): Minimum action value.
             max_action_value (float): Maximum action value.
-            control_horizon (int): Control horizon (timesteps).
+            control_horizon (int): Control horizon (timesteps between actions).
+            output_dir (Optional[str]): Directory name for output files. If None, a default directory is used.
             render_mode (Optional[str]): Mode for rendering the environment.
+            melgen_path (Optional[str]): Path to the MELGEN executable. If None, the default path in exec directory is used.
+            melcor_path (Optional[str]): Path to the MELCOR executable. If None, the default path in exec directory is used.
         """
 
         self.render_mode = render_mode
 
         # Files and paths
         self.melcor_model = melcor_model
-        model_name = os.path.basename(melcor_model)
-        self.output_dir = os.path.join(OUTPUT_DIR, model_name.split(
-            '.')[0] + f'_{datetime.now().strftime("%Y_%m_%d-%H_%M_%S")}')
+        model_name = os.path.splitext(os.path.basename(melcor_model))[0]
+
+        if output_dir is None:
+            self.output_dir = os.path.join(
+                OUTPUT_DIR, model_name + f'_{datetime.now().strftime("%Y_%m_%d-%H_%M_%S")}')
+        else:
+            self.output_dir = os.path.join(OUTPUT_DIR, output_dir)
 
         self.melin_path = os.path.join(self.output_dir, 'MELIN')
         self.melog_path = os.path.join(self.output_dir, 'MELOG')
         self.edf_path = os.path.join(self.output_dir, 'MELEDF')
 
+        self.melgen_path = melgen_path if melgen_path is not None else MELGEN_PATH
+        self.melcor_path = melcor_path if melcor_path is not None else MELCOR_PATH
+
         self.toolkit = None
 
         # Observation and action spaces
         self.control_cfs = control_cfs
-        self.controlled_values = self._get_controlled_variables(melcor_model)
+        self.controlled_values = Toolkit(self.melcor_model).get_edf_vars()
         if 'TIME' in self.controlled_values:
             self.controlled_values.remove('TIME')
 
@@ -80,7 +91,7 @@ class MelcorEnv(gym.Env):
             dtype=np.float64
         )
 
-        # Simulation params
+        # Simulation parameters
         self.control_horizon = control_horizon
         self.n_steps = 0
         self.current_tend = 0
@@ -91,9 +102,11 @@ class MelcorEnv(gym.Env):
 
         Args:
             seed (Optional[int]): Seed for random number generation.
-            options (Optional[dict]): Additional options for resetting.
+            options (Optional[dict]): Additional options for resetting. Not used by default.
         Returns:
             tuple: A tuple containing the initial observation and info.
+        Raises:
+            Exception: If the MELGEN execution fails.
         """
         super().reset(seed=seed)
 
@@ -111,10 +124,10 @@ class MelcorEnv(gym.Env):
         # MELGEN execution
         try:
             with open(self.melog_path, 'a') as log:
-                subprocess.run([MELGEN_PATH, self.melin_path],
+                subprocess.run([self.melgen_path, self.melin_path],
                                cwd=self.output_dir, stdout=log, stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
-            raise RuntimeError(f"MELCOR execution failed: {e}")
+            raise RuntimeError(f"MELGEN execution failed: {e}")
 
         # Initial state
         info = {'time': 0.0}
@@ -128,8 +141,7 @@ class MelcorEnv(gym.Env):
 
     def step(self, action):
         """
-        Executes a step in the MELCOR environment by applying the given action, 
-        running a MELCOR simulation during a given control horizon, and retrieving the latest state.
+        Executes a step in the MELCOR environment by applying the given action, running a MELCOR simulation during a given control horizon, and retrieving the latest state.
 
         Args:
             action (np.array): An array of control values (CFs scale factors) to be applied.
@@ -137,12 +149,16 @@ class MelcorEnv(gym.Env):
         Returns:
             tuple:
                 - np.array: Observations, representing the latest EDF values after simulation.
-                - float: Reward calculated based on the new state.
+                - float: Reward calculated based on the latest state.
                 - bool: Whether the episode has terminated.
                 - bool: Whether the episode was truncated.
                 - dict: Additional metadata, including:
                     - "TIME" (float): The current simulation time.
                     - Controlled variable names as keys with their respective values.
+
+        Raises:
+            Exception: If reset() has not been called before step().
+            Exception: If the MELCOR execution fails.
         """
 
         # Update time
@@ -157,7 +173,7 @@ class MelcorEnv(gym.Env):
         # MELCOR simulation
         try:
             with open(self.melog_path, 'a') as log:
-                subprocess.call([MELCOR_PATH, 'ow=o', 'i=' + self.melin_path],
+                subprocess.call([self.melcor_path, 'ow=o', 'i=' + self.melin_path],
                                 cwd=self.output_dir, stdout=log, stderr=subprocess.STDOUT)
         except subprocess.CalledProcessError as e:
             raise RuntimeError(f"MELCOR execution failed: {e}")
@@ -169,30 +185,33 @@ class MelcorEnv(gym.Env):
         info.update(dict(zip(self.controlled_values, obs)))
 
         # Compute reward
-        reward = self._compute_reward(info)
+        reward = self._compute_reward(obs, info)
 
         # Check termination / truncation
-        termination = self._check_termination(info)
-        truncation = self._check_truncation(info)
+        termination = self._check_termination(obs, info)
+        truncation = self._check_truncation(obs, info)
 
         return np.array(obs, dtype=np.float64), reward, termination, truncation, info
 
     def render(self):
+        """
+        Renders the environment. 
+        This method should be overridden in subclasses to define the render method.
+        """
         raise NotImplementedError
 
     def close(self):
-        raise NotImplementedError
-
-    def _get_controlled_variables(self, melcor_model):
         """
-        Retrieves the variables registered in the EDF and returns a list of their names.
+        Closes the environment and cleans up resources.
 
-        Args:
-            melcor_model (str): Path to the MELCOR model file.
-        Returns:
-            list[str]: A list of controlled variable names.
+        Raises:
+            Exception: If the MELCOR or MELGEN processes cannot be terminated.
         """
-        return Toolkit(melcor_model).get_edf_vars()
+        try:
+            subprocess.run(["pkill", "-f", self.melcor_path], check=False)
+            subprocess.run(["pkill", "-f", self.melgen_path], check=False)
+        except Exception as e:
+            print(f"Warning: Failed to terminate MELCOR/MELGEN processes: {e}")
 
     def _update_time(self):
         """
@@ -227,14 +246,20 @@ class MelcorEnv(gym.Env):
         """
         Includes the definitions of the CFs to be overwritten in the MELCOR input, inserting them after "*EOR* MELCOR".
         If the marker is not found, the block is inserted before the last line.
+
+        Raises:
+            FileNotFoundError: If the input file is not found.
         """
         # Get the headlines of the controlled CFs
         cf_headlines = [str(cf).split('\n')[0]
                         for cf in self.toolkit.get_cf_list()
                         if cf.get_id() in self.control_cfs]
 
-        with open(self.melin_path, 'r') as f:
-            lines = f.readlines()
+        try:
+            with open(self.melin_path, 'r') as f:
+                lines = f.readlines()
+        except FileNotFoundError:
+            raise FileNotFoundError(f"Input file {self.melin_path} not found.")
 
         # Search for insertion line
         insert_index = None
@@ -262,9 +287,13 @@ class MelcorEnv(gym.Env):
 
         Raises:
             Exception: If the marker "*EOR* MELCOR" is not found.
+            FileNotFoundError: If the input file is not found.
         """
-        with open(self.melin_path, 'r') as f:
-            lines = f.readlines()
+        try:
+            with open(self.melin_path, 'r') as f:
+                lines = f.readlines()
+        except FileNotFoundError:
+            raise FileNotFoundError(f"Input file {self.melin_path} not found.")
 
         # Search for "*EOR* MELCOR" line
         try:
@@ -299,22 +328,55 @@ class MelcorEnv(gym.Env):
 
         Returns:
             list[str]: A list containing the last recorded values.
+
+        Raises:
+            FileNotFoundError: If the EDF file is not found.
         """
-        n_values = len(self.controlled_values) + 1
-        with open(self.edf_path, 'rb') as edf:
-            edf.seek(0, os.SEEK_END)
-            file_size = edf.tell()
-            buffer_size = min(4096, file_size)
-            edf.seek(-buffer_size, os.SEEK_END)
-            values = edf.read().decode(errors='ignore').split()[-n_values:]
+        try:
+            with open(self.edf_path, 'rb') as edf:
+                n_values = len(self.controlled_values) + 1
+
+                edf.seek(0, os.SEEK_END)
+                file_size = edf.tell()
+                buffer_size = min(4096, file_size)
+                edf.seek(-buffer_size, os.SEEK_END)
+
+                values = edf.read().decode(errors='ignore').split()[-n_values:]
+
+        except FileNotFoundError:
+            raise FileNotFoundError(f"Input file {self.melin_path} not found.")
 
         return values
 
-    def _compute_reward(self, info):
-        return 0
+    def _compute_reward(self, obs, info):
+        """
+        Computes the reward based on the current state.
+        This method should be overridden in subclasses to define the reward function.
 
-    def _check_termination(self, info):
-        return False
+        Args:
+            obs (np.array): Current observation.
+            info (dict): Additional information about the current state.
+        """
+        raise NotImplementedError
 
-    def _check_truncation(self, info):
-        return False
+    def _check_termination(self, obs, info):
+        """
+        Checks if the episode has terminated.
+        This method should be overridden in subclasses to define the termination condition.
+
+        Args:
+            obs (np.array): Current observation.
+            info (dict): Additional information about the current state.
+        """
+        raise NotImplementedError
+
+    def _check_truncation(self, obs, info):
+        """
+        Checks if the episode should be truncated.
+        This method should be overridden in subclasses to define the truncation condition.
+
+        Args:
+            obs (np.array): Current observation.
+            info (dict): Additional information about the current state.
+        """
+        raise NotImplementedError

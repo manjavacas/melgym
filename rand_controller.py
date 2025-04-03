@@ -18,13 +18,12 @@ def rand_control(env):
         obs, _ = env.reset()
         done = False
         truncated = False
-
-        while not done and not truncated:
+        for i in range(100):
             action = env.action_space.sample()
             obs, reward, truncated, done, info = env.step(action)
             print(info)
 
-
+    env.close()
 
 if __name__ == '__main__':
     env = gym.make('pressure')
