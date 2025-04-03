@@ -97,7 +97,7 @@ class PressureEnv(MelcorEnv):
 
     def _compute_reward(self, obs, info):
         """
-        Computes the reward based on the current observation and the given setpoints.
+        Computes the reward based on the distance between the current observation and the given setpoints.
 
         Args:
             obs (np.array): Current observation.
@@ -106,10 +106,7 @@ class PressureEnv(MelcorEnv):
         Returns:
             float: Computed reward.
         """
-        if info['termination']:
-            return -np.inf
-        else:
-            return -np.mean(np.abs(obs - np.array(self.setpoints)))
+        return -np.mean(np.abs(obs - np.array(self.setpoints)))
 
     def _check_termination(self, obs, info):
         """
