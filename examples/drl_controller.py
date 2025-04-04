@@ -5,6 +5,7 @@ import gymnasium as gym
 
 from gymnasium.wrappers import RescaleAction, NormalizeObservation, NormalizeReward
 
+from stable_baselines3 import PPO
 from stable_baselines3.common.monitor import Monitor
 from stable_baselines3.common.callbacks import EvalCallback
 
