@@ -9,9 +9,9 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.10"
 gymnasium = "^1.1.1"
+melkit = "^0.4"
 colorama = "^0.4.6"
 stable-baselines3 = {extras = ["extra"], version = "^2.6.0", optional = true}
-melkit = "^0.4"
 
 [tool.poetry.extras]
 rl = ["stable-baselines3"]
