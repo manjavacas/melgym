@@ -38,12 +38,12 @@ env = NormalizeReward(env)
 render_callback = RenderEveryNSteps(env, n_steps=1_000)
 
 # Training
-agent = PPO('MlpPolicy', env=env, device='cpu', verbose=True)
+agent = SAC('MlpPolicy', env=env, device='cpu', verbose=True)
 agent.learn(total_timesteps=10_000, progress_bar=True, callback=render_callback)
 agent.save('rl_model')
 
 # Evaluation
-agent = PPO.load('ppo_pressure', env=env, device='cpu')
+agent = SAC.load('rl_model', env=env, device='cpu')
 obs, info = env.reset()
 done = trunc = False
 
