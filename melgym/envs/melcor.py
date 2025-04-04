@@ -79,7 +79,7 @@ class MelcorEnv(gym.Env):
             low=min_action_value,
             high=max_action_value,
             shape=(len(control_cfs),),
-            dtype=np.float64
+            dtype=np.float32
         )
 
         n_obs = len(self.controlled_values)
@@ -186,7 +186,7 @@ class MelcorEnv(gym.Env):
         # Get observation
         time, *obs = self._get_last_edf_data()
 
-        info = {'TIME': time}
+        info = {'TIME': time, 'action': action}
         info.update(dict(zip(self.controlled_values, obs)))
 
         # Check termination / truncation
@@ -194,8 +194,8 @@ class MelcorEnv(gym.Env):
         truncation = self._check_truncation(obs, info)
 
         info['termination'] = termination
-        info['truncation'] = truncation
-
+        info['truncation'] = truncation 
+        
         # Compute reward
         reward = self._compute_reward(obs, info)
 

@@ -62,18 +62,19 @@ class PressureEnv(MelcorEnv):
         """
         Renders the environment interactively, displaying the evolution of variables.
         """
-        try:
-            values = self._get_last_edf_data()
-            time = values[0]
-            controlled_values = values[1:]
+        if self.n_steps > 1:
+            try:
+                values = self._get_last_edf_data()
+                time = values[0]
+                controlled_values = values[1:]
 
-            self.time_data.append(time)
-            self.obs_data.append(controlled_values)
+                self.time_data.append(time)
+                self.obs_data.append(controlled_values)
 
-            self._update_plot()
+                self._update_plot()
 
-        except Exception as e:
-            print(f"Render error: {e}")
+            except Exception as e:
+                print(f"Render error: {e}")
 
     def _update_plot(self):
         """
@@ -118,7 +119,7 @@ class PressureEnv(MelcorEnv):
         Returns:
             bool: True if the episode should terminate, False otherwise.
         """
-        return np.any(np.abs(obs - np.array(self.setpoints)) > self.max_deviation)
+        return bool(np.any(np.abs(obs - np.array(self.setpoints)) > self.max_deviation))
 
     def _check_truncation(self, obs, info):
         """
@@ -131,4 +132,4 @@ class PressureEnv(MelcorEnv):
         Returns:
             bool: True if the episode should be truncated, False otherwise.
         """
-        return info['TIME'] >= self.max_episode_len
+        return bool(info['TIME'] >= self.max_episode_len)

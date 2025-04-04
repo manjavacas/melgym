@@ -3,7 +3,9 @@ melgym/exec/*
 melgym/out/*
 ep_metrics/*
 tensorboard/
-best_models/
+best_model/
+logs/
+monitor
 
 # VS Code
 .vscode/

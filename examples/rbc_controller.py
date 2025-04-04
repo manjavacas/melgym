@@ -22,13 +22,13 @@ def rbc_controller(env, n_episodes=1):
             else:
                 action = np.array([.5])
             obs, reward, done, trunc, info = env.step(action)
-            print(obs, reward, action, info)
+            print(f"Action: {action}, Reward: {reward}, Info: {info}")
             env.render()
 
     env.close()
 
 
 if __name__ == '__main__':
-    env = gym.make('pressure')
+    env = gym.make('pressure-v0')
     rbc_controller(env, n_episodes=1)
     env.close()
