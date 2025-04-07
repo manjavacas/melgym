@@ -6,6 +6,7 @@ tensorboard/
 best_model/
 logs/
 monitor
+*.csv
 
 # VS Code
 .vscode/

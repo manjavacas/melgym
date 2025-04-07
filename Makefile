@@ -7,4 +7,4 @@ drl:
 	python3 examples/drl_controller.py
 
 clean:
-	rm -rf best_model *log*.txt *log.csv* logs monitor.csv melgym/out
+	rm -rf best_models *log*.txt logs *.csv melgym/out

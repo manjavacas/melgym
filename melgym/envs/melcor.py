@@ -79,7 +79,7 @@ class MelcorEnv(gym.Env):
             low=min_action_value,
             high=max_action_value,
             shape=(len(control_cfs),),
-            dtype=np.float32
+            dtype=np.float16
         )
 
         n_obs = len(self.controlled_values)

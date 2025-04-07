@@ -25,8 +25,6 @@ def rbc_controller(env, n_episodes=1):
             print(f"Action: {action}, Reward: {reward}, Info: {info}")
             env.render()
 
-    env.close()
-
 
 if __name__ == '__main__':
     env = gym.make('pressure-v0')
