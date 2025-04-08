@@ -10,5 +10,4 @@ This section details the main classes and functions of MELGYM.
    :recursive:
    :template: custom-module-template.rst
 
-   melgym.envs
-   melgym.utils
+   melgym
