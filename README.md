@@ -21,7 +21,17 @@ MELGYM allows the definition of external user-defined controllers, allowing the 
 
 ## ⚙️ How it works?
 
-MELGYM leverages MELCOR's restart capabilities to modify CFs every few simulation cycles. Just before a *warm start* is performed, the underlying MELCOR model is modified according to the last registered simulation state, and continues running until the next control action is performed.
+MELGYM leverages MELCOR's restart capabilities to modify CFs dynamically during simulation cycles. Here's how it works:
+
+1. **On-restart control**: MELGYM discretizes simulations by modifying the MELCOR input file just before warm starts are performed.
+2. **Dynamic control**: the specified CFs are updated based on the latest simulation state, allowing real-time control.
+3. **Integration with RL**: MELGYM can integrate reinforcement learning agents to optimize control strategies.
+
+This approach enables interactive control over MELCOR simulations, overcoming the limitations of its batch execution mode.
+
+<p align="center">
+    <img src="./docs/source/_static/images/mdp.png" alt="mpd-2" width="500"/>
+</p>
 
 <p align="center">
     <img src="./docs/source/_static/images/mdp.png" alt="mpd-2" width="500"/>
@@ -59,7 +69,15 @@ env.close()
 
 ## 🚀 Contributing
 
-See our [contributing](./CONTRIBUTING.md) guidelines.
+We welcome contributions to MELGYM! Here's how you can contribute:
+
+1. Fork this repository.
+2. Create a new branch for your feature or bug fix:
+   ```bash
+   git checkout -b feature/new-feature
+   ```
+
+Remember to check our [contributing](./CONTRIBUTING.md) guidelines.
 
 ## 🧰 Side projects
 

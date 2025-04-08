@@ -128,7 +128,7 @@ class PressureEnv(MelcorEnv):
 
     def _compute_reward(self, obs, info):
         """
-        Computes the reward based on the distance between the current observation and the given setpoints.
+        Computes the reward based on the current observation and the given setpoints.
 
         Args:
             obs (np.array): Current observation.
@@ -137,11 +137,8 @@ class PressureEnv(MelcorEnv):
         Returns:
             float: Computed reward.
         """
-        distance =  np.mean(np.abs(np.array(self.setpoints) - obs))
-        r = -distance**2 / 1e7
-        print(r)
-        return r
-    
+        return -np.mean(np.abs(np.array(self.setpoints) - obs))
+
     def _check_termination(self, obs, info):
         """
         Checks if the episode has terminated.
@@ -170,7 +167,8 @@ class PressureEnv(MelcorEnv):
 
         press_limit = False
         if self.max_deviation:
-            press_limit = bool(np.any(np.abs(obs - np.array(self.setpoints)) > self.max_deviation))
+            press_limit = bool(
+                np.any(np.abs(obs - np.array(self.setpoints)) > self.max_deviation))
 
         return time_limit or press_limit
 
