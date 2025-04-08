@@ -34,10 +34,6 @@ This approach enables interactive control over MELCOR simulations, overcoming th
     <img src="./docs/source/_static/images/mdp.png" alt="mpd-2" width="500"/>
 </p>
 
-<p align="center">
-    <img src="./docs/source/_static/images/mdp.png" alt="mpd-2" width="500"/>
-</p>
-
 > Check the [MELGYM documentation](https://melgym.readthedocs.io/) for more detailed information.
 
 ## 🖥️ Setting up experiments
