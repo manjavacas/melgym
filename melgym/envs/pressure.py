@@ -19,8 +19,8 @@ class PressureEnv(MelcorEnv):
         min_action_value (float): Minimum action value.
         max_action_value (float): Maximum action value.
         setpoints (list): List of setpoints.
-        max_deviation (float): Maximum deviation from setpoints before truncation.
-        max_episode_len (float): Maximum length of an episode before truncation.
+        max_episode_len (float): Maximum length of an episode for truncation.
+        max_deviation (float): Maximum deviation from setpoints for truncation.
         render_mode (str): Render mode. Default is None.
         logging (bool): Logging option. Default is False.
     """
@@ -30,7 +30,7 @@ class PressureEnv(MelcorEnv):
     }
 
     def __init__(self, melcor_model, control_cfs, min_action_value, max_action_value,
-                 setpoints, max_deviation, max_episode_len, render_mode=None, logging=False):
+                 setpoints, max_episode_len, max_deviation=None, render_mode=None, logging=False):
         super().__init__(melcor_model=melcor_model, control_cfs=control_cfs,
                          min_action_value=min_action_value, max_action_value=max_action_value)
 
@@ -137,8 +137,11 @@ class PressureEnv(MelcorEnv):
         Returns:
             float: Computed reward.
         """
-        return -np.mean(np.abs(np.array(self.setpoints) - obs))
-
+        distance =  np.mean(np.abs(np.array(self.setpoints) - obs))
+        r = -distance**2 / 1e7
+        print(r)
+        return r
+    
     def _check_termination(self, obs, info):
         """
         Checks if the episode has terminated.
@@ -164,7 +167,10 @@ class PressureEnv(MelcorEnv):
             bool: True if the episode should be truncated, False otherwise.
         """
         time_limit = bool(info['TIME'] >= self.max_episode_len)
-        press_limit = bool(np.any(np.abs(obs - np.array(self.setpoints)) > self.max_deviation))
+
+        press_limit = False
+        if self.max_deviation:
+            press_limit = bool(np.any(np.abs(obs - np.array(self.setpoints)) > self.max_deviation))
 
         return time_limit or press_limit
 

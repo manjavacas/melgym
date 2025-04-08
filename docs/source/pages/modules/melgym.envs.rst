@@ -1,4 +1,4 @@
-﻿melgym.envs
+melgym.envs
 ===========
 
 .. automodule:: melgym.envs
@@ -29,6 +29,6 @@
    :template: custom-module-template.rst                
    :recursive:
 
-   hvac
+   melcor
    pressure
 

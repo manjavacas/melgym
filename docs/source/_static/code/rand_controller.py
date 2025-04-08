@@ -9,7 +9,7 @@ def rand_control(env, n_episodes=1):
     Random controller for testing purposes.
 
     Args:
-        env (gym.Env): gymnasium environment.
+        env (gym.Env): Gymnasium environment.
         n_episodes (int): Number of episodes to run. Default is 1.
     """
     for _ in range(n_episodes):

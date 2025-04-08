@@ -9,11 +9,11 @@
 [![DOI](https://zenodo.org/badge/621343688.svg)](https://doi.org/10.5281/zenodo.13885984)
 
 
-**MELGYM** is a [Gymnasium](https://github.com/Farama-Foundation/Gymnasium)-based tool designed to facilitate interactive control over [MELCOR](https://melcor.sandia.gov/) 1.8.6 simulations.
+**MELGYM** is a [Gymnasium](https://github.com/Farama-Foundation/Gymnasium)-based interface designed to facilitate interactive control over [MELCOR](https://melcor.sandia.gov/) 1.8.6 simulations.
 
 Every control functionality in MELCOR is determined by Control Functions (CFs). However, the batch execution mode of MELCOR makes it difficult to interactively control and modify functions under certain user-defined conditions. Control conditions are defined a priori and sometimes requires the concatenation of several CFs that must be done in an unfriendly way.
 
-MELGYM allows the definition of external user-defined controllers, allowing the use of reinforcement learning agents or any other custom/external control algorithm.
+MELGYM allows the definition of external user-defined controllers, allowing the use of reinforcement learning agents or any other custom control algorithm.
 
 <p align="center">
     <img src="./docs/source/_static/images/mdp-simp.png" alt="mdp" width="400"/>
@@ -36,30 +36,25 @@ MELGYM environments adhere to the Gymnasium interface, and can be combined with 
 ```python
 import melgym
 import gymnasium as gym
+
 from stable_baselines3 import PPO
 
-env = gym.make('presscontrol', render_mode='pressures')
+env = gym.make('pressure-v0')
 
 # Training
 agent = PPO('MlpPolicy', env)
 agent.learn(total_timesteps=10_000)
 
 # Evaluation
-obs, info = env.reset()
+obs, _ = env.reset()
 done = trunc = False
 
 while not (done or trunc):
     env.render()
     act, _ = agent.predict(obs)
-    obs, rew, trunc, done, info = env.step(act)      
+    obs, rew, done, trunc, info = env.step(act)      
 
 env.close()
-```
-
-For faster experimentation, the [run_experiment.py](./run_experiment.py) script allows to launch experiments by using the configuration defined in [config.yaml](./config.yaml).
-
-```
-$ ./run_experiment.py -conf config.yaml
 ```
 
 ## 🚀 Contributing

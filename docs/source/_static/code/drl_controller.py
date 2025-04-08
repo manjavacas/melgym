@@ -39,7 +39,7 @@ def apply_wrappers(env):
     Applies a series of Gymnasium wrappers to the environment.
 
     Args:
-        env (gym.Env): The environment to wrap.
+        env (gym.Env): Gymnasium environment.
     Returns:
         gym.Env: The wrapped environment.
     """
