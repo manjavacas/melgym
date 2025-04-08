@@ -2,6 +2,9 @@
 MELGYM module.
 """
 
+from melgym import envs
+from melgym import utils
+
 from gymnasium.envs.registration import register
 
 register(
