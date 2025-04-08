@@ -2,12 +2,13 @@
     <img src="./docs/source/_static/images/logo.png" alt="logo" width="400"/>
 </p>
 
-[![Release](https://badgen.net/github/release/manjavacas/melgym)]()
-![License](https://img.shields.io/badge/license-GPLv3-blue)
-[![Contributors](https://badgen.net/github/contributors/manjavacas/melgym)]() 
-[![Documentation Status](https://readthedocs.org/projects/melgym/badge/?version=latest)](https://melgym.readthedocs.io/en/latest/?badge=latest)
-[![DOI](https://zenodo.org/badge/621343688.svg)](https://doi.org/10.5281/zenodo.13885984)
-
+<p align="center">
+    <a href="#"><img src="https://badgen.net/github/release/manjavacas/melgym" alt="Release"></a>
+    <img src="https://img.shields.io/badge/license-GPLv3-blue" alt="License">
+    <a href="#"><img src="https://badgen.net/github/contributors/manjavacas/melgym" alt="Contributors"></a>
+    <a href="https://melgym.readthedocs.io/en/latest/?badge=latest"><img src="https://readthedocs.org/projects/melgym/badge/?version=latest" alt="Documentation Status"></a>
+    <a href="https://doi.org/10.5281/zenodo.13885984"><img src="https://zenodo.org/badge/621343688.svg" alt="DOI"></a>
+</p>
 
 **MELGYM** is a [Gymnasium](https://github.com/Farama-Foundation/Gymnasium)-based interface designed to facilitate interactive control over [MELCOR](https://melcor.sandia.gov/) 1.8.6 simulations.
 
