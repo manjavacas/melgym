@@ -4,9 +4,9 @@ import sys
 import os
 
 project = 'MELGYM'
-copyright = '2024, Antonio Manjavacas'
+copyright = '2025, Antonio Manjavacas'
 author = 'Antonio Manjavacas'
-release = '0.1'
+release = '2.0.0'
 
 # -- General configuration ---------------------------------------------------
 
