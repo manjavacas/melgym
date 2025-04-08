@@ -1,8 +1,7 @@
 # -- Project information -----------------------------------------------------
 
-import sys
 import os
-import melgym
+import sys
 
 project = 'MELGYM'
 copyright = '2025, Antonio Manjavacas'
