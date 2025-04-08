@@ -10,7 +10,7 @@ release = '2.0.0'
 
 # -- General configuration ---------------------------------------------------
 
-sys.path.insert(0, os.path.abspath('../../'))
+sys.path.insert(0, os.path.abspath('..'))
 
 extensions = ['sphinx_rtd_theme',
               'sphinx.ext.autosummary',
@@ -21,8 +21,6 @@ exclude_patterns = []
 
 autosummary_generate = True
 pygments_style = 'sphinx'
-
-autodoc_mock_imports = ["melgym.envs.melcor", "melgym.envs.pressure", "melgym.utils.constants", "melgym.utils.exceptios"]
 
 
 # -- Options for HTML output -------------------------------------------------

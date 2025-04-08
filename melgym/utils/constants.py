@@ -1,5 +1,5 @@
 """
-Constants declarations.
+Constants used by MELGYM.
 """
 
 import os

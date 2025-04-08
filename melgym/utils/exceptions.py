@@ -1,3 +1,7 @@
+"""
+MELGYM custom exceptions.
+"""
+
 from colorama import Fore, Style
 
 class MelgymError(Exception):
