@@ -22,6 +22,7 @@ exclude_patterns = []
 autosummary_generate = True
 pygments_style = 'sphinx'
 
+
 # -- Options for HTML output -------------------------------------------------
 
 html_theme = 'sphinx_rtd_theme'
@@ -34,3 +35,4 @@ html_static_path = [
 html_css_files = [
     'css/custom.css',
 ]
+
