@@ -2,5 +2,4 @@
 Constants and utilities.
 """
 
-from . import constants
-from . import exceptions
+from .exceptions import MelgymError, MelgymWarning
