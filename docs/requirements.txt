@@ -477,7 +477,7 @@ matplotlib==3.9.1 ; python_version >= "3.10" and python_version < "4.0" \
     --hash=sha256:dd2a59ff4b83d33bca3b5ec58203cc65985367812cb8c257f3e101632be86d92 \
     --hash=sha256:de06b19b8db95dd33d0dc17c926c7c9ebed9f572074b6fac4f65068a6814d010 \
     --hash=sha256:f1f2e5d29e9435c97ad4c36fb6668e89aee13d48c75893e25cef064675038ac9
-melkit>=0.4 ; python_version >= "3.10" and python_version < "4.0" \
+melkit==0.4 ; python_version >= "3.10" and python_version < "4.0" \
     --hash=sha256:fa45f5018bd2cf12d2fbb066b4c5fc538701b273d564ce34df974c4db5c4909e
 mkl==2021.4.0 ; python_version >= "3.10" and python_version < "4.0" and platform_system == "Windows" \
     --hash=sha256:398dbf2b0d12acaf54117a5210e8f191827f373d362d796091d161f610c1ebfb \
