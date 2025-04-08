@@ -2,8 +2,8 @@
 MELGYM module.
 """
 
-from . import envs
-from . import utils
+from melgym import envs
+from melgym import utils
 
 from gymnasium.envs.registration import register
 
