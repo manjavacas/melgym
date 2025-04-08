@@ -1,12 +1,12 @@
-# MELCOR/MELGEN
+# MELGYM files
 melgym/exec/*
 melgym/out/*
 ep_metrics/*
-
-# Training
-# best_models/
 tensorboard/
-best_models/
+best_model/
+logs/
+monitor
+*.csv
 
 # VS Code
 .vscode/

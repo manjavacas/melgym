@@ -29,8 +29,6 @@ melgym.utils
    :template: custom-module-template.rst                
    :recursive:
 
-   aux
-   callbacks
    constants
-   wrappers
+   exceptions
 

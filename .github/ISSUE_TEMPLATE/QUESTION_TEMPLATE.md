@@ -1,15 +1,19 @@
 ---
-name: "❓ QUESTION"
-about: Ask a question
-title: "[QUESTION]:"
-labels: Question
-assignees: ''
+name: "❓ Question"
+about: Ask a question about MELGYM
+title: "[QUESTION] <brief description>"
+labels: ["question"]
+assignees: ""
 ---
 
-## Question
+## 🤔 Question
 
-<!--- Ask your question here. -->
+<!-- Clearly state your question. Be as specific as possible. -->
 
-## Additional context
+## 📌 Context
 
-<!--- Any kind of information to help addressing this question. -->
+<!-- Provide any relevant background information, such as why you're asking this question or where you're encountering the issue. -->
+
+## 🔗 Additional Details
+
+<!-- Include references, related issues, or any extra information that might help answer your question. -->

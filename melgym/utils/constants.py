@@ -4,11 +4,16 @@ Constants declarations.
 
 import os
 
-ROOT_DIR = os.getcwd()
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
-DATA_DIR = os.path.join(ROOT_DIR, 'melgym', 'data')
-EXEC_DIR = os.path.join(ROOT_DIR, 'melgym', 'exec')
-OUTPUT_DIR = os.path.join(ROOT_DIR, 'melgym', 'out')
+OUTPUT_DIR = os.path.join(BASE_DIR, "out")
 
-MELGEN_PATH = os.path.join(EXEC_DIR, 'MELGEN')
-MELCOR_PATH = os.path.join(EXEC_DIR, 'MELCOR')
+EXEC_DIR = os.path.join(BASE_DIR, "exec")
+MELGEN_PATH = os.path.join(EXEC_DIR, "MELGEN")
+MELCOR_PATH = os.path.join(EXEC_DIR, "MELCOR")
+
+if not os.path.isfile(MELGEN_PATH):
+    raise FileNotFoundError(f"MELGEN executable not found at {MELGEN_PATH}")
+
+if not os.path.isfile(MELCOR_PATH):
+    raise FileNotFoundError(f"MELCOR executable not found at {MELCOR_PATH}")

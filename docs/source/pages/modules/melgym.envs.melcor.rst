@@ -1,7 +1,7 @@
-melgym.utils.callbacks
-======================
+melgym.envs.melcor
+==================
 
-.. automodule:: melgym.utils.callbacks
+.. automodule:: melgym.envs.melcor
    :private-members:   
 
    
@@ -20,8 +20,7 @@ melgym.utils.callbacks
       :toctree:                                          
       :template: custom-class-template.rst               
    
-      EpisodicDataCallback
-      TbMetricsCallback
+      MelcorEnv
    
    
 

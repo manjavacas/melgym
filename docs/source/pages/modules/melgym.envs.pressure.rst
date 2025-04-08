@@ -20,7 +20,7 @@ melgym.envs.pressure
       :toctree:                                          
       :template: custom-class-template.rst               
    
-      EnvPress
+      PressureEnv
    
    
 

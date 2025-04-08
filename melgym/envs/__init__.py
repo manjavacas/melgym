@@ -1,6 +1,5 @@
 """ 
 Control environments provided by MELGYM.
-"""
 
-from melgym.envs.hvac import EnvHVAC
-from melgym.envs.pressure import EnvPress
+Custom environments must inherit from the base MelcorEnv class.
+"""
