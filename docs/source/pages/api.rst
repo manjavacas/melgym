@@ -6,7 +6,7 @@ API reference
 This section details the main classes and functions of MELGYM.
 
 .. autosummary::
-   :toctree: modules
+   :toctree: modules/
    :recursive:
    :template: custom-module-template.rst
 
