@@ -12,6 +12,7 @@ gymnasium = "^1.1.1"
 melkit = "^0.4"
 colorama = "^0.4.6"
 stable-baselines3 = {extras = ["extra"], version = "^2.6.0", optional = true}
+matplotlib = "^3.10.1"
 
 
 [tool.poetry.extras]
