@@ -22,6 +22,8 @@ exclude_patterns = []
 autosummary_generate = True
 pygments_style = 'sphinx'
 
+autodoc_mock_imports = ["melgym.envs.melcor", "melgym.envs.pressure", "melgym.utils.constants", "melgym.utils.exceptios"]
+
 
 # -- Options for HTML output -------------------------------------------------
 
