@@ -2,6 +2,7 @@
 
 import sys
 import os
+import melgym
 
 project = 'MELGYM'
 copyright = '2025, Antonio Manjavacas'
@@ -10,7 +11,7 @@ release = '2.0.0'
 
 # -- General configuration ---------------------------------------------------
 
-sys.path.insert(0, os.path.abspath('..'))
+sys.path.insert(0, os.path.abspath('../../'))
 
 extensions = ['sphinx_rtd_theme',
               'sphinx.ext.autosummary',
