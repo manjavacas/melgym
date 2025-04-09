@@ -52,6 +52,14 @@ class MelcorEnv(gym.Env):
             melcor_path (Optional[str]): Path to the MELCOR executable. If None, the default path in exec directory is used.
         """
 
+        if not os.path.isfile(MELGEN_PATH):
+            raise FileNotFoundError(
+                f"MELGEN executable not found at {MELGEN_PATH}")
+
+        if not os.path.isfile(MELCOR_PATH):
+            raise FileNotFoundError(
+                f"MELCOR executable not found at {MELCOR_PATH}")
+
         # Files and paths
         self.melcor_model = melcor_model
         model_name = os.path.splitext(os.path.basename(melcor_model))[0]
@@ -196,8 +204,8 @@ class MelcorEnv(gym.Env):
         truncation = self._check_truncation(obs, info)
 
         info['termination'] = termination
-        info['truncation'] = truncation 
-        
+        info['truncation'] = truncation
+
         # Compute reward
         reward = self._compute_reward(obs, info)
 
