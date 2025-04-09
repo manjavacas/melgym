@@ -52,14 +52,6 @@ class MelcorEnv(gym.Env):
             melcor_path (Optional[str]): Path to the MELCOR executable. If None, the default path in exec directory is used.
         """
 
-        if not os.path.isfile(MELGEN_PATH):
-            raise FileNotFoundError(
-                f"MELGEN executable not found at {MELGEN_PATH}")
-
-        if not os.path.isfile(MELCOR_PATH):
-            raise FileNotFoundError(
-                f"MELCOR executable not found at {MELCOR_PATH}")
-
         # Files and paths
         self.melcor_model = melcor_model
         model_name = os.path.splitext(os.path.basename(melcor_model))[0]
@@ -76,6 +68,14 @@ class MelcorEnv(gym.Env):
 
         self.melgen_path = melgen_path if melgen_path is not None else MELGEN_PATH
         self.melcor_path = melcor_path if melcor_path is not None else MELCOR_PATH
+
+        if not os.path.isfile(self.melgen_path):
+            raise FileNotFoundError(
+                f"MELGEN executable not found at {self.melgen_path}")
+
+        if not os.path.isfile(self.melcor_path):
+            raise FileNotFoundError(
+                f"MELCOR executable not found at {self.melcor_path}")
 
         self.toolkit = None
 
