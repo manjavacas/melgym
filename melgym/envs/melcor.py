@@ -1,5 +1,7 @@
 """
 Generic MELCOR environment.
+
+Custom environments must inherit from this class.
 """
 
 import os

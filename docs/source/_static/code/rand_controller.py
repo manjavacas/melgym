@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 import melgym
 import gymnasium as gym
 

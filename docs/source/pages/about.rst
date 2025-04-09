@@ -68,13 +68,13 @@ The following image summarizes the main functions and the low-level agent-enviro
 Environments
 ============
 
-Every MELGYM environment inherits from the `MelcorEnv` class. To function properly, users should consider the following:
+Every MELGYM environment inherits from the ``MelcorEnv`` class. To function properly, users should consider the following:
 
 - The CFs to be controlled must be specified when creating or registering the environment.
 - EDF records to be used as observations must be defined in the MELCOR input file.
 - Environment-specific parameters, such as the action space, must be set in the environment constructor.
 - Users must define the reward function and the termination/truncation conditions, as they are specific to each environment.
-- The EDF dump and restart frequencies must be consistent with the `control_horizon`, and properly defined in the MELCOR input file.
+- The EDF dump and restart frequencies must be consistent with the ``control_horizon``, and properly defined in the MELCOR input file.
 
 .. tip:: Refer to :ref:`api` for a detailed definition of the `MelcorEnv` class and its methods.
 

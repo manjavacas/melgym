@@ -1,5 +1,11 @@
 """
 Constants used by MELGYM.
+
+- `BASE_DIR`: The base directory of the project.
+- `OUTPUT_DIR`: The directory where output files are stored.
+- `EXEC_DIR`: The directory where executable files are stored.
+- `MELGEN_PATH`: The path to the MELGEN executable.
+- `MELCOR_PATH`: The path to the MELCOR executable.
 """
 
 import os
