@@ -43,7 +43,7 @@ This allows simulations to be **discretised** into small time intervals, inserti
 
 .. figure:: ../_static/images/timeline.png
     :align: center
-    :scale: 6 %
+    :scale: 20 %
 
     MELGYM introduces additional restart steps to enable fine-grained control over MELCOR elements
 
@@ -61,7 +61,7 @@ The following image summarizes the main functions and the low-level agent-enviro
 
 .. figure:: ../_static/images/functions.png
     :align: center
-    :scale: 9 %
+    :scale: 20 %
 
     Low-level diagram of the agent–environment interaction loop
 
