@@ -1,5 +1,4 @@
 # MELGYM files
-melgym/exec/*
 melgym/out/*
 ep_metrics/*
 tensorboard/
