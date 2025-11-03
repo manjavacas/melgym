@@ -8,6 +8,7 @@
     <a href="#"><img src="https://badgen.net/github/contributors/manjavacas/melgym" alt="Contributors"></a>
     <a href="https://melgym.readthedocs.io/en/latest/?badge=latest"><img src="https://readthedocs.org/projects/melgym/badge/?version=latest" alt="Documentation Status"></a>
     <a href="https://doi.org/10.5281/zenodo.13885984"><img src="https://zenodo.org/badge/621343688.svg" alt="DOI"></a>
+    <a href="https://doi.org/10.1016/j.softx.2025.102148"><img src="https://zenodo.org/badge/621343688.svg" alt="DOI"></a>
 </p>
 
 **MELGYM** is a [Gymnasium](https://github.com/Farama-Foundation/Gymnasium)-based interface designed to facilitate interactive control over [MELCOR](https://melcor.sandia.gov/) 1.8.6 simulations.
@@ -80,3 +81,16 @@ Remember to check our [contributing](./CONTRIBUTING.md) guidelines.
 
 MELGYM rely on the auxiliar toolbox [MELKIT](https://github.com/manjavacas/melkit/). Feel free to help us improving both projects!
 
+## 📖 Citation
+
+```
+@article{manjavacas2025melgym,
+  title={MELGYM: A dynamic control interface for MELCOR simulations},
+  author={Manjavacas, Antonio and G{\'o}mez-Romero, Juan and Ernst, Damien and V{\'a}zquez-Barroso, Manuel A and Mart{\'\i}n-Fuertes, Francisco},
+  journal={SoftwareX},
+  volume={30},
+  pages={102148},
+  year={2025},
+  publisher={Elsevier}
+}
+```
