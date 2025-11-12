@@ -14,7 +14,7 @@ class PressureEnv(MelcorEnv):
     """
     Pressure control environment.
 
-    This subclass re-implements the reset, saatep, compute_reward, check_termination, check_truncation, and rendering methods.
+    This subclass re-implements the reset, step, compute_reward, check_termination, check_truncation, and rendering methods.
     for a pressure control environment.
 
     Args:
